@@ -1,27 +1,29 @@
-package com.joaonardi.gerenciadorocupacional.backend.model;
+package com.joaonardi.gerenciadorocupacional.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+
+
+@Entity
 public class Setor {
+    @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String nome;
+    @Getter
+    private String area;
+    @Getter
     private Integer grauRisco;
 
-    //getters
-    public Integer getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public Integer getGrauRisco() {
-        return grauRisco;
-    }
+    public Setor(){}
 
     //builder
     public static final class SetorBuilder {
         private Integer id;
-        private String nome;
+        private String area;
         private Integer grauRisco;
 
         private SetorBuilder() {
@@ -36,8 +38,8 @@ public class Setor {
             return this;
         }
 
-        public SetorBuilder nome(String nome) {
-            this.nome = nome;
+        public SetorBuilder area(String area) {
+            this.area = area;
             return this;
         }
 
@@ -48,7 +50,7 @@ public class Setor {
 
         public Setor build() {
             Setor setor = new Setor();
-            setor.nome = this.nome;
+            setor.area = this.area;
             setor.id = this.id;
             setor.grauRisco = this.grauRisco;
             return setor;

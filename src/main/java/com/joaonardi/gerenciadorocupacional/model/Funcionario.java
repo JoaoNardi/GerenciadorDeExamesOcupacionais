@@ -1,38 +1,33 @@
-package com.joaonardi.gerenciadorocupacional.backend.model;
+package com.joaonardi.gerenciadorocupacional.model;
 
-import javax.annotation.processing.Generated;
+import jakarta.persistence.*;
+import lombok.Getter;
+
+
 import java.time.LocalDate;
 
+@Entity
 public class Funcionario {
+    @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Getter
     private String nome;
+    @Getter
+    @Column(unique = true)
     private String cpf;
+    @Getter
     private LocalDate dataNascimento;
+    @Getter
     private LocalDate dataAdmissao;
+    @Getter
     private Integer setor;
+    @Getter
+    private Boolean ativo;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public LocalDate getDataAdmissao() {
-        return dataAdmissao;
-    }
-
-    public Integer getSetor() {
-        return setor;
+    public Funcionario() {
     }
 
     //builder
@@ -43,31 +38,7 @@ public class Funcionario {
         private LocalDate dataNascimento;
         private LocalDate dataAdmissao;
         private Integer setor;
-
-        //getters
-        public Integer getId() {
-            return id;
-        }
-
-        public String getNome() {
-            return nome;
-        }
-
-        public String getCpf() {
-            return cpf;
-        }
-
-        public LocalDate getDataNascimento() {
-            return dataNascimento;
-        }
-
-        public LocalDate getDataAdmissao() {
-            return dataAdmissao;
-        }
-
-        public Integer getSetor() {
-            return setor;
-        }
+        private Boolean ativo;
 
         private FuncionarioBuilder() {
         }
@@ -106,19 +77,25 @@ public class Funcionario {
             return this;
         }
 
-        public Funcionario build() {
-            Funcionario funcionario = new Funcionario();
-            funcionario.dataNascimento = this.dataNascimento;
-            funcionario.dataAdmissao = this.dataAdmissao;
-            funcionario.setor = this.setor;
-            funcionario.nome = this.nome;
-            funcionario.id = this.id;
-            funcionario.cpf = this.cpf;
-            return funcionario;
+        public FuncionarioBuilder ativo(Boolean ativo) {
+            this.ativo = ativo;
+            return this;
         }
 
-
+        public Funcionario build() {
+            Funcionario funcionario = new Funcionario();
+            funcionario.dataAdmissao = this.dataAdmissao;
+            funcionario.nome = this.nome;
+            funcionario.setor = this.setor;
+            funcionario.cpf = this.cpf;
+            funcionario.dataNascimento = this.dataNascimento;
+            funcionario.id = this.id;
+            funcionario.ativo = this.ativo;
+            return funcionario;
+        }
     }
+
+
     @Override
     public String toString() {
         return "FuncionarioBuilder{" +
