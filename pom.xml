@@ -54,23 +54,18 @@
             <version>6.6.8.Final</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.enigmabridge</groupId>
-            <artifactId>hibernate4-sqlite-dialect</artifactId>
-            <version>0.1.2</version>
-        </dependency>
+
 
         <!-- OpenJFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>22</version>
+            <version>23.0.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>22</version>
+            <version>23.0.1</version>
         </dependency>
     </dependencies>
 

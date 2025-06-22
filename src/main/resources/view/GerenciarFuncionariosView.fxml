@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarFuncionariosController">
+    <children>
+        <Label layoutX="21.0" layoutY="4.0" text="Funcionarios">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+        <TableView fx:id="tabelaFuncionarios" layoutX="26.0" layoutY="31.0" onMouseClicked="#handleTableDoubleClick" prefHeight="321.0" prefWidth="548.0">
+            <columns>
+                <TableColumn fx:id="colunaNome" prefWidth="110.0" text="Nome" />
+                <TableColumn fx:id="colunaCpf" prefWidth="95.0" text="CPF" />
+                <TableColumn fx:id="colunaDataNascimento" prefWidth="114.0" text="Data Nascimento" />
+                <TableColumn fx:id="colunaSetor" minWidth="9.0" prefWidth="64.0" text="Setor" />
+                <TableColumn fx:id="colunaDataAdmissao" prefWidth="127.0" text="Data Adnissão" />
+                <TableColumn fx:id="colunaAtivo" prefWidth="37.0" text="Ativo" />
+            </columns>
+        </TableView>
+      <Button layoutX="517.0" layoutY="361.0" mnemonicParsing="false" text="Editar" />
+    </children>
+</AnchorPane>

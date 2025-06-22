@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="515.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.MainController">
+   <children>
+      <MenuBar layoutX="25.0" layoutY="23.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Funcionários">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirFuncionario" text="Cadastrar Funcionario" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarFuncionario" text="Gerenciar Funcionarios" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Setores">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirSetor" text="Adicionar Setor" />
+                  <MenuItem mnemonicParsing="false" text="Gerenciar Setores" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Exames">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Exames" />
+                  <MenuItem mnemonicParsing="false" text="Gerenciar Exames" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Certificados">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Adicionar Certificado" />
+                  <MenuItem mnemonicParsing="false" text="Gerenciar Certificados" />
+               </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <TableView layoutX="19.0" layoutY="79.0" prefHeight="415.0" prefWidth="677.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="id" />
+          <TableColumn prefWidth="75.0" text="Nome" />
+            <TableColumn prefWidth="75.0" text="Idade" />
+            <TableColumn prefWidth="75.0" text="C2" />
+            <TableColumn prefWidth="75.0" text="C2" />
+            <TableColumn prefWidth="75.0" text="C2" />
+            <TableColumn prefWidth="75.0" text="C2" />
+        </columns>
+      </TableView>
+      <ScrollBar layoutX="19.0" layoutY="494.0" prefHeight="14.0" prefWidth="677.0" />
+   </children>
+</AnchorPane>
