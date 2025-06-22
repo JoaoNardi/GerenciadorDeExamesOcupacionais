@@ -1,30 +1,22 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Getter;
 
 import java.time.LocalDate;
-
-@Entity
+@Getter
 public class Certificado {
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Getter
-    private String tipo;
-    @Getter
-    private Integer dataValidade;
-
-    public Certificado(){}
+    private Integer tipoCertificadoId;
+    private Integer funcionarioId;
+    private LocalDate dataEmissao;
+    private LocalDate dataValidade;
 
     public static final class CertificadoBuilder {
         private Integer id;
-        private String tipo;
-        private Integer dataValidade;
+        private Integer tipoCertificadoId;
+        private Integer funcionarioId;
+        private LocalDate dataEmissao;
+        private LocalDate dataValidade;
 
         private CertificadoBuilder() {
         }
@@ -38,21 +30,33 @@ public class Certificado {
             return this;
         }
 
-        public CertificadoBuilder tipo(String tipo) {
-            this.tipo = tipo;
+        public CertificadoBuilder tipoCertificadoId(Integer tipoCertificadoId) {
+            this.tipoCertificadoId = tipoCertificadoId;
             return this;
         }
 
-        public CertificadoBuilder dataValidade(Integer dataValidade) {
+        public CertificadoBuilder funcionarioId(Integer funcionarioId) {
+            this.funcionarioId = funcionarioId;
+            return this;
+        }
+
+        public CertificadoBuilder dataEmissao(LocalDate dataEmissao) {
+            this.dataEmissao = dataEmissao;
+            return this;
+        }
+
+        public CertificadoBuilder dataValidade(LocalDate dataValidade) {
             this.dataValidade = dataValidade;
             return this;
         }
 
         public Certificado build() {
             Certificado certificado = new Certificado();
+            certificado.tipoCertificadoId = this.tipoCertificadoId;
             certificado.id = this.id;
-            certificado.tipo = this.tipo;
+            certificado.dataEmissao = this.dataEmissao;
             certificado.dataValidade = this.dataValidade;
+            certificado.funcionarioId = this.funcionarioId;
             return certificado;
         }
     }

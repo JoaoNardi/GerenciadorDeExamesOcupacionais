@@ -1,21 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.model;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Getter;
 
-
-@Entity
+@Getter
 public class Setor {
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Getter
     private String area;
-    @Getter
     private Integer grauRisco;
 
     public Setor(){}
@@ -55,5 +44,11 @@ public class Setor {
             setor.grauRisco = this.grauRisco;
             return setor;
         }
+
+    }
+    @Override
+    public String toString() {
+        return area;
+
     }
 }

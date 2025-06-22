@@ -1,29 +1,17 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
-import jakarta.persistence.*;
 import lombok.Getter;
-
-
 import java.time.LocalDate;
 
-@Entity
+
+@Getter
 public class Funcionario {
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Getter
     private String nome;
-    @Getter
-    @Column(unique = true)
     private String cpf;
-    @Getter
     private LocalDate dataNascimento;
-    @Getter
     private LocalDate dataAdmissao;
-    @Getter
     private Integer setor;
-    @Getter
     private Boolean ativo;
 
 

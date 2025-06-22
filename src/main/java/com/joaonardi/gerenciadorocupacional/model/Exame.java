@@ -8,24 +8,21 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
-
-@Entity
+@Getter
 public class Exame {
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Getter
-    private String tipo;
-    @Getter
-    private Integer dataValidade;
+    private Integer idTipoExame;
+    private Integer idFuncionario;
+    private LocalDate dataEmissao;
+    private LocalDate dataValidade;
 
-    public Exame(){}
 
     public static final class ExameBuilder {
         private Integer id;
-        private String tipo;
-        private Integer dataValidade;
+        private Integer idTipoExame;
+        private Integer idFuncionario;
+        private LocalDate dataEmissao;
+        private LocalDate dataValidade;
 
         private ExameBuilder() {
         }
@@ -39,25 +36,34 @@ public class Exame {
             return this;
         }
 
-        public ExameBuilder tipo(String tipo) {
-            this.tipo = tipo;
+        public ExameBuilder idTipoExame(Integer idTipoExame) {
+            this.idTipoExame = idTipoExame;
             return this;
         }
 
-        public ExameBuilder dataValidade(Integer dataValidade) {
+        public ExameBuilder idFuncionario(Integer idFuncionario) {
+            this.idFuncionario = idFuncionario;
+            return this;
+        }
+
+        public ExameBuilder dataEmissao(LocalDate dataEmissao) {
+            this.dataEmissao = dataEmissao;
+            return this;
+        }
+
+        public ExameBuilder dataValidade(LocalDate dataValidade) {
             this.dataValidade = dataValidade;
             return this;
         }
 
         public Exame build() {
             Exame exame = new Exame();
-            exame.tipo = this.tipo;
             exame.dataValidade = this.dataValidade;
             exame.id = this.id;
+            exame.dataEmissao = this.dataEmissao;
+            exame.idTipoExame = this.idTipoExame;
+            exame.idFuncionario = this.idFuncionario;
             return exame;
         }
     }
-
-    //builder
-
 }
