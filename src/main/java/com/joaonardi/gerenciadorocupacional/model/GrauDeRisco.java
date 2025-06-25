@@ -1,6 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
-public enum GrauDeRisco {
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
+
+public enum GrauDeRisco  {
     SEM_RISCO(0),
     BAIXO_RISCO(1),
     MEDIO_RISCO(2),

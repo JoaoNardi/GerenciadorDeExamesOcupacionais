@@ -3,6 +3,7 @@ package com.joaonardi.gerenciadorocupacional.service;
 import com.joaonardi.gerenciadorocupacional.dao.SetorDAO;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class SetorService {
         }
     }
 
-    public List<Setor> carregarSetores(){
+    public ArrayList<Setor> carregarSetores(){
 
         return dao.listarSetores();
     }

@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class SetorDAO {
     private static PreparedStatement preparedStatement = null;
@@ -114,9 +115,9 @@ public class SetorDAO {
         }
     }
 
-    public List<Setor> listarSetores() {
+    public ArrayList<Setor> listarSetores() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        List<Setor> listaSetores = new ArrayList<>();
+        ArrayList<Setor> listaSetores = new ArrayList<Setor>();
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR_SETORES);
