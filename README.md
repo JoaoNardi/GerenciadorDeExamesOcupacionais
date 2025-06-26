@@ -4,7 +4,8 @@
 <p> Gerenciar exames e certificados ocupacionais controlando prazos e vencimentos</p>
 
 <h3>Funcionailidades</h3>
-<li>🚧 Cadastro de Funcionarios </li> 
+<li>✅ Cadastro e Atualização de Funcionarios  </li> 
+<li>🚧 Cadastro de Setores (parcialmente concluido - é possivel apenas adicionar setores) </li>
 <li>🚧 Cadastro de Exames </li>
 <li>🚧 Cadastro de Certificados </li>
 <li>🚧 Controle de Prazos </li>
