@@ -26,6 +26,7 @@ public class GerenciarSetoresControlller {
     public TableColumn colunaArea;
     public TableColumn colunaRisco;
 
+    ObservableList<Setor> setores;
     Janela janela = new Janela();
     SetorController setorController = new SetorController();
     SetorService setorService = new SetorService();
@@ -33,8 +34,8 @@ public class GerenciarSetoresControlller {
 
     @FXML
     public void initialize() {
-        ArrayList<Setor> setoresList = setorService.carregarSetores();
-        ObservableList<Setor> setores = FXCollections.observableArrayList(setoresList);
+
+        setores = setorService.carregarSetores();
 
         colunaArea.setCellValueFactory(new PropertyValueFactory<>("area"));
         colunaRisco.setCellValueFactory(new PropertyValueFactory<>("grauRisco"));
@@ -61,6 +62,9 @@ public class GerenciarSetoresControlller {
         janela.abrirJanela("/view/SetorView.fxml","Editar Setor");
         setorController = janela.loader.getController();
         setorController.setSetor(setorSelecionado);
+            janela.stage.setOnHidden(e -> {setores.clear(); setores.addAll(setorService.carregarSetores());
+            tabelaSetores.setItems(setores);
+            });
         }
     }
 }

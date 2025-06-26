@@ -2,10 +2,8 @@ package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.dao.SetorDAO;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
+import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class SetorService {
 
@@ -19,7 +17,7 @@ public class SetorService {
 
     }
 
-    public ArrayList<Setor> carregarSetores(){
+    public ObservableList<Setor> carregarSetores(){
 
         return dao.listarSetores();
     }

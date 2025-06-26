@@ -2,6 +2,8 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
@@ -115,9 +117,9 @@ public class SetorDAO {
         }
     }
 
-    public ArrayList<Setor> listarSetores() {
+    public ObservableList<Setor> listarSetores() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        ArrayList<Setor> listaSetores = new ArrayList<Setor>();
+        ObservableList<Setor> listaSetores =  FXCollections.observableArrayList();;
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR_SETORES);
