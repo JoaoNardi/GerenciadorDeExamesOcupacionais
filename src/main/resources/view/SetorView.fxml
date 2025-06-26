@@ -17,8 +17,8 @@
             </font>
         </Label>
         <Label layoutX="106.0" layoutY="68.0" text="Area" />
-        <TextField fx:id="InputArea" layoutX="106.0" layoutY="92.0" prefHeight="25.0" prefWidth="165.0" promptText="Exemplo: Escritorio" />
+        <TextField fx:id="inputArea" layoutX="106.0" layoutY="92.0" prefHeight="25.0" prefWidth="165.0" promptText="Exemplo: Escritorio" />
         <Label layoutX="108.0" layoutY="145.0" text="Grau de Risco" />
-        <ChoiceBox fx:id="InputGrauRisco" layoutX="106.0" layoutY="162.0" prefHeight="25.0" prefWidth="165.0" />
+        <ChoiceBox fx:id="inputGrauRisco" layoutX="106.0" layoutY="162.0" prefHeight="25.0" prefWidth="165.0" />
     </children>
 </AnchorPane>

@@ -21,7 +21,7 @@
           <Menu mnemonicParsing="false" text="Setores">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbrirSetor" text="Adicionar Setor" />
-                  <MenuItem mnemonicParsing="false" text="Gerenciar Setores" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarSetor" text="Gerenciar Setores" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Exames">

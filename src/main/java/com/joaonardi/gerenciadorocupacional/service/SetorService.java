@@ -11,11 +11,12 @@ public class SetorService {
 
     private final SetorDAO dao = new SetorDAO();
     public void cadastrarSetor(Setor setor) {
-        try {
+        if (setor.getId() == null){
             dao.cadastrarSetor(setor);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } else {
+            dao.alterarSetor(setor.getId(),setor);
         }
+
     }
 
     public ArrayList<Setor> carregarSetores(){

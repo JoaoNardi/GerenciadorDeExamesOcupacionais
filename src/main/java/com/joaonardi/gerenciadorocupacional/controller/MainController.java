@@ -17,12 +17,17 @@ Janela janela = new Janela();
         janela.abrirJanela("/view/FuncionarioView.fxml","Cadastro de Funcionários");
     }
     @FXML
+    public void handleAbrirGerenciarFuncionario(ActionEvent event) {
+        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml","Gerenciar Funcionarios");
+    }
+
+    @FXML
     public void handleAbrirSetor(ActionEvent event) {
         janela.abrirJanela("/view/SetorView.fxml","Cadastro de Setores");
     }
     @FXML
-    public void handleAbrirGerenciarFuncionario(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml","Gerenciar Funcionarios");
+    public void handleAbrirGerenciarSetor(ActionEvent event) {
+        janela.abrirJanela("/view/GerenciarSetoresView.fxml","Gerenciar Setores");
     }
     @FXML
     public void handleAbrirExame(ActionEvent event){

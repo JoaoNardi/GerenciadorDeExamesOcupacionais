@@ -15,23 +15,41 @@ import javafx.scene.control.TextField;
 public class SetorController {
 
 
-    public TextField InputArea;
-    public ChoiceBox<GrauDeRisco> InputGrauRisco;
+    public TextField inputArea;
+    public ChoiceBox<GrauDeRisco> inputGrauRisco;
     public Button btnCancelar;
     public Button btnSalvar;
 
     SetorService service = new SetorService();
     Janela janela = new Janela();
+    private Setor setor;
     @FXML
     public void initialize() {
-        InputGrauRisco.getItems().addAll(GrauDeRisco.values());
+        inputGrauRisco.getItems().addAll(GrauDeRisco.values());
+    }
+
+    public void setSetor(Setor setor) {
+        this.setor = setor;
+        if (setor !=null){
+            inputArea.setText(setor.getArea());
+            inputGrauRisco.setValue(GrauDeRisco.values()[setor.getGrauRisco()]);
+        }
     }
 
     @FXML
     public void handleSalvarSetor(ActionEvent event) {
-        Setor setor = Setor.SetorBuilder.builder()
-                .area(InputArea.getText())
-                .grauRisco(InputGrauRisco.getValue().getValor()).build();
+        if (setor.getId() ==null){
+        setor = Setor.SetorBuilder.builder()
+                .id(null)
+                .area(inputArea.getText())
+                .grauRisco(inputGrauRisco.getValue().getValor()).build();
+        } else {
+            setor = Setor.SetorBuilder.builder()
+                    .id(this.setor.getId())
+                    .area(inputArea.getText())
+                    .grauRisco(inputGrauRisco.getValue().getValor())
+                    .build();
+        }
         service.cadastrarSetor(setor);
         janela.fecharJanela(btnSalvar);
     }
@@ -40,4 +58,5 @@ public class SetorController {
         janela.fecharJanela(btnCancelar);
 
     }
+
 }
