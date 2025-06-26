@@ -38,7 +38,7 @@ public class SetorController {
 
     @FXML
     public void handleSalvarSetor(ActionEvent event) {
-        if (setor.getId() ==null){
+        if (setor == null || setor.getId() ==null){
         setor = Setor.SetorBuilder.builder()
                 .id(null)
                 .area(inputArea.getText())

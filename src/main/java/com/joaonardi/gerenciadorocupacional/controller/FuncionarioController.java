@@ -48,7 +48,7 @@ public class FuncionarioController {
 
     @FXML
     public void handleSalvarFuncionario(ActionEvent event) {
-        if (this.funcionario.getId() == null){
+        if (this.funcionario == null || this.funcionario.getId() == null){
         this.funcionario = Funcionario
                 .FuncionarioBuilder.builder()
                 .id(null)
