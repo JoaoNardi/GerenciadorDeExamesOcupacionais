@@ -11,9 +11,10 @@ import java.io.IOException;
 
 public class Janela {
     public FXMLLoader loader;
-    public Stage stage = new Stage();
+    public Stage stage;
     public void abrirJanela(String diretorioView, String tituloJanela){
         try {
+            stage = new Stage();
              loader= new FXMLLoader(getClass().getResource(diretorioView));
             Parent root = loader.load();
 
