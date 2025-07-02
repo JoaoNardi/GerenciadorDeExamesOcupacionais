@@ -27,7 +27,7 @@
           <Menu mnemonicParsing="false" text="Exames">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Exames" />
-                  <MenuItem mnemonicParsing="false" text="Gerenciar Exames" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame" text="Gerenciar Exames" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Certificados">

@@ -13,10 +13,10 @@
                 <Font size="14.0" />
             </font>
         </Label>
-        <TableView fx:id="tabelaFuncionarios" layoutX="26.0" layoutY="40.0" prefHeight="321.0" prefWidth="548.0">
+        <TableView fx:id="tabelaExames" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0" prefHeight="321.0" prefWidth="548.0">
             <columns>
-                <TableColumn fx:id="colunaNome" prefWidth="110.0" text="Tipo" />
-            <TableColumn fx:id="colunaNome1" prefWidth="110.0" text="Periodicidade" />
+                <TableColumn fx:id="colunaNome" prefWidth="110.0" text="Nome" />
+            <TableColumn fx:id="colunaPerioicidade" prefWidth="110.0" text="Periodicidade" />
             </columns>
         </TableView>
     </children>

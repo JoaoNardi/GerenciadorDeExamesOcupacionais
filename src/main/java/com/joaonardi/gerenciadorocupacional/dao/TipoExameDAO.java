@@ -2,6 +2,8 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
@@ -62,14 +64,14 @@ public class TipoExameDAO {
         return tipoExame;
     }
 
-    public void alterarTipoExame(TipoExame tipoExame) {
+    public void alterarTipoExame(int id,TipoExame tipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(ALTERAR);
             int i = 1;
             preparedStatement.setString(i++, tipoExame.getNome());
             preparedStatement.setInt(i++,tipoExame.getPeriodicidade());
-            preparedStatement.setInt(i++, tipoExame.getId());
+            preparedStatement.setInt(i++, id);
 
             int linhasAfetadas = preparedStatement.executeUpdate();
             connection.commit();
@@ -109,9 +111,9 @@ public class TipoExameDAO {
         }
     }
 
-    public List<TipoExame> listarTiposExame() {
+    public ObservableList<TipoExame> listarTiposExame() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        List<TipoExame> lista = new ArrayList<>();
+        ObservableList<TipoExame> lista = FXCollections.observableArrayList();
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR);
@@ -119,8 +121,9 @@ public class TipoExameDAO {
 
             while (resultSet.next()) {
                 TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()
+                        .id(resultSet.getInt("id"))
                         .nome(resultSet.getString("nome"))
-                        .periodicidade(resultSet.getInt("periodicidade "))
+                        .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
                 lista.add(tipoExame);
             }

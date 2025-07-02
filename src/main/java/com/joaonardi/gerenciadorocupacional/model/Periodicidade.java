@@ -13,6 +13,14 @@ public enum Periodicidade {
     public int getValor() {
         return valor;
     }
+    public static Periodicidade fromValor(int valor) {
+        for (Periodicidade p : Periodicidade.values()) {
+            if (p.getValor() == valor) {
+                return p;
+            }
+        }
+        return null;
+    }
     @Override
     public String toString() {
         switch (this) {

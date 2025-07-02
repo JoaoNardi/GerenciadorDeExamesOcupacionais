@@ -33,6 +33,9 @@ Janela janela = new Janela();
     public void handleAbrirExame(ActionEvent event){
         janela.abrirJanela("/view/ExameView.fxml","Cadastro de Exame");
     }
-
+    @FXML
+    public void handleAbrirGerenciarExame(ActionEvent event) {
+        janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames");
+    }
 
 }
