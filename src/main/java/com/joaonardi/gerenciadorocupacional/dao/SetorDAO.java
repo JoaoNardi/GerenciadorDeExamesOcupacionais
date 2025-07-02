@@ -119,7 +119,7 @@ public class SetorDAO {
 
     public ObservableList<Setor> listarSetores() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        ObservableList<Setor> listaSetores =  FXCollections.observableArrayList();;
+        ObservableList<Setor> listaSetores =  FXCollections.observableArrayList();
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR_SETORES);
