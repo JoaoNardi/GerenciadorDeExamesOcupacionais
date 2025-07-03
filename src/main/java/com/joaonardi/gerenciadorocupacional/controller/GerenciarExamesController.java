@@ -1,6 +1,8 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.model.*;
+import com.joaonardi.gerenciadorocupacional.model.Exame;
+import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
+import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.collections.ObservableList;
