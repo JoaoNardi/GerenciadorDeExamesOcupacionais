@@ -38,4 +38,11 @@ Janela janela = new Janela();
         janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames");
     }
 
+    public void handleAbrirCertificado(ActionEvent event) {
+        janela.abrirJanela("/view/CertificadoView.fxml", "Cadastro Certificado");
+    }
+
+    public void handleAbrirGerenciarCertificado(ActionEvent event) {
+        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Certificados");
+    }
 }

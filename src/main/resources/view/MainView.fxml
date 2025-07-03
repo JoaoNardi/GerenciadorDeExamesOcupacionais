@@ -32,8 +32,8 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Certificados">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Adicionar Certificado" />
-                  <MenuItem mnemonicParsing="false" text="Gerenciar Certificados" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirCertificado" text="Adicionar Certificado" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarCertificado" text="Gerenciar Certificados" />
                </items>
             </Menu>
         </menus>
