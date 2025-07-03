@@ -4,10 +4,11 @@
 <p> Gerenciar exames e certificados ocupacionais controlando prazos e vencimentos</p>
 
 <h3>Funcionailidades</h3>
-<li>✅ Cadastro e Atualização de Funcionarios  </li> 
-<li>🚧 Cadastro de Setores (parcialmente concluido - é possivel apenas adicionar setores) </li>
-<li>🚧 Cadastro de Exames </li>
-<li>🚧 Cadastro de Certificados </li>
+OBS: Atualmente todos os cruds estao sem delete (crus?)
+<li>✅ Cadastro e Atualização de Funcionarios com Inativação </li> 
+<li>✅ Cadastro de Setores  </li>
+<li>✅ Cadastro de Exames </li>
+<li>✅ Cadastro de Certificados </li>
 <li>🚧 Controle de Prazos </li>
 <li>🚧 Alertas de Vencimento </li>
 <li>🚧 Relatorios </li>
