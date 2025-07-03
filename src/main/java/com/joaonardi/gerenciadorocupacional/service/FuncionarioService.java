@@ -2,6 +2,7 @@ package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.dao.FuncionarioDAO;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class FuncionarioService {
         } else {dao.alterarFuncionario(funcionario.getId(),funcionario);}
     }
 
-    public ArrayList<Funcionario> carregarFuncionarios() throws Exception {
-        return dao.listaFuncionariosPorStatus(true);
+    public ObservableList<Funcionario> carregarFuncionarios(boolean inAtivo) throws Exception {
+        return dao.listaFuncionariosPorStatus(inAtivo);
     }
 }

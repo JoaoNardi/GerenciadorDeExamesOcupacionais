@@ -3,6 +3,8 @@ package com.joaonardi.gerenciadorocupacional.dao;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
@@ -174,12 +176,12 @@ public class FuncionarioDAO {
         }
     }
 
-    public ArrayList<Funcionario> listaFuncionariosPorStatus(Boolean ativo) throws Exception {
+    public ObservableList<Funcionario> listaFuncionariosPorStatus(Boolean ativo) throws Exception {
 
         // arrumar isso aqui
         Connection connection = DBConexao.getInstance().abrirConexao();
         Funcionario funcionario = null;
-        ArrayList<Funcionario> listaFuncionariosAtivos = new ArrayList<>();
+        ObservableList<Funcionario> listaFuncionariosAtivos = FXCollections.observableArrayList();
         String query = LISTAR_FUNCIONARIOS_POR_STATUS;
 
         try {

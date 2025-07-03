@@ -9,10 +9,11 @@ import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -29,19 +30,26 @@ public class GerenciarFuncionariosController {
     public TableColumn<Funcionario, String> colunaSetor;
     public TableColumn<Funcionario, String> colunaDataAdmissao;
     public TableColumn<Funcionario, Boolean> colunaAtivo;
+    public RadioButton inputAtivo;
+    public RadioButton inputInativo;
+    public Button inputEditar;
 
+    boolean listarAtivos = true;
+    ToggleGroup toggleAtivo = new ToggleGroup();
     FuncionarioController funcionarioController = new FuncionarioController();
     Janela janela = new Janela();
     FuncionarioService funcionarioService = new FuncionarioService();
     SetorDAO setorDAO = new SetorDAO();
     Map<Integer, String> setoresMap = setorDAO.listarSetores().stream()
             .collect(Collectors.toMap(Setor::getId, Setor::getArea));
-
+    ObservableList<Funcionario> funcionariosList = FXCollections.observableArrayList();
     @FXML
     private void initialize() throws Exception {
+        inputInativo.setSelected(false);
+        inputAtivo.setSelected(true);
+        recarregarListaFuncionarios();
 
-        ArrayList<Funcionario> funcionariosList = funcionarioService.carregarFuncionarios();
-        ObservableList<Funcionario> funcionarios = FXCollections.observableArrayList(funcionariosList);
+
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
         colunaDataNascimento.setCellValueFactory(new PropertyValueFactory<>("dataNascimento"));
@@ -51,22 +59,50 @@ public class GerenciarFuncionariosController {
         });
         colunaDataAdmissao.setCellValueFactory(new PropertyValueFactory<>("dataAdmissao"));
         colunaAtivo.setCellValueFactory(new PropertyValueFactory<>("ativo"));
-        tabelaFuncionarios.setItems(funcionarios);
+
 
     }
+
+    private void recarregarListaFuncionarios(){
+        try {
+            funcionariosList = funcionarioService.carregarFuncionarios(listarAtivos);
+            tabelaFuncionarios.setItems(funcionariosList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void handleEditar() throws Exception {
+        Funcionario funcionarioSelecionado = tabelaFuncionarios.getSelectionModel().getSelectedItem();
+        if (funcionarioSelecionado != null){
+            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario");
+            funcionarioController = janela.loader.getController();
+            funcionarioController.setFuncionario(funcionarioSelecionado);
+        }
+    }
+
     @FXML
     private void handleTableDoubleClick(javafx.scene.input.MouseEvent mouseEvent) throws Exception {
         if (mouseEvent.getClickCount() == 2){
-            Funcionario funcionarioSelecionado = tabelaFuncionarios.getSelectionModel().getSelectedItem();
-            if (funcionarioSelecionado != null){
-
-                janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario");
-                funcionarioController = janela.loader.getController();
-                funcionarioController.setFuncionario(funcionarioSelecionado);
-
-
-            }
+            handleEditar();
         }
 
     }
+
+    public void handleListarAtivos(ActionEvent event) {
+        inputAtivo.setSelected(true);
+        inputInativo.setSelected(false);
+        listarAtivos = true;
+        recarregarListaFuncionarios();
+    }
+
+    public void handleListarInativos(ActionEvent event) {
+        inputInativo.setSelected(true);
+        inputAtivo.setSelected(false);
+        listarAtivos = false;
+        recarregarListaFuncionarios();
+    }
+
+
 }

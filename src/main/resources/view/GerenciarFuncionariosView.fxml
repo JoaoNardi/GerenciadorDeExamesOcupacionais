@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -24,6 +25,8 @@
                 <TableColumn fx:id="colunaAtivo" prefWidth="37.0" text="Ativo" />
             </columns>
         </TableView>
-      <Button layoutX="517.0" layoutY="361.0" mnemonicParsing="false" text="Editar" />
+      <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="361.0" mnemonicParsing="false" text="Editar" />
+      <RadioButton fx:id="inputAtivo" onAction="#handleListarAtivos" layoutX="375.0" layoutY="6.0" mnemonicParsing="false" text="Ativos" />
+      <RadioButton fx:id="inputInativo" onAction="#handleListarInativos" layoutX="474.0" layoutY="6.0" mnemonicParsing="false" text="Inativos" />
     </children>
 </AnchorPane>
