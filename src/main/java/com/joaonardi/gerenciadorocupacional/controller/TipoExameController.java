@@ -25,11 +25,10 @@ public class TipoExameController {
 
     public void setTipoExame(TipoExame tipoExameSelecionado) {
         this.tipoExame = tipoExameSelecionado;
-        System.out.println(tipoExameSelecionado.toString());
         if (tipoExame !=null){
 
             inputNome.setText(tipoExame.getNome());
-            inputPeriodicidade.setValue(Periodicidade.values()[tipoExameSelecionado.getPeriodicidade()]);
+            inputPeriodicidade.setValue(Periodicidade.fromValor(tipoExameSelecionado.getPeriodicidade()));
         }
 
     }
