@@ -51,7 +51,7 @@ public class GerenciarExamesController {
         if (mouseEvent.getClickCount() == 2){
             TipoExame tipoExameSelecionado = tabelaExames.getSelectionModel().getSelectedItem();
 
-            janela.abrirJanela("/view/ExameView.fxml","Editar Exame");
+            janela.abrirJanela("/view/TipoExameView.fxml","Editar Exame");
             tipoExameController = janela.loader.getController();
             tipoExameController.setTipoExame(tipoExameSelecionado);
             janela.stage.setOnHidden(e -> {tiposExame.clear(); tiposExame.addAll(tipoExameService.carregarTiposExame());

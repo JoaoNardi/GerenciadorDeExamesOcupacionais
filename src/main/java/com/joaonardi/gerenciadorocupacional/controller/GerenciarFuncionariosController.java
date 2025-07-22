@@ -1,11 +1,9 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.dao.SetorDAO;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
-import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
-import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,13 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class GerenciarFuncionariosController {
@@ -39,10 +30,8 @@ public class GerenciarFuncionariosController {
     FuncionarioController funcionarioController = new FuncionarioController();
     Janela janela = new Janela();
     FuncionarioService funcionarioService = new FuncionarioService();
-    SetorDAO setorDAO = new SetorDAO();
-    Map<Integer, String> setoresMap = setorDAO.listarSetores().stream()
-            .collect(Collectors.toMap(Setor::getId, Setor::getArea));
     ObservableList<Funcionario> funcionariosList = FXCollections.observableArrayList();
+
     @FXML
     private void initialize() throws Exception {
         inputInativo.setSelected(false);
@@ -54,7 +43,7 @@ public class GerenciarFuncionariosController {
         colunaCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
         colunaDataNascimento.setCellValueFactory(new PropertyValueFactory<>("dataNascimento"));
         colunaSetor.setCellValueFactory(f->{
-            String areaSetor = setoresMap.getOrDefault(f.getValue().getSetor(),"Sem Setor");
+            String areaSetor = SetorCache.getSetorMapeado(f.getValue().getSetor());
         return new SimpleStringProperty(areaSetor);
         });
         colunaDataAdmissao.setCellValueFactory(new PropertyValueFactory<>("dataAdmissao"));

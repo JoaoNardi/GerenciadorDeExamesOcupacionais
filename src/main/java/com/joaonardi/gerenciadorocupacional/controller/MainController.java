@@ -1,27 +1,25 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.dao.FuncionarioDAO;
 import com.joaonardi.gerenciadorocupacional.dao.SetorDAO;
+import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
+import com.joaonardi.gerenciadorocupacional.service.ExameService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,33 +32,43 @@ public class MainController {
     public TableColumn<Funcionario, String> colunaAniversario;
     public TableColumn<Funcionario, String> colunaStatusGeral;
     public TableColumn<Funcionario, Button> colunaAcoes;
+    public Button btnVencidos;
+    public Button btnVencemSemana;
+    public Button btnVencemMes;
+    public Button btnVencemSemestre;
+    public Button btnTodos;
+    public Label labelTodos;
+    public Label labelVencemMes;
+    public Label labelVencemSemana;
+    public Label labelVencidos;
     Janela janela = new Janela();
 
     ObservableList<Funcionario> funcionariosList = FXCollections.observableArrayList();
     FuncionarioService funcionarioService = new FuncionarioService();
-    SetorDAO setorDAO = new SetorDAO();
-    Map<Integer, String> setoresMap = setorDAO.listarSetores().stream()
-            .collect(Collectors.toMap(Setor::getId, Setor::getArea));
+    ExameService exameService = new ExameService();
+    ObservableList<Exame> listaDeExames = exameService.listarExames();
 
     @FXML
     private void initialize() throws Exception {
+        labelTodos.setText(String.valueOf(funcionariosList.size()));
         recarregarListaFuncionarios();
-        colunaFuncionario.setCellValueFactory(new  PropertyValueFactory<>("nome"));
-        colunaIdade.setCellValueFactory(f->{
-           Integer idade = funcionarioService.calcularIdade(f.getValue().getDataNascimento());
-            return new SimpleStringProperty(idade.toString());
+        SetorCache.carregarSetores();
+        colunaFuncionario.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colunaIdade.setCellValueFactory(funcionarioStringCellDataFeatures -> {
+            Funcionario f = funcionarioStringCellDataFeatures.getValue();
+            int idade = funcionarioService.calcularIdade(f.getDataNascimento());
+            return new ReadOnlyObjectWrapper<>(idade).asString();
         });
-        colunaSetor.setCellValueFactory(f->{
-            String areaSetor = setoresMap.getOrDefault(f.getValue().getSetor(),"Sem Setor");
+        colunaSetor.setCellValueFactory(f -> {
+            String areaSetor = SetorCache.getSetorMapeado(f.getValue().getSetor());
             return new SimpleStringProperty(areaSetor);
         });
-        colunaAniversario.setCellValueFactory(f-> {
-            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM");
-            String aniversario = f.getValue().getDataNascimento().format(formato);
-            return new SimpleStringProperty(aniversario);
+        colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
+            Funcionario f = funcionarioStringCellDataFeatures.getValue();
+            String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
+            return new ReadOnlyObjectWrapper<>(dataAniversario);
         });
-
-
+        tabelaPrincipal.setItems(funcionariosList);
 
     }
     private void recarregarListaFuncionarios(){
@@ -91,7 +99,7 @@ public class MainController {
     }
     @FXML
     public void handleAbrirExame(ActionEvent event){
-        janela.abrirJanela("/view/ExameView.fxml","Cadastro de Exame");
+        janela.abrirJanela("/view/TipoExameView.fxml","Cadastro de Exame");
     }
     @FXML
     public void handleAbrirGerenciarExame(ActionEvent event) {
@@ -99,7 +107,7 @@ public class MainController {
     }
 
     public void handleAbrirCertificado(ActionEvent event) {
-        janela.abrirJanela("/view/CertificadoView.fxml", "Cadastro Certificado");
+        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Certificado");
     }
 
     public void handleAbrirGerenciarCertificado(ActionEvent event) {
@@ -107,6 +115,7 @@ public class MainController {
     }
 
     public void handleLancarExame(ActionEvent event) {
+        janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames");
     }
 
     public void handleGerenciarExames(ActionEvent event) {

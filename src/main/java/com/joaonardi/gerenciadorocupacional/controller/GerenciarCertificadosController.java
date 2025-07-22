@@ -51,7 +51,7 @@ public class GerenciarCertificadosController {
         if (mouseEvent.getClickCount() == 2){
             TipoCertificado tipoCertificadoSelecionado = tabelaCertificados.getSelectionModel().getSelectedItem();
 
-            janela.abrirJanela("/view/CertificadoView.fxml","Editar Certificado");
+            janela.abrirJanela("/view/TipoCertificadoView.fxml","Editar Certificado");
             tipoCertificadoController = janela.loader.getController();
             tipoCertificadoController.setTipoCertificado(tipoCertificadoSelecionado);
             janela.stage.setOnHidden(e -> {tiposCertificado.clear(); tiposCertificado.addAll(tipoCertificadoService.carregarTiposCertificado());

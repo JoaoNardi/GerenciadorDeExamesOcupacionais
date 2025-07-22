@@ -23,7 +23,7 @@
                </font>
                <graphic>
                    <VBox alignment="BOTTOM_CENTER">
-                       <Label text="0"> </Label>
+                       <Label fx:id="labelVencidos" text="0"> </Label>
                    </VBox>
                </graphic>
               </Button>
@@ -33,7 +33,7 @@
                   </font>
                   <graphic>
                       <VBox alignment="BOTTOM_CENTER">
-                          <Label text="0"> </Label>
+                          <Label fx:id="labelVencemSemana" text="0"> </Label>
                       </VBox>
                   </graphic>
 
@@ -44,7 +44,7 @@
                  </font>
                  <graphic>
                      <VBox alignment="BOTTOM_CENTER">
-                         <Label text="0"> </Label>
+                         <Label fx:id="labelVencemMes" text="0"> </Label>
                      </VBox>
                  </graphic>
              </Button>
@@ -54,7 +54,7 @@
                  </font>
                  <graphic>
                      <VBox alignment="BOTTOM_CENTER">
-                         <Label text="0"> </Label>
+                         <Label fx:id="labelVencemSemestre" text="0"> </Label>
                      </VBox>
                  </graphic>
              </Button>
@@ -64,7 +64,7 @@
                  </font>
                  <graphic>
                      <VBox alignment="BOTTOM_CENTER">
-                         <Label text="0"> </Label>
+                         <Label fx:id="labelTodos" text="0"> </Label>
                      </VBox>
                  </graphic>
              </Button>
