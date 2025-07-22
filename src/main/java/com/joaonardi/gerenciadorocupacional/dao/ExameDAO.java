@@ -2,6 +2,8 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
@@ -15,7 +17,7 @@ public class ExameDAO {
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
 
-    private static final String CADASTRAR_EXAME = "INSERT INTO EXAMES (id, tipo_exame_id, funcioanrio_id, data_emissao, data_validade)"
+    private static final String CADASTRAR_EXAME = "INSERT INTO EXAMES (id, tipo_exame_id, funcionario_id, data_emissao, data_validade)"
             + " VALUES (NULL, ?, ?, ?, ?)";
 
     private static final String CONSULTAR_EXAME = "SELECT * FROM EXAMES WHERE id = ?";
@@ -121,9 +123,9 @@ public class ExameDAO {
         }
     }
 
-    public List<Exame> listarExames() {
+    public ObservableList<Exame> listarExames() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        List<Exame> listaExames = new ArrayList<>();
+        ObservableList<Exame> listaExames = FXCollections.observableArrayList();
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR_EXAMES);
@@ -132,10 +134,10 @@ public class ExameDAO {
             while (resultSet.next()) {
                 Exame exame = Exame.ExameBuilder.builder()
                         .id(resultSet.getInt("id"))
-                        .idTipoExame(resultSet.getInt("id_tipo_exame"))
-                        .idFuncionario(resultSet.getInt("idFuncionario"))
-                        .dataEmissao(resultSet.getDate("dataEmissao").toLocalDate())
-                        .dataValidade(resultSet.getDate("dataValidade").toLocalDate())
+                        .idTipoExame(resultSet.getInt("tipo_exame_id"))
+                        .idFuncionario(resultSet.getInt("funcionario_id"))
+                        .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
+                        .dataValidade(resultSet.getDate("data_validade").toLocalDate())
                         .build();
                 listaExames.add(exame);
             }

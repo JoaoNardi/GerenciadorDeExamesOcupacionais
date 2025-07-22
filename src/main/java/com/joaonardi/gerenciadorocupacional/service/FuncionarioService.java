@@ -5,8 +5,6 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class FuncionarioService {
