@@ -81,6 +81,7 @@ public class ExamesController {
                 .idFuncionario(inputFuncionario.getValue().getId())
                 .dataEmissao(inputDataEmissao.getValue())
                 .dataValidade(inputDataValidade.getValue())
+                .atualizadoPor(null)
                 .build();
         exameService.lancarExame(exame);
         janela.fecharJanela(btnSalvar);

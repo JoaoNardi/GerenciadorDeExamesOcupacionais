@@ -20,12 +20,14 @@ public class ExameDAO {
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
 
-    private static final String CADASTRAR_EXAME = "INSERT INTO EXAMES (id, tipo_exame_id, funcionario_id, data_emissao, data_validade)"
-            + " VALUES (NULL, ?, ?, ?, ?)";
+    private static final String CADASTRAR_EXAME = "INSERT INTO EXAMES (id, tipo_exame_id, funcionario_id, data_emissao, data_validade, " +
+            "atualizado_por)"
+            + " VALUES (NULL, ?, ?, ?, ?, ?)";
 
     private static final String CONSULTAR_EXAME = "SELECT * FROM EXAMES WHERE id = ?";
 
-    private static final String ALTERAR_EXAME = "UPDATE EXAMES SET tipo_exame_id = ?, data_emissao = ? WHERE id = ?";
+    private static final String ALTERAR_EXAME = "UPDATE EXAMES SET tipo_exame_id = ?, data_emissao = ?, data_validade = ?, atualizado_por = ? WHERE" +
+            " id = ?";
 
     private static final String DELETAR_EXAME = "DELETE FROM EXAMES WHERE id = ?";
 
@@ -43,6 +45,7 @@ public class ExameDAO {
             preparedStatement.setInt(i++,exame.getIdFuncionario());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
             preparedStatement.setString(i++, exame.getDataValidade().format(formato));
+            preparedStatement.setInt(i++, exame.getAtualizadoPor());
 
             preparedStatement.execute();
             connection.commit();
@@ -70,6 +73,7 @@ public class ExameDAO {
                         .idFuncionario(resultSet.getInt("idFuncionario"))
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
                         .dataValidade(LocalDate.parse(resultSet.getString("data_validade")))
+                        .atualizadoPor(resultSet.getInt("atualizado_por"))
                         .build();
             }
         } catch (SQLException e) {
@@ -93,9 +97,9 @@ public class ExameDAO {
             preparedStatement = connection.prepareStatement(CADASTRAR_EXAME);
             int i = 1;
             preparedStatement.setInt(i++,exame.getIdTipoExame());
-            preparedStatement.setInt(i++,exame.getIdFuncionario());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
             preparedStatement.setString(i++, exame.getDataValidade().format(formato));
+            preparedStatement.setInt(i++, exame.getAtualizadoPor());
             preparedStatement.setInt(i++, id);
 
             preparedStatement.executeUpdate();
@@ -141,6 +145,7 @@ public class ExameDAO {
                         .idFuncionario(resultSet.getInt("funcionario_id"))
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
                         .dataValidade(LocalDate.parse(resultSet.getString("data_validade")))
+                        .atualizadoPor(resultSet.getInt("atualizado_por"))
                         .build();
                 listaExames.add(exame);
             }

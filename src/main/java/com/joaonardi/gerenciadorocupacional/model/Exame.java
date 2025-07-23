@@ -15,6 +15,7 @@ public class Exame {
     private Integer idFuncionario;
     private LocalDate dataEmissao;
     private LocalDate dataValidade;
+    private Integer atualizadoPor;
 
 
     public static final class ExameBuilder {
@@ -23,6 +24,7 @@ public class Exame {
         private Integer idFuncionario;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
+        private Integer atualizadoPor;
 
         private ExameBuilder() {
         }
@@ -56,13 +58,19 @@ public class Exame {
             return this;
         }
 
+        public ExameBuilder atualizadoPor(Integer atualizadoPor) {
+            this.atualizadoPor = atualizadoPor;
+            return this;
+        }
+
         public Exame build() {
             Exame exame = new Exame();
-            exame.dataValidade = this.dataValidade;
             exame.id = this.id;
-            exame.dataEmissao = this.dataEmissao;
-            exame.idTipoExame = this.idTipoExame;
+            exame.atualizadoPor = this.atualizadoPor;
             exame.idFuncionario = this.idFuncionario;
+            exame.dataEmissao = this.dataEmissao;
+            exame.dataValidade = this.dataValidade;
+            exame.idTipoExame = this.idTipoExame;
             return exame;
         }
     }
