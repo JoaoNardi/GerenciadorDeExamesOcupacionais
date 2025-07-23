@@ -7,10 +7,13 @@ import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExameDAO {
+    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
@@ -38,8 +41,8 @@ public class ExameDAO {
             int i = 1;
             preparedStatement.setInt(i++,exame.getIdTipoExame());
             preparedStatement.setInt(i++,exame.getIdFuncionario());
-            preparedStatement.setDate(i++, Date.valueOf(exame.getDataEmissao()));
-            preparedStatement.setDate(i++, Date.valueOf(exame.getDataValidade()));
+            preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
+            preparedStatement.setString(i++, exame.getDataValidade().format(formato));
 
             preparedStatement.execute();
             connection.commit();
@@ -65,8 +68,8 @@ public class ExameDAO {
                         .id(resultSet.getInt("id"))
                         .idTipoExame(resultSet.getInt("id_tipo_exame"))
                         .idFuncionario(resultSet.getInt("idFuncionario"))
-                        .dataEmissao(resultSet.getDate("dataEmissao").toLocalDate())
-                        .dataValidade(resultSet.getDate("dataValidade").toLocalDate())
+                        .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
+                        .dataValidade(LocalDate.parse(resultSet.getString("data_validade")))
                         .build();
             }
         } catch (SQLException e) {
@@ -91,8 +94,8 @@ public class ExameDAO {
             int i = 1;
             preparedStatement.setInt(i++,exame.getIdTipoExame());
             preparedStatement.setInt(i++,exame.getIdFuncionario());
-            preparedStatement.setDate(i++, Date.valueOf(exame.getDataEmissao()));
-            preparedStatement.setDate(i++, Date.valueOf(exame.getDataValidade()));
+            preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
+            preparedStatement.setString(i++, exame.getDataValidade().format(formato));
             preparedStatement.setInt(i++, id);
 
             preparedStatement.executeUpdate();
@@ -136,8 +139,8 @@ public class ExameDAO {
                         .id(resultSet.getInt("id"))
                         .idTipoExame(resultSet.getInt("tipo_exame_id"))
                         .idFuncionario(resultSet.getInt("funcionario_id"))
-                        .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
-                        .dataValidade(resultSet.getDate("data_validade").toLocalDate())
+                        .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
+                        .dataValidade(LocalDate.parse(resultSet.getString("data_validade")))
                         .build();
                 listaExames.add(exame);
             }
