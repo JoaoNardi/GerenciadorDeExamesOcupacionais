@@ -7,7 +7,10 @@ import javafx.collections.ObservableList;
 public class ExameCache {
     private static ExameDAO exameDAO = new ExameDAO();
     public static ObservableList<Exame> todosExames;
-    public static void carregarExames() {
-        todosExames = exameDAO.listarExames();
+    public static void carregarExamesTodos() {
+        todosExames = exameDAO.listarExamesVigentes(false);
+    }
+    public static void carregarExamesVigentes() {
+        todosExames = exameDAO.listarExamesVigentes(true);
     }
 }

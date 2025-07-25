@@ -9,11 +9,9 @@ import javax.swing.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExameDAO {
-    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
@@ -31,7 +29,8 @@ public class ExameDAO {
 
     private static final String DELETAR_EXAME = "DELETE FROM EXAMES WHERE id = ?";
 
-    private static final String LISTAR_EXAMES = "SELECT * FROM EXAMES";
+    private static final String LISTAR_EXAMES_VIGENTES = "SELECT * FROM EXAMES WHERE atualizado_por is NULL";
+    private static final String LISTAR_TODOS_EXAME = "SELECT * FROM EXAMES";
 
     public ExameDAO() {
     }
@@ -41,11 +40,17 @@ public class ExameDAO {
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR_EXAME);
             int i = 1;
-            preparedStatement.setInt(i++,exame.getIdTipoExame());
-            preparedStatement.setInt(i++,exame.getIdFuncionario());
+            preparedStatement.setInt(i++, exame.getIdTipoExame());
+            preparedStatement.setInt(i++, exame.getIdFuncionario());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
             preparedStatement.setString(i++, exame.getDataValidade().format(formato));
-            preparedStatement.setInt(i++, exame.getAtualizadoPor());
+            if (exame.getAtualizadoPor() == null) {
+                preparedStatement.setObject(i++, null, Types.INTEGER);
+            } else {
+                preparedStatement.setInt(i++,
+                        exame.getAtualizadoPor());
+            }
+
 
             preparedStatement.execute();
             connection.commit();
@@ -57,6 +62,7 @@ public class ExameDAO {
             fecharConexao();
         }
     }
+
     //daqui pra baixo
     public Exame consultarExame(int id) throws Exception {
         Connection connection = DBConexao.getInstance().abrirConexao();
@@ -96,7 +102,7 @@ public class ExameDAO {
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR_EXAME);
             int i = 1;
-            preparedStatement.setInt(i++,exame.getIdTipoExame());
+            preparedStatement.setInt(i++, exame.getIdTipoExame());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
             preparedStatement.setString(i++, exame.getDataValidade().format(formato));
             preparedStatement.setInt(i++, exame.getAtualizadoPor());
@@ -130,14 +136,17 @@ public class ExameDAO {
         }
     }
 
-    public ObservableList<Exame> listarExames() {
+    public ObservableList<Exame> listarExamesVigentes(boolean inVigentes) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         ObservableList<Exame> listaExames = FXCollections.observableArrayList();
-
         try {
-            preparedStatement = connection.prepareStatement(LISTAR_EXAMES);
+            if (inVigentes == true) {
+                preparedStatement = connection.prepareStatement(LISTAR_EXAMES_VIGENTES);
+            }
+            if (inVigentes == false) {
+                preparedStatement = connection.prepareStatement(LISTAR_TODOS_EXAME);
+            }
             resultSet = preparedStatement.executeQuery();
-
             while (resultSet.next()) {
                 Exame exame = Exame.ExameBuilder.builder()
                         .id(resultSet.getInt("id"))
