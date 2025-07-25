@@ -1,9 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
+import java.time.LocalDate;
+
 public enum Periodicidade {
     SEM_PERIODICIDADE(0),
-    SEMESTRAL(182),
-    ANUAL(365);
+    SEMESTRAL(6),
+    ANUAL(12);
 
     private final int valor;
 
