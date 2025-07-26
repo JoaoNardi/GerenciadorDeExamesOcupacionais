@@ -107,7 +107,7 @@
             </Menu>
         </menus>
       </MenuBar>
-      <TableView fx:id="tabelaPrincipal" layoutX="34.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+      <TableView fx:id="tabelaPrincipal" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
         <columns>
             <TableColumn fx:id="colunaFuncionarioGeral" prefWidth="138.0" text="Funcionário" />
             <TableColumn fx:id="colunaIdadeGeral" prefWidth="81.0" text="Idade" />
@@ -120,13 +120,15 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </TableView>
-      <TableView fx:id="tabelaVencimentos" layoutX="50.0" layoutY="270.0" prefHeight="498.0" prefWidth="1163.0">
+      <TableView fx:id="tabelaVencimentos" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
          <columns>
             <TableColumn fx:id="colunaFuncionarioVencimentos" prefWidth="138.0" text="Funcionário" />
             <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="81.0" text="Idade" />
             <TableColumn fx:id="colunaSetorVencimentos" prefWidth="158.0" text="Setor" />
-            <TableColumn fx:id="colunaStatusVencimentos" minWidth="5.0" prefWidth="445.0" text="Status Geral" />
-            <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" prefWidth="173.0" text="Ações" />
+            <TableColumn fx:id="colunaTipoVencimentos" prefWidth="104.0" text="Tipo" />
+            <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="135.0" text="Descrição" />
+            <TableColumn fx:id="colunaStatusVencimentos" minWidth="5.0" prefWidth="374.0" text="ExameStatus" />
+            <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" prefWidth="155.0" text="Ações" />
          </columns>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

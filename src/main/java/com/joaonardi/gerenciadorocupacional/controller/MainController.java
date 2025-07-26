@@ -1,5 +1,8 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
+import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
+import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
+import com.joaonardi.gerenciadorocupacional.cache.TipoExameCache;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.service.ExameService;
@@ -8,7 +11,6 @@ import com.joaonardi.gerenciadorocupacional.util.Janela;
 import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,26 +46,31 @@ public class MainController {
     //tabela Secundaria
     public TableView<Exame> tabelaVencimentos;
     public TableColumn<Exame, String> colunaFuncionarioVencimentos;
-    public TableColumn<Exame, Integer> colunaIdadeVencimentos;
+    public TableColumn<Exame, String> colunaIdadeVencimentos;
     public TableColumn<Exame, String> colunaSetorVencimentos;
+    public TableColumn<Exame,String> colunaTipoVencimentos;
+    public TableColumn<Exame,String> colunaDescricaoVencimentos;
     public TableColumn<Exame, String> colunaStatusVencimentos;
     public TableColumn<Exame, Node> colunaAcoesVencimentos;
 
+
     Janela janela = new Janela();
 
-    ObservableList<Funcionario> funcionariosList = FXCollections.observableArrayList();
     FuncionarioService funcionarioService = new FuncionarioService();
     ExameService exameService = new ExameService();
-    ObservableList<Exame> listaDeExames = exameService.listarExames();
+
     int diasVencimento = 0;
 
     @FXML
     private void initialize() throws Exception {
-        recarregarListaFuncionarios();
+        tabelaVencimentos.setVisible(false);
+        ExameCache.carregarExamesVigentes();
+        TipoExameCache.carregarTiposExames();
+        FuncionarioCache.carregarFuncionarios(true);
         SetorCache.carregarSetores();
         setTabelaPrincipal();
         setTabelaSecundaria();
-        labelTodos.setText(String.valueOf(funcionariosList.size()));
+        labelTodos.setText(String.valueOf(FuncionarioCache.todosFuncionarios.size()));
         labelVencidos.setText(String.valueOf(exameService.listarExamePorVencimento(0).size()));
         labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()));
         labelVencemMes.setText(String.valueOf(exameService.listarExamePorVencimento(30).size()));
@@ -71,7 +78,7 @@ public class MainController {
     }
 
     private void setTabelaPrincipal(){
-        if (!funcionariosList.isEmpty()) {
+        if (!FuncionarioCache.todosFuncionarios.isEmpty()) {
             colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
             colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                 Funcionario f = funcionarioStringCellDataFeatures.getValue();
@@ -85,26 +92,40 @@ public class MainController {
             colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                 Funcionario f = funcionarioStringCellDataFeatures.getValue();
                 String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
-                return new ReadOnlyObjectWrapper<>(dataAniversario);
+                return new SimpleStringProperty(dataAniversario);
             });
-            tabelaPrincipal.setItems(funcionariosList);
+            tabelaPrincipal.setItems(FuncionarioCache.todosFuncionarios);
         }
     }
 
     private void setTabelaSecundaria(){
-        colunaFuncionarioVencimentos.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        tabelaVencimentos.setItems(listaDeExames);
+        colunaFuncionarioVencimentos.setCellValueFactory(f-> {
+            String nomeFuncionario = String.valueOf(FuncionarioCache.getFuncionarioMapeado(f.getValue().getIdFuncionario()).getNome());
+            return new SimpleStringProperty(nomeFuncionario);
+        });
+        colunaIdadeVencimentos.setCellValueFactory(f->{
+            String idadeFuncionario =
+                    String.valueOf(funcionarioService.calcularIdade(FuncionarioCache.getFuncionarioMapeado(f.getValue().getIdFuncionario()).getDataNascimento()));
+            return new SimpleStringProperty(idadeFuncionario);
+        });
+        colunaSetorVencimentos.setCellValueFactory(f->{
+            int setorId = FuncionarioCache.getFuncionarioMapeado(f.getValue().getIdFuncionario()).getSetor();
+            String setorNome = String.valueOf(SetorCache.getSetorMapeado(setorId)) ;
+            return new SimpleStringProperty(setorNome) ;
+        });
+        colunaTipoVencimentos.setCellValueFactory(f-> {
+            String tipo = f.getValue().getClass().getSimpleName();
+            return new SimpleStringProperty(tipo);
+        });
+        colunaDescricaoVencimentos.setCellValueFactory(f-> {
+            String descricao = TipoExameCache.getTipoExameMapeado(f.getValue().getIdTipoExame()).getNome();
+            return new SimpleStringProperty(descricao);
+        });
+        tabelaVencimentos.setItems(ExameCache.todosExames);
 
     }
 
-    private void recarregarListaFuncionarios(){
-        try {
-            funcionariosList = funcionarioService.carregarFuncionarios(true);
-            tabelaPrincipal.setItems(funcionariosList);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     @FXML
     private void handleAbrirFuncionario(ActionEvent event) {
@@ -148,21 +169,31 @@ public class MainController {
     }
 
     public void handleBtnVencidos(ActionEvent event) {
+        tabelaPrincipal.setVisible(false);
+        tabelaVencimentos.setVisible(true);
         diasVencimento = 0;
     }
 
     public void handleBtnSemana(ActionEvent event) {
+        tabelaPrincipal.setVisible(false);
+        tabelaVencimentos.setVisible(true);
         diasVencimento = 7;
     }
 
     public void handleBtnMes(ActionEvent event) {
+        tabelaPrincipal.setVisible(false);
+        tabelaVencimentos.setVisible(true);
         diasVencimento = 30;
     }
 
     public void handleBtnSemestre(ActionEvent event) {
+        tabelaPrincipal.setVisible(false);
+        tabelaVencimentos.setVisible(true);
         diasVencimento = 182;
     }
 
     public void handleBtnTodos(ActionEvent event) {
+        tabelaVencimentos.setVisible(false);
+        tabelaPrincipal.setVisible(true);
     }
 }
