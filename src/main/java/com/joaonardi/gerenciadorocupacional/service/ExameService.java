@@ -54,26 +54,32 @@ public class ExameService {
 
         List<Exame> list = ExameCache.todosExames;
         LocalDate hoje = LocalDate.now();
-        List<Exame> list2 = list.stream()
-                .filter(f -> {
-                    LocalDate validade = f.getDataValidade();
-                    if (validade == null) {return false;}
-                    int dias = (int) ChronoUnit.DAYS.between(hoje, validade);
+        if (diasVencimento == 183) {
+            return FXCollections.observableArrayList(list);
+        } else {
+            List<Exame> list2 = list.stream()
+                    .filter(f -> {
+                        LocalDate validade = f.getDataValidade();
+                        if (validade == null) {
+                            return false;
+                        }
+                        int dias = (int) ChronoUnit.DAYS.between(hoje, validade);
 
-                    if (diasVencimento == 0) {
-                        return dias <=0;
-                    } else if (diasVencimento == 7 ){
-                       return dias > 0 && dias <= 7;
-                    } else if (diasVencimento == 30 ){
-                        return dias > 7 && dias <= 30;
-                    } else if (diasVencimento == 182){
-                        return dias > 30 && dias <= 182;
-                    }
-                    return false;
-                })
-                .collect(Collectors.toList());
+                        if (diasVencimento == 0) {
+                            return dias <= 0;
+                        } else if (diasVencimento == 7) {
+                            return dias > 0 && dias <= 7;
+                        } else if (diasVencimento == 30) {
+                            return dias > 7 && dias <= 30;
+                        } else if (diasVencimento == 182) {
+                            return dias > 30 && dias <= 182;
+                        }
+                        return false;
+                    })
+                    .collect(Collectors.toList());
 
-        return FXCollections.observableArrayList(list2);
+            return FXCollections.observableArrayList(list2);
+        }
     }
 
 }

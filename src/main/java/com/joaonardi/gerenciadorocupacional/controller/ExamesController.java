@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
+import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
@@ -33,7 +34,8 @@ public class ExamesController {
     @FXML
     private void initialize() throws Exception {
         ObservableList<TipoExame> exames = tipoExameService.carregarTiposExame();
-        ObservableList<Funcionario> funcionarios = funcionarioService.carregarFuncionarios(true);
+        FuncionarioCache.carregarFuncionarios(true);
+        ObservableList<Funcionario> funcionarios = FuncionarioCache.todosFuncionarios;
         inputFuncionario.setItems(funcionarios);
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
             @Override

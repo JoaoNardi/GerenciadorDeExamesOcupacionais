@@ -1,17 +1,12 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
 import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
-import com.joaonardi.gerenciadorocupacional.cache.TipoExameCache;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
-import com.joaonardi.gerenciadorocupacional.service.ExameService;
-import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
+import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -60,27 +55,26 @@ public class MainController {
 
     FuncionarioService funcionarioService = new FuncionarioService();
     ExameService exameService = new ExameService();
-
+    MainService mainService = new MainService();
+    SetorService setorService = new SetorService();
+    TipoExameService tipoExameService = new TipoExameService();
     int diasVencimento = 0;
 
     @FXML
     private void initialize() throws Exception {
         tabelaVencimentos.setVisible(false);
-        ExameCache.carregarExamesVigentes();
-        TipoExameCache.carregarTiposExames();
-        FuncionarioCache.carregarFuncionarios(true);
-        SetorCache.carregarSetores();
+        mainService.loadInicial();
         setTabelaPrincipal();
         setTabelaSecundaria();
-        labelTodos.setText(String.valueOf(FuncionarioCache.todosFuncionarios.size()));
+        labelTodos.setText(String.valueOf(exameService.listarExamePorVencimento(183).size()));
         labelVencidos.setText(String.valueOf(exameService.listarExamePorVencimento(0).size()));
         labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()));
         labelVencemMes.setText(String.valueOf(exameService.listarExamePorVencimento(30).size()));
         labelVencemSemestre.setText(String.valueOf(exameService.listarExamePorVencimento(182).size()));
     }
 
-    private void setTabelaPrincipal() {
-        if (!FuncionarioCache.todosFuncionarios.isEmpty()) {
+    private void setTabelaPrincipal() throws Exception {
+        if (!funcionarioService.listarFuncionarios(true).isEmpty()) {
             colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
             colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                 Funcionario f = funcionarioStringCellDataFeatures.getValue();
@@ -88,7 +82,7 @@ public class MainController {
                 return new ReadOnlyObjectWrapper<>(idade).asString();
             });
             colunaSetorGeral.setCellValueFactory(f -> {
-                String areaSetor = SetorCache.getSetorMapeado(f.getValue().getSetor());
+                String areaSetor = setorService.getSetorMapeadoPorId(f.getValue().getSetor());
                 return new SimpleStringProperty(areaSetor);
             });
             colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
@@ -98,23 +92,23 @@ public class MainController {
             });
             // TODO: add status geral do Funcionario (Tudo certo, Vencimento proximo etc)
             // TODO: add acoes
-            tabelaPrincipal.setItems(FuncionarioCache.todosFuncionarios);
+            tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
         }
     }
 
     private void setTabelaSecundaria() {
         colunaFuncionarioVencimentos.setCellValueFactory(f -> {
-            String nomeFuncionario = String.valueOf(FuncionarioCache.getFuncionarioMapeado(f.getValue().getIdFuncionario()).getNome());
+            String nomeFuncionario = String.valueOf(funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getNome());
             return new SimpleStringProperty(nomeFuncionario);
         });
         colunaIdadeVencimentos.setCellValueFactory(f -> {
             String idadeFuncionario =
-                    String.valueOf(funcionarioService.calcularIdade(FuncionarioCache.getFuncionarioMapeado(f.getValue().getIdFuncionario()).getDataNascimento()));
+                    String.valueOf(funcionarioService.calcularIdade(funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getDataNascimento()));
             return new SimpleStringProperty(idadeFuncionario);
         });
         colunaSetorVencimentos.setCellValueFactory(f -> {
-            int setorId = FuncionarioCache.getFuncionarioMapeado(f.getValue().getIdFuncionario()).getSetor();
-            String setorNome = String.valueOf(SetorCache.getSetorMapeado(setorId));
+            int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getSetor();
+            String setorNome = String.valueOf(setorService.getSetorMapeadoPorId(setorId));
             return new SimpleStringProperty(setorNome);
         });
         colunaTipoVencimentos.setCellValueFactory(f -> {
@@ -122,7 +116,7 @@ public class MainController {
             return new SimpleStringProperty(tipo);
         });
         colunaDescricaoVencimentos.setCellValueFactory(f -> {
-            String descricao = TipoExameCache.getTipoExameMapeado(f.getValue().getIdTipoExame()).getNome();
+            String descricao = tipoExameService.getTipoExameMapeadoPorId(f.getValue().getIdTipoExame()).getNome();
             return new SimpleStringProperty(descricao);
         });
         colunaEmissaoVencimentos.setCellValueFactory(f -> {
@@ -137,7 +131,7 @@ public class MainController {
            return new SimpleStringProperty(exameService.vencimentos(f));
         });
         // TODO: add acoes
-        tabelaVencimentos.setItems(ExameCache.todosExames);
+        tabelaVencimentos.setItems(exameService.listarExames());
 
     }
 
@@ -221,9 +215,9 @@ public class MainController {
         tabelaVencimentos.setItems(exameService.listarExames());
     }
 
-    public void handleBtnGeral(ActionEvent event) {
+    public void handleBtnGeral(ActionEvent event) throws Exception {
         tabelaPrincipal.setVisible(true);
         tabelaVencimentos.setVisible(false);
-        tabelaPrincipal.setItems(FuncionarioCache.todosFuncionarios);
+        tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
     }
 }

@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
+import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
@@ -37,8 +38,6 @@ public class GerenciarFuncionariosController {
         inputInativo.setSelected(false);
         inputAtivo.setSelected(true);
         recarregarListaFuncionarios();
-
-
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
         colunaDataNascimento.setCellValueFactory(new PropertyValueFactory<>("dataNascimento"));
@@ -54,7 +53,8 @@ public class GerenciarFuncionariosController {
 
     private void recarregarListaFuncionarios(){
         try {
-            funcionariosList = funcionarioService.carregarFuncionarios(listarAtivos);
+            FuncionarioCache.carregarFuncionarios(listarAtivos);
+            funcionariosList = FuncionarioCache.todosFuncionarios;
             tabelaFuncionarios.setItems(funcionariosList);
         } catch (Exception e) {
             throw new RuntimeException(e);

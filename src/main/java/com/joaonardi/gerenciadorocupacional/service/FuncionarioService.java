@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
+import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.dao.FuncionarioDAO;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import javafx.collections.ObservableList;
@@ -26,9 +27,14 @@ public class FuncionarioService {
         if (funcionario.getId() == null) {
             dao.cadastrarFuncionario(funcionario);
         } else {dao.alterarFuncionario(funcionario.getId(),funcionario);}
+        FuncionarioCache.carregarFuncionarios(true);
     }
 
-    public ObservableList<Funcionario> carregarFuncionarios(boolean inAtivo) throws Exception {
+    public Funcionario getFuncionarioMapeadoPorId(int id){
+        return FuncionarioCache.getFuncionarioMapeado(id);
+    }
+
+    public ObservableList<Funcionario> listarFuncionarios(boolean inAtivo) throws Exception {
         return dao.listaFuncionariosPorStatus(inAtivo);
     }
 }

@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
+import com.joaonardi.gerenciadorocupacional.cache.TipoExameCache;
 import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
 import com.joaonardi.gerenciadorocupacional.dao.TipoExameDAO;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
@@ -15,6 +16,10 @@ public class TipoExameService {
         } else {
             dao.alterarTipoExame(tipoExame.getId(), tipoExame);
         }
+    }
+
+    public TipoExame getTipoExameMapeadoPorId(int id){
+        return TipoExameCache.getTipoExameMapeado(id);
     }
 
     public ObservableList<TipoExame> carregarTiposExame() {

@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
+import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import com.joaonardi.gerenciadorocupacional.dao.SetorDAO;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import javafx.collections.ObservableList;
@@ -18,8 +19,11 @@ public class SetorService {
     }
 
     public ObservableList<Setor> carregarSetores(){
-
         return dao.listarSetores();
+    }
+
+    public String getSetorMapeadoPorId(int id){
+        return SetorCache.getSetorMapeado(id);
     }
 
     public Setor consultarSetorPorId(Integer id) throws Exception {
