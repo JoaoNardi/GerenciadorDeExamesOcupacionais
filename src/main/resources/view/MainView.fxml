@@ -15,7 +15,48 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="921.0" prefWidth="1263.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.MainController">
    <children>
-      <HBox alignment="CENTER" layoutX="34.0" layoutY="66.0" prefHeight="100.0" prefWidth="1183.0" spacing="50.0">
+      <MenuBar layoutY="2.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Funcionários">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirFuncionario" text="Cadastrar Funcionario" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarFuncionario" text="Gerenciar Funcionarios" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Setores">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirSetor" text="Adicionar Setor" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarSetor" text="Gerenciar Setores" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Exames">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Tipo de Exame" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame" text="Gerenciar Tipo de Exame" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleLancarExame" text="Lançar novo Exame" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleGerenciarExames" text="Gerenciar Exames" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Certificados">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirCertificado" text="Adicionar Certificado" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarCertificado" text="Gerenciar Certificados" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Relatórios">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Por Funcionário" />
+                  <MenuItem mnemonicParsing="false" text="Por Tipos" />
+               </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <Button fx:id="btnGeral" layoutX="323.0" layoutY="52.0" mnemonicParsing="false" onAction="#handleBtnGeral" prefHeight="70.0" prefWidth="608.0" text="Geral">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <HBox alignment="CENTER" layoutX="34.0" layoutY="120.0" prefHeight="100.0" prefWidth="1183.0" spacing="50.0">
          <children>
               <Button fx:id="btnVencidos" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="70.0" minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnVencidos" style="-fx-background-color: #f10e11; -fx-border-radius: 5; -fx-background-radius: 5;" text="Vencidos" textAlignment="CENTER">
                <font>
@@ -71,42 +112,6 @@
 
          </children>
       </HBox>
-      <MenuBar layoutY="2.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="Funcionários">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleAbrirFuncionario" text="Cadastrar Funcionario" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarFuncionario" text="Gerenciar Funcionarios" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Setores">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleAbrirSetor" text="Adicionar Setor" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarSetor" text="Gerenciar Setores" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Exames">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Tipo de Exame" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame" text="Gerenciar Tipo de Exame" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleLancarExame" text="Lançar novo Exame" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleGerenciarExames" text="Gerenciar Exames" />
-            </items>
-          </Menu>
-            <Menu mnemonicParsing="false" text="Certificados">
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirCertificado" text="Adicionar Certificado" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarCertificado" text="Gerenciar Certificados" />
-               </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Relatórios">
-               <items>
-                  <MenuItem mnemonicParsing="false" text="Por Funcionário" />
-                  <MenuItem mnemonicParsing="false" text="Por Tipos" />
-               </items>
-            </Menu>
-        </menus>
-      </MenuBar>
       <TableView fx:id="tabelaPrincipal" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
         <columns>
             <TableColumn fx:id="colunaFuncionarioGeral" prefWidth="138.0" text="Funcionário" />
@@ -123,12 +128,14 @@
       <TableView fx:id="tabelaVencimentos" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
          <columns>
             <TableColumn fx:id="colunaFuncionarioVencimentos" prefWidth="138.0" text="Funcionário" />
-            <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="81.0" text="Idade" />
-            <TableColumn fx:id="colunaSetorVencimentos" prefWidth="158.0" text="Setor" />
-            <TableColumn fx:id="colunaTipoVencimentos" prefWidth="104.0" text="Tipo" />
-            <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="135.0" text="Descrição" />
-            <TableColumn fx:id="colunaStatusVencimentos" minWidth="5.0" prefWidth="374.0" text="ExameStatus" />
-            <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" prefWidth="155.0" text="Ações" />
+            <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="56.0" text="Idade" />
+            <TableColumn fx:id="colunaSetorVencimentos" prefWidth="114.0" text="Setor" />
+            <TableColumn fx:id="colunaTipoVencimentos" prefWidth="92.0" text="Tipo" />
+            <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="163.0" text="Descrição" />
+            <TableColumn fx:id="colunaEmissaoVencimentos" prefWidth="106.0" text="Data Emissão" />
+            <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="140.0" text="Data Validade" />
+            <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="226.0" text="Status" />
+            <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" prefWidth="119.0" text="Ações" />
          </columns>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
