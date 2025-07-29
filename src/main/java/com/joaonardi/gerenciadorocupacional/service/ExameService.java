@@ -19,6 +19,7 @@ public class ExameService {
 
     public void lancarExame(Exame exame) {
         exameDAO.cadastrarExame(exame);
+        ExameCache.carregarExamesVigentes();
     }
 
     public LocalDate calcularValidadeExame(LocalDate emissaoExame, TipoExame tipoExame) {
