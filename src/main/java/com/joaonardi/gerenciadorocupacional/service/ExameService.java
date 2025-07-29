@@ -33,10 +33,10 @@ public class ExameService {
     }
 
     public String vencimentos(TableColumn.CellDataFeatures<Exame, String> exame) {
-        String status = "";
         Integer dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getValue().getDataValidade());
+        String status = "Faltam: " + dias + " para o vencimento";
         if (dias < 0) {
-            status = "Vencido" + dias + " de atraso";
+            status = "Vencido " + dias + " de atraso";
         } else if (dias == 0) {
             status = "Vence Hoje";
         } else if (dias <= 7) {
