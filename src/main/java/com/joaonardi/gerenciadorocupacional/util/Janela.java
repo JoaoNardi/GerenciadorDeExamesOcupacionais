@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Janela {
     public FXMLLoader loader;
     public Stage stage;
-    public void abrirJanela(String diretorioView, String tituloJanela){
+    public void abrirJanela(String diretorioView, String tituloJanela, Runnable aoFechar){
         try {
             stage = new Stage();
              loader= new FXMLLoader(getClass().getResource(diretorioView));
@@ -20,6 +20,11 @@ public class Janela {
 
             stage.setTitle(tituloJanela);
             stage.setScene(new Scene(root));
+
+
+            if(aoFechar != null){
+                stage.setOnHiding(e -> aoFechar.run());
+            }
             stage.show();
         }catch (IOException e){
             e.printStackTrace();

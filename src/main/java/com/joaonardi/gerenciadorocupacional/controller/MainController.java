@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.service.*;
@@ -9,13 +8,17 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import org.controlsfx.control.PopOver;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class MainController {
@@ -64,8 +67,16 @@ public class MainController {
     private void initialize() throws Exception {
         tabelaVencimentos.setVisible(false);
         mainService.loadInicial();
+        setTodos();
+
+    }
+    private void setTodos() {
+        setLabels();
         setTabelaPrincipal();
         setTabelaSecundaria();
+    }
+
+    private void setLabels(){
         labelTodos.setText(String.valueOf(exameService.listarExamePorVencimento(183).size()));
         labelVencidos.setText(String.valueOf(exameService.listarExamePorVencimento(0).size()));
         labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()));
@@ -73,26 +84,30 @@ public class MainController {
         labelVencemSemestre.setText(String.valueOf(exameService.listarExamePorVencimento(182).size()));
     }
 
-    private void setTabelaPrincipal() throws Exception {
-        if (!funcionarioService.listarFuncionarios(true).isEmpty()) {
-            colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
-            colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
-                Funcionario f = funcionarioStringCellDataFeatures.getValue();
-                int idade = funcionarioService.calcularIdade(f.getDataNascimento());
-                return new ReadOnlyObjectWrapper<>(idade).asString();
-            });
-            colunaSetorGeral.setCellValueFactory(f -> {
-                String areaSetor = setorService.getSetorMapeadoPorId(f.getValue().getSetor());
-                return new SimpleStringProperty(areaSetor);
-            });
-            colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
-                Funcionario f = funcionarioStringCellDataFeatures.getValue();
-                String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
-                return new SimpleStringProperty(dataAniversario);
-            });
-            // TODO: add status geral do Funcionario (Tudo certo, Vencimento proximo etc)
-            // TODO: add acoes
-            tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
+    private void setTabelaPrincipal() {
+        try {
+            if (!funcionarioService.listarFuncionarios(true).isEmpty()) {
+                colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
+                colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
+                    Funcionario f = funcionarioStringCellDataFeatures.getValue();
+                    int idade = funcionarioService.calcularIdade(f.getDataNascimento());
+                    return new ReadOnlyObjectWrapper<>(idade).asString();
+                });
+                colunaSetorGeral.setCellValueFactory(f -> {
+                    String areaSetor = setorService.getSetorMapeadoPorId(f.getValue().getSetor());
+                    return new SimpleStringProperty(areaSetor);
+                });
+                colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
+                    Funcionario f = funcionarioStringCellDataFeatures.getValue();
+                    String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
+                    return new SimpleStringProperty(dataAniversario);
+                });
+                // TODO: add status geral do Funcionario (Tudo certo, Vencimento proximo etc)
+                // TODO: add acoes
+                tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -124,64 +139,128 @@ public class MainController {
             return new SimpleStringProperty(emissao);
         });
         colunaValidadeVencimentos.setCellValueFactory(f -> {
-            String validade = f.getValue().getDataValidade().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String validade = f.getValue().getDataValidade() != null ? f.getValue().getDataValidade().format(DateTimeFormatter.ofPattern("dd/MM" +
+                    "/yyyy")) : null;
             return new SimpleStringProperty(validade);
         });
         colunaStatusVencimentos.setCellValueFactory(f -> {
-           return new SimpleStringProperty(exameService.vencimentos(f));
+            return new SimpleStringProperty(exameService.vencimentos(f));
+        });
+        colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
+            FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
+            FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
+
+            Button btnLancarNovoExame = new Button();
+            Button btnOpcoesExame = new Button();
+
+            private final HBox hBox = new HBox(10, btnLancarNovoExame, btnOpcoesExame);
+
+            @Override
+            protected void updateItem(Node node, boolean b) {
+                super.updateItem(node, b);
+                if (b) {
+                    setGraphic(null);
+                } else {
+                    btnOpcoesExame.setGraphic(iconeOpcoes);
+                    btnLancarNovoExame.setGraphic(iconeLancar);
+                    btnLancarNovoExame.setOnAction(event -> {
+                        Exame exame = getTableView().getItems().get(getIndex());
+                        handleAbrirPopExame(exame, btnLancarNovoExame);
+                    });
+                    setGraphic(hBox);
+                }
+            }
         });
         // TODO: add acoes
-        tabelaVencimentos.setItems(exameService.listarExames());
+        tabelaVencimentos.setItems(exameService.listarExamePorVencimento(diasVencimento));
+    }
 
+    @FXML
+    private void handleAbrirPopExame(Exame exame, Node anchor) {
+        Label label = new Label("Regularizar");
+        Label label1 = new Label("Data de emissão");
+        DatePicker datePicker = new DatePicker();
+        datePicker.setValue(LocalDate.now());
+        Button btnConfirmar = new Button("Concluir");
+        btnConfirmar.setOnAction(e->{
+            Exame exame1 = Exame.ExameBuilder.builder()
+                    .id(null)
+                    .idTipoExame(exame.getIdTipoExame())
+                    .idFuncionario(exame.getIdFuncionario())
+                    .dataEmissao(datePicker.getValue())
+                    .dataValidade(exameService.calcularValidadeExame(datePicker.getValue(), tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame())))
+                    .atualizadoPor(null)
+                    .build();
+            exame1 = exameService.lancarExame(exame1);
+
+            Exame exame2 = Exame.ExameBuilder.builder()
+                    .id(exame.getId())
+                    .idTipoExame(exame.getIdTipoExame())
+                    .idFuncionario(exame.getIdFuncionario())
+                    .dataEmissao(exame.getDataEmissao())
+                    .dataValidade(exame.getDataValidade())
+                    .atualizadoPor(exame1.getId())
+                    .build();
+            exameService.alterarExame(exame2);
+        });
+
+        VBox layout = new VBox(10,label, label1,datePicker,btnConfirmar);
+        layout.setPadding(new Insets(10));
+        PopOver popOver = new PopOver(layout);
+        popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+        popOver.setDetachable(false);
+        popOver.show(anchor);
     }
 
 
     @FXML
     private void handleAbrirFuncionario(ActionEvent event) {
-        janela.abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários");
+        janela.abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários", this::setTodos);
     }
 
     @FXML
     public void handleAbrirGerenciarFuncionario(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml", "Gerenciar Funcionarios");
+        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml", "Gerenciar Funcionarios", this::setTodos);
     }
 
     @FXML
     public void handleAbrirSetor(ActionEvent event) {
-        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores");
+        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", this::setTodos);
     }
 
     @FXML
     public void handleAbrirGerenciarSetor(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarSetoresView.fxml", "Gerenciar Setores");
+        janela.abrirJanela("/view/GerenciarSetoresView.fxml", "Gerenciar Setores", this::setTodos);
     }
 
     @FXML
     public void handleAbrirExame(ActionEvent event) {
-        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro de Exame");
+        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro de Exame", this::setTodos);
     }
 
     @FXML
     public void handleAbrirGerenciarExame(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames");
+        janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", this::setTodos);
     }
 
     public void handleAbrirCertificado(ActionEvent event) {
-        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Certificado");
+        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Certificado", this::setTodos);
     }
 
     public void handleAbrirGerenciarCertificado(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Certificados");
+        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Certificados", this::setTodos);
     }
 
     public void handleLancarExame(ActionEvent event) {
-        janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames");
+        janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
     }
 
     public void handleGerenciarExames(ActionEvent event) {
     }
 
     public void handleBtnVencidos(ActionEvent event) {
+        setTabelaSecundaria();
+        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 0;
@@ -189,6 +268,8 @@ public class MainController {
     }
 
     public void handleBtnSemana(ActionEvent event) {
+        setTabelaSecundaria();
+        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 7;
@@ -196,6 +277,8 @@ public class MainController {
     }
 
     public void handleBtnMes(ActionEvent event) {
+        setTabelaSecundaria();
+        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 30;
@@ -203,6 +286,8 @@ public class MainController {
     }
 
     public void handleBtnSemestre(ActionEvent event) {
+        setTabelaSecundaria();
+        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 182;
@@ -210,12 +295,16 @@ public class MainController {
     }
 
     public void handleBtnTodos(ActionEvent event) {
+        setTabelaSecundaria();
+        setLabels();
         tabelaVencimentos.setVisible(true);
         tabelaPrincipal.setVisible(false);
-        tabelaVencimentos.setItems(exameService.listarExames());
+        tabelaVencimentos.setItems(exameService.listarExamePorVencimento(183));
     }
 
     public void handleBtnGeral(ActionEvent event) throws Exception {
+        setTabelaPrincipal();
+        setLabels();
         tabelaPrincipal.setVisible(true);
         tabelaVencimentos.setVisible(false);
         tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));

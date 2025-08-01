@@ -59,7 +59,7 @@ public class GerenciarSetoresControlller {
     public void handleTableDoubleClick(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2){
             Setor setorSelecionado = tabelaSetores.getSelectionModel().getSelectedItem();
-        janela.abrirJanela("/view/SetorView.fxml","Editar Setor");
+        janela.abrirJanela("/view/SetorView.fxml","Editar Setor", null);
         setorController = janela.loader.getController();
         setorController.setSetor(setorSelecionado);
             janela.stage.setOnHidden(e -> {setores.clear(); setores.addAll(setorService.carregarSetores());

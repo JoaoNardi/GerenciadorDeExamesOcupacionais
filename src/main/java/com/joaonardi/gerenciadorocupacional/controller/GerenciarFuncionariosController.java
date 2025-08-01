@@ -65,7 +65,7 @@ public class GerenciarFuncionariosController {
     public void handleEditar() throws Exception {
         Funcionario funcionarioSelecionado = tabelaFuncionarios.getSelectionModel().getSelectedItem();
         if (funcionarioSelecionado != null){
-            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario");
+            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", null);
             funcionarioController = janela.loader.getController();
             funcionarioController.setFuncionario(funcionarioSelecionado);
         }
