@@ -58,13 +58,13 @@ public class ExamesController {
         inputTipoExame.setConverter(new StringConverter<TipoExame>() {
             @Override
             public String toString(TipoExame tipoExame) {
-                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame.getPeriodicidade() + " Dias" : "" ;
+                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame.getPeriodicidade() + " Meses" : "" ;
             }
 
             @Override
             public TipoExame fromString(String s) {
                 for (TipoExame t : inputTipoExame.getItems()){
-                    String tipoExameString = t.getNome() + " - " + t.getPeriodicidade() + " Dias";
+                    String tipoExameString = t.getNome() + " - " + t.getPeriodicidade() + " Meses";
                     if (tipoExameString.equalsIgnoreCase(s)) {
                         return t;
                     }
@@ -82,7 +82,7 @@ public class ExamesController {
                 .idTipoExame(inputTipoExame.getValue().getId())
                 .idFuncionario(inputFuncionario.getValue().getId())
                 .dataEmissao(inputDataEmissao.getValue())
-                .dataValidade(inputDataValidade.getValue())
+                .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                 .atualizadoPor(null)
                 .build();
         exameService.lancarExame(exame);

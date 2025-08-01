@@ -3,7 +3,6 @@ package com.joaonardi.gerenciadorocupacional.service;
 import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
 import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
-import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,13 +16,24 @@ import java.util.stream.Collectors;
 public class ExameService {
     private ExameDAO exameDAO = new ExameDAO();
 
-    public void lancarExame(Exame exame) {
-        exameDAO.cadastrarExame(exame);
+    public Exame lancarExame(Exame exame) {
+        Exame exameCadastrado = exameDAO.cadastrarExame(exame);
+        ExameCache.carregarExamesVigentes();
+        return exameCadastrado;
+    }
+
+    public void alterarExame(Exame exame) {
+        exameDAO.alterarExame(exame.getId(), exame);
+
         ExameCache.carregarExamesVigentes();
     }
 
     public LocalDate calcularValidadeExame(LocalDate emissaoExame, TipoExame tipoExame) {
-        LocalDate dataValidade = emissaoExame.plusMonths(tipoExame.getPeriodicidade());
+        LocalDate dataValidade;
+        if (tipoExame.getPeriodicidade().equals(0)) {
+            return null;
+        }
+      dataValidade = emissaoExame.plusMonths(tipoExame.getPeriodicidade());
         return dataValidade;
     }
 
@@ -33,6 +43,7 @@ public class ExameService {
     }
 
     public String vencimentos(TableColumn.CellDataFeatures<Exame, String> exame) {
+        if (exame.getValue().getDataValidade() == null){return "Sem Periodicidade" ;}
         Integer dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getValue().getDataValidade());
         String status = "Faltam: " + dias + " para o vencimento";
         if (dias < 0) {

@@ -35,15 +35,15 @@ public class ExameDAO {
     public ExameDAO() {
     }
 
-    public void cadastrarExame(Exame exame) {
+    public Exame cadastrarExame(Exame exame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            preparedStatement = connection.prepareStatement(CADASTRAR_EXAME);
+            preparedStatement = connection.prepareStatement(CADASTRAR_EXAME, Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             preparedStatement.setInt(i++, exame.getIdTipoExame());
             preparedStatement.setInt(i++, exame.getIdFuncionario());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
-            preparedStatement.setString(i++, exame.getDataValidade().format(formato));
+            preparedStatement.setString(i++, exame.getDataValidade() == null ? null : exame.getDataValidade().format(formato));
             if (exame.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {
@@ -53,6 +53,12 @@ public class ExameDAO {
 
 
             preparedStatement.execute();
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int idGerado = rs.getInt(1);
+                    exame.setId(idGerado);
+                }
+            }
             connection.commit();
 
             JOptionPane.showMessageDialog(null, "Exame cadastrado com sucesso");
@@ -61,6 +67,7 @@ public class ExameDAO {
         } finally {
             fecharConexao();
         }
+        return exame;
     }
 
     //daqui pra baixo
@@ -100,7 +107,7 @@ public class ExameDAO {
     public void alterarExame(int id, Exame exame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            preparedStatement = connection.prepareStatement(CADASTRAR_EXAME);
+            preparedStatement = connection.prepareStatement(ALTERAR_EXAME);
             int i = 1;
             preparedStatement.setInt(i++, exame.getIdTipoExame());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
@@ -153,7 +160,8 @@ public class ExameDAO {
                         .idTipoExame(resultSet.getInt("tipo_exame_id"))
                         .idFuncionario(resultSet.getInt("funcionario_id"))
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
-                        .dataValidade(LocalDate.parse(resultSet.getString("data_validade")))
+                        .dataValidade( resultSet.getString("data_validade") != null ?
+                                LocalDate.parse(resultSet.getString("data_validade")) : null)
                         .atualizadoPor(resultSet.getInt("atualizado_por"))
                         .build();
                 listaExames.add(exame);
