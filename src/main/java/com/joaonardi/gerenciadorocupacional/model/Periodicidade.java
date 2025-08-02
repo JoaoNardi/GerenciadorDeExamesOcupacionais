@@ -5,7 +5,9 @@ import java.time.LocalDate;
 public enum Periodicidade {
     SEM_PERIODICIDADE(0),
     SEMESTRAL(6),
-    ANUAL(12);
+    ANUAL(12),
+    BIENAL(24),
+    TRIENAL(36);
 
     private final int valor;
 
@@ -32,6 +34,10 @@ public enum Periodicidade {
                 return "Semestral";
             case ANUAL:
                 return "Anual";
+            case BIENAL:
+                return "Bienal";
+            case TRIENAL:
+                return "Trienal";
             default:
                 return "Desconhecido";
         }
