@@ -22,7 +22,7 @@ public class ExameService {
         return exameCadastrado;
     }
 
-    public void alterarExame(Exame exame) {
+    public void editarExame(Exame exame) {
         exameDAO.alterarExame(exame.getId(), exame);
 
         ExameCache.carregarExamesVigentes();
@@ -93,4 +93,8 @@ public class ExameService {
         }
     }
 
+    public void deletarExame(int id) {
+        exameDAO.deletarExame(id);
+        ExameCache.carregarExamesVigentes();
+    }
 }

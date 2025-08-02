@@ -112,7 +112,12 @@ public class ExameDAO {
             preparedStatement.setInt(i++, exame.getIdTipoExame());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
             preparedStatement.setString(i++, exame.getDataValidade().format(formato));
-            preparedStatement.setInt(i++, exame.getAtualizadoPor());
+            if (exame.getAtualizadoPor() == null) {
+                preparedStatement.setObject(i++, null, Types.INTEGER);
+            } else {
+                preparedStatement.setInt(i++,
+                        exame.getAtualizadoPor());
+            }
             preparedStatement.setInt(i++, id);
 
             preparedStatement.executeUpdate();

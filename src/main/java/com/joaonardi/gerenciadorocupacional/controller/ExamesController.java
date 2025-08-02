@@ -30,7 +30,8 @@ public class ExamesController {
     FuncionarioService funcionarioService = new FuncionarioService();
     TipoExameService tipoExameService = new TipoExameService();
     ExameService exameService = new ExameService();
-    Exame exame;
+    Exame exame = null;
+
     @FXML
     private void initialize() throws Exception {
         ObservableList<TipoExame> exames = tipoExameService.carregarTiposExame();
@@ -40,12 +41,12 @@ public class ExamesController {
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
             @Override
             public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + SetorCache.getSetorMapeado(funcionario.getSetor()): "" ;
+                return funcionario != null ? funcionario.getNome() + " - " + SetorCache.getSetorMapeado(funcionario.getSetor()) : "";
             }
 
             @Override
             public Funcionario fromString(String s) {
-                for (Funcionario f : inputFuncionario.getItems()){
+                for (Funcionario f : inputFuncionario.getItems()) {
                     String funcionario = f.getNome() + " - " + SetorCache.getSetorMapeado(f.getSetor());
                     if (funcionario.equalsIgnoreCase(s)) {
                         return f;
@@ -58,12 +59,12 @@ public class ExamesController {
         inputTipoExame.setConverter(new StringConverter<TipoExame>() {
             @Override
             public String toString(TipoExame tipoExame) {
-                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame.getPeriodicidade() + " Meses" : "" ;
+                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame.getPeriodicidade() + " Meses" : "";
             }
 
             @Override
             public TipoExame fromString(String s) {
-                for (TipoExame t : inputTipoExame.getItems()){
+                for (TipoExame t : inputTipoExame.getItems()) {
                     String tipoExameString = t.getNome() + " - " + t.getPeriodicidade() + " Meses";
                     if (tipoExameString.equalsIgnoreCase(s)) {
                         return t;
@@ -78,14 +79,28 @@ public class ExamesController {
     }
 
     public void handleSalvarExame(ActionEvent event) {
-        this.exame = Exame.ExameBuilder.builder()
-                .idTipoExame(inputTipoExame.getValue().getId())
-                .idFuncionario(inputFuncionario.getValue().getId())
-                .dataEmissao(inputDataEmissao.getValue())
-                .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
-                .atualizadoPor(null)
-                .build();
-        exameService.lancarExame(exame);
+        if (this.exame == null) {
+            this.exame = Exame.ExameBuilder.builder()
+                    .id(null)
+                    .idTipoExame(inputTipoExame.getValue().getId())
+                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .dataEmissao(inputDataEmissao.getValue())
+                    .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
+                    .atualizadoPor(null)
+                    .build();
+            exameService.lancarExame(exame);
+        }
+        if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null){ // editar exame que nao é nao atualizado ainda
+            Exame exame1 = Exame.ExameBuilder.builder()
+                    .id(this.exame.getId())
+                    .idTipoExame(inputTipoExame.getValue().getId())
+                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .dataEmissao(inputDataEmissao.getValue())
+                    .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
+                    .atualizadoPor(null)
+                    .build();
+            exameService.editarExame(exame1);
+        }
         janela.fecharJanela(btnSalvar);
     }
 
@@ -96,5 +111,17 @@ public class ExamesController {
     public void validadeAlteracao(ActionEvent event) {
         inputDataValidade.setValue(exameService.calcularValidadeExame(inputDataEmissao.getValue(), inputTipoExame.getValue()));
 
+    }
+
+    public void setExame(Exame exameSelecionado) {
+
+        this.exame = exameSelecionado;
+        if (exame != null) {
+            inputFuncionario.setValue(funcionarioService.getFuncionarioMapeadoPorId(exame.getIdFuncionario()));
+            inputTipoExame.setValue(tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+            inputDataEmissao.setValue(exameSelecionado.getDataEmissao());
+            inputDataValidade.setValue(exameSelecionado.getDataEmissao());
+
+        }
     }
 }

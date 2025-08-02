@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class MainController {
+    ExamesController examesController = new ExamesController();
     //tabela Principal Geral
     public TableView<Funcionario> tabelaPrincipal;
     public TableColumn<Funcionario, String> colunaFuncionarioGeral;
@@ -70,13 +72,14 @@ public class MainController {
         setTodos();
 
     }
+
     private void setTodos() {
         setLabels();
         setTabelaPrincipal();
         setTabelaSecundaria();
     }
 
-    private void setLabels(){
+    private void setLabels() {
         labelTodos.setText(String.valueOf(exameService.listarExamePorVencimento(183).size()));
         labelVencidos.setText(String.valueOf(exameService.listarExamePorVencimento(0).size()));
         labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()));
@@ -149,7 +152,6 @@ public class MainController {
         colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
             FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
             FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
-
             Button btnLancarNovoExame = new Button();
             Button btnOpcoesExame = new Button();
 
@@ -162,27 +164,32 @@ public class MainController {
                     setGraphic(null);
                 } else {
                     btnOpcoesExame.setGraphic(iconeOpcoes);
+                    btnOpcoesExame.setOnAction(e -> {
+                        handleOpcoesExame(getTableView().getItems().get(getIndex()), btnOpcoesExame);
+
+                    });
                     btnLancarNovoExame.setGraphic(iconeLancar);
-                    btnLancarNovoExame.setOnAction(event -> {
+                    btnLancarNovoExame.setOnAction(e -> {
                         Exame exame = getTableView().getItems().get(getIndex());
-                        handleAbrirPopExame(exame, btnLancarNovoExame);
+                        handleLancarExame(exame, btnLancarNovoExame);
                     });
                     setGraphic(hBox);
                 }
             }
         });
-        // TODO: add acoes
+
+
         tabelaVencimentos.setItems(exameService.listarExamePorVencimento(diasVencimento));
     }
 
     @FXML
-    private void handleAbrirPopExame(Exame exame, Node anchor) {
+    private void handleLancarExame(Exame exame, Node anchor) {
         Label label = new Label("Regularizar");
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
         Button btnConfirmar = new Button("Concluir");
-        btnConfirmar.setOnAction(e->{
+        btnConfirmar.setOnAction(e -> {
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(null)
                     .idTipoExame(exame.getIdTipoExame())
@@ -201,15 +208,57 @@ public class MainController {
                     .dataValidade(exame.getDataValidade())
                     .atualizadoPor(exame1.getId())
                     .build();
-            exameService.alterarExame(exame2);
+            exameService.editarExame(exame2);
         });
 
-        VBox layout = new VBox(10,label, label1,datePicker,btnConfirmar);
+        VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
         popOver.setDetachable(false);
         popOver.show(anchor);
+    }
+
+    @FXML
+    private void handleOpcoesExame(Exame exame, Node anchor) {
+        FontIcon iconeLixeira = new FontIcon(FontAwesomeSolid.TRASH);
+        FontIcon iconeEditar = new FontIcon(FontAwesomeSolid.PENCIL_ALT);
+        Button btnEditarExame = new Button();
+        Button btnDeletarExame = new Button();
+        btnEditarExame.setGraphic(iconeEditar);
+        btnDeletarExame.setGraphic(iconeLixeira);
+        btnDeletarExame.setOnAction(e -> {
+            handleDeletarExame(exame);
+        });
+        btnEditarExame.setOnAction(event -> {
+            try {
+                handleEditarExame(exame);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        HBox layout = new HBox(10, btnEditarExame, btnDeletarExame);
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(10));
+        PopOver popOver = new PopOver(layout);
+        popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+        popOver.setDetachable(false);
+        popOver.show(anchor);
+    }
+
+    public void handleDeletarExame(Exame exame){
+        exameService.deletarExame(exame.getId());
+        setTodos();
+    }
+
+    @FXML
+    public void handleEditarExame(Exame exame) throws Exception {
+        Exame exameSelecionado = exame;
+        if (exameSelecionado != null) {
+            janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", this::setTodos);
+            examesController = janela.loader.getController();
+            examesController.setExame(exameSelecionado);
+        }
     }
 
 
@@ -234,7 +283,7 @@ public class MainController {
     }
 
     @FXML
-    public void handleAbrirExame(ActionEvent event) {
+    public void handleAbrirExame() {
         janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro de Exame", this::setTodos);
     }
 
@@ -299,7 +348,8 @@ public class MainController {
         setLabels();
         tabelaVencimentos.setVisible(true);
         tabelaPrincipal.setVisible(false);
-        tabelaVencimentos.setItems(exameService.listarExamePorVencimento(183));
+        diasVencimento = 183;
+        tabelaVencimentos.setItems(exameService.listarExamePorVencimento(diasVencimento));
     }
 
     public void handleBtnGeral(ActionEvent event) throws Exception {
