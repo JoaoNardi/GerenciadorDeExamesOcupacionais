@@ -1,8 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DBConexao {
     private static DBConexao instance;
@@ -37,15 +35,25 @@ public class DBConexao {
         return conexao;
     }
 
-    public void fechaConexao() {
+    public void fechaConexao(ResultSet resultSet, PreparedStatement preparedStatement) {
         try {
-            if (conexao != null && !conexao.isClosed()) {
-                conexao.close();
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            try {
+                if (conexao != null && !conexao.isClosed()) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao fechar conexão com banco de dados: " + e.getMessage());
+            } finally {
+                conexao = null;
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao fechar conexão com banco de dados: " + e.getMessage());
-        } finally {
-            conexao = null;
+            throw new RuntimeException(e);
         }
     }
 }

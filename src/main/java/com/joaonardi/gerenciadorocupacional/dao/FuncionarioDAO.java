@@ -70,7 +70,7 @@ public class FuncionarioDAO {
        } catch (SQLException e) {
            throw new RuntimeException(e);
        }finally {
-           fecharConexao();
+           DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
        }
    }
@@ -92,7 +92,7 @@ public class FuncionarioDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
         }
     }
@@ -112,7 +112,7 @@ public class FuncionarioDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
         }
     }
@@ -143,7 +143,7 @@ public class FuncionarioDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
         }
         if (funcionario == null) {
@@ -176,7 +176,7 @@ public class FuncionarioDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
         }
     }
@@ -211,7 +211,7 @@ public class FuncionarioDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
         }
         if (listaFuncionariosAtivos.isEmpty()) {
@@ -222,19 +222,5 @@ public class FuncionarioDAO {
         return listaFuncionariosAtivos;
     }
 
-    private void fecharConexao() {
-        try {
-           if (resultSet!=null){
-               resultSet.close();
-           }
-           if (preparedStatement != null) {
-               preparedStatement.close();
-           }
-           DBConexao.getInstance().fechaConexao();
-           } catch (SQLException e) {
-               throw new RuntimeException(e);
-        }
-
-   }
 }
 

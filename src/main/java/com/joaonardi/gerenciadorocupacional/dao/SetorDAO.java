@@ -46,7 +46,7 @@ public class SetorDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
     }
 
@@ -68,7 +68,7 @@ public class SetorDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
 
         if (setor == null) {
@@ -96,7 +96,7 @@ public class SetorDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
     }
 
@@ -113,7 +113,7 @@ public class SetorDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
     }
 
@@ -137,23 +137,11 @@ public class SetorDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
 
         return listaSetores;
     }
 
-    private void fecharConexao() {
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            DBConexao.getInstance().fechaConexao();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }

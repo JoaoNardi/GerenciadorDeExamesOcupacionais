@@ -35,7 +35,7 @@ public class TipoExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
     }
 
@@ -58,7 +58,7 @@ public class TipoExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
 
         return tipoExame;
@@ -85,7 +85,7 @@ public class TipoExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
     }
 
@@ -107,7 +107,7 @@ public class TipoExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
     }
 
@@ -131,19 +131,11 @@ public class TipoExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            fecharConexao();
+            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
 
         return lista;
     }
 
-    private void fecharConexao() {
-        try {
-            if (resultSet != null) resultSet.close();
-            if (preparedStatement != null) preparedStatement.close();
-            DBConexao.getInstance().fechaConexao();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }
