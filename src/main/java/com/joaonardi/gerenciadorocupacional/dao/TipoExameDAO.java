@@ -22,21 +22,29 @@ public class TipoExameDAO {
 
     public TipoExameDAO() {}
 
-    public void cadastrarTipoExame(TipoExame tipoExame) {
+    public TipoExame cadastrarTipoExame(TipoExame tipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            preparedStatement = connection.prepareStatement(CADASTRAR);
+            preparedStatement = connection.prepareStatement(CADASTRAR,Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             preparedStatement.setString(i++, tipoExame.getNome());
             preparedStatement.setInt(i++, tipoExame.getPeriodicidade());
             preparedStatement.execute();
+
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int idGerado = rs.getInt(1);
+                    tipoExame.setId(idGerado);
+                }
+            }
             connection.commit();
-            JOptionPane.showMessageDialog(null, "Tipo de exame cadastrado com sucesso.");
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }
+        return tipoExame;
     }
 
     public TipoExame consultarTipoExame(int id) {
@@ -77,9 +85,7 @@ public class TipoExameDAO {
             connection.commit();
 
             if (linhasAfetadas > 0) {
-                JOptionPane.showMessageDialog(null, "Tipo de exame atualizado com sucesso.");
             } else {
-                JOptionPane.showMessageDialog(null, "Tipo de exame não encontrado para atualizar.");
             }
 
         } catch (SQLException e) {

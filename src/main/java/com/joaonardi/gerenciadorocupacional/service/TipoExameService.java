@@ -10,12 +10,17 @@ import javafx.collections.ObservableList;
 public class TipoExameService {
     private final TipoExameDAO dao = new TipoExameDAO();
 
-    public void cadastrarTipoExame(TipoExame tipoExame){
+    public TipoExame cadastrarTipoExame(TipoExame tipoExame){
         if (tipoExame.getId() == null) {
             dao.cadastrarTipoExame(tipoExame);
         } else {
             dao.alterarTipoExame(tipoExame.getId(), tipoExame);
         }
+        return tipoExame;
+    }
+
+    public void deletarTipoExame(int id){
+        dao.deletarTipoExame(id);
     }
 
     public TipoExame getTipoExameMapeadoPorId(int id){

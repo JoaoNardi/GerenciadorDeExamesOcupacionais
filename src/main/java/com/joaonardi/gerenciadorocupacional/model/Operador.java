@@ -7,9 +7,7 @@ public enum Operador {
     MAIOR_OU_IGUAL(">="),
     MENOR_OU_IGUAL("<="),
     DIFERENTE("!="),
-    CONTEM("<>"),
-    EXCETO("><");
-
+    CONTEM("<>");
     private final String operador;
 
     Operador(String operador) {
@@ -44,8 +42,6 @@ public enum Operador {
                 return "Diferente";
             case CONTEM:
                 return "Contêm";
-            case EXCETO:
-                return "Exceto";
             default:
                 return "Desconhecido";
         }

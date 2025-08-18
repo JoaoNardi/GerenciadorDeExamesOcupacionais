@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="406.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.TipoExameController">
+<AnchorPane prefHeight="406.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.TipoExameController">
     <children>
         <Button fx:id="btnSalvar" layoutX="170.0" layoutY="363.0" mnemonicParsing="false" onAction="#handleSalvarExame" text="Salvar" />
         <Button fx:id="btnCancelar" layoutX="332.0" layoutY="363.0" mnemonicParsing="false" onAction="#handleCancelarExame" text="Cancelar" />
@@ -22,11 +29,29 @@
         <TextField fx:id="inputNome" layoutX="198.0" layoutY="112.0" prefHeight="25.0" prefWidth="165.0" promptText="Tipo de Exame" />
         <Label layoutX="110.0" layoutY="149.0" text="Periodicidade:" />
         <ChoiceBox fx:id="inputPeriodicidade" layoutX="199.0" layoutY="143.0" prefHeight="25.0" prefWidth="165.0" />
-      <ToggleButton layoutX="58.0" layoutY="178.0" mnemonicParsing="false" onAction="#handleAdicionarCondicoes" text="Adicionar Condições" />
-        <ScrollPane fx:id="scrollPaneCondicoes" layoutX="35.0" layoutY="212.0" prefHeight="142.0" prefWidth="500.0">
-            <content>
-        <VBox fx:id="containerCondicoes" layoutX="15.0" layoutY="215.0" prefHeight="0.0" prefWidth="479.0" spacing="10.0" />
-            </content>
-        </ScrollPane>
+      <TableView fx:id="tabelaCondicoes" layoutX="40.0" layoutY="203.0" prefHeight="152.0" prefWidth="483.0">
+        <columns>
+            <TableColumn fx:id="colunaReferencia" prefWidth="84.0" text="Referência" />
+            <TableColumn fx:id="colunaOperador" prefWidth="66.0" text="Operador" />
+            <TableColumn fx:id="colunaParametro" prefWidth="99.0" text="Parametro" />
+            <TableColumn fx:id="colunaPeriodicidade" prefWidth="104.0" text="Periodicidade" />
+            <TableColumn fx:id="colunaAcoes" prefWidth="129.0" text="Ações" />
+        </columns>
+      </TableView>
+      <HBox fx:id="modalAddCondicao" layoutX="39.0" layoutY="177.0" prefHeight="27.0" prefWidth="483.0" spacing="10.0" style="-fx-background-color: silver;">
+         <children>
+            <ChoiceBox fx:id="modalReferencia" prefWidth="150.0" />
+            <ChoiceBox fx:id="modalOperador" prefWidth="150.0" />
+            <HBox fx:id="modalParametro" prefHeight="100.0" prefWidth="200.0" />
+            <ChoiceBox fx:id="modalPeriodicidade" prefWidth="150.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="btnAddCondicao" mnemonicParsing="false" />
+                  <Button fx:id="btnCancelarCondicao" mnemonicParsing="false"  />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <Button fx:id="btnAtivaModalCondicao" layoutX="58.0" layoutY="178.0" mnemonicParsing="false" onAction="#handleAdicionarCondicoes" text="Adicionar Condições" />
     </children>
 </AnchorPane>

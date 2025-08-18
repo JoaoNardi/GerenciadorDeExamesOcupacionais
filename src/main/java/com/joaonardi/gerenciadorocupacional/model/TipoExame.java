@@ -2,9 +2,11 @@ package com.joaonardi.gerenciadorocupacional.model;
 
 import jakarta.persistence.Entity;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class TipoExame {
+    @Setter
     private Integer id;
     private String nome;
     private Integer periodicidade;
