@@ -1,5 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
+import java.util.Objects;
+
 public enum Operador {
     IGUAL("=="),
     MAIOR(">"),
@@ -13,12 +15,14 @@ public enum Operador {
     Operador(String operador) {
         this.operador = operador;
     }
+
     public String getOperador() {
         return operador;
     }
+
     public static Operador from(String operador) {
         for (Operador p : Operador.values()) {
-            if (p.getOperador() == operador) {
+            if (Objects.equals(p.getOperador(), operador)) {
                 return p;
             }
         }

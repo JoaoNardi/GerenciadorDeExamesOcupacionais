@@ -33,7 +33,7 @@ public class TipoExameController {
 
     public TableView<Condicao> tabelaCondicoes;
     public TableColumn<Condicao, String> colunaReferencia;
-    public TableColumn<Condicao, String> colunaOperador;
+    public TableColumn colunaOperador;
     public TableColumn<Condicao, String> colunaParametro;
     public TableColumn<Condicao, String> colunaPeriodicidade;
     public TableColumn<Condicao, Node> colunaAcoes;
@@ -58,8 +58,6 @@ public class TipoExameController {
     public void initialize() {
         modalAddCondicao.setOpacity(0);
         inputPeriodicidade.setValue(Periodicidade.SEM_PERIODICIDADE);
-
-        listaDeCondicoes = condicaoService.listarCondicoesPorTipoExameId(tipoExameId);
         setores = setorService.carregarSetores();
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
         setTabelaCondicoes();
@@ -85,7 +83,8 @@ public class TipoExameController {
             inputNome.setText(tipoExame.getNome());
             inputPeriodicidade.setValue(Periodicidade.fromValor(tipoExameSelecionado.getPeriodicidade()));
         }
-
+        listaDeCondicoes = condicaoService.listarCondicoesPorTipoExameId(tipoExameSelecionado.getId());
+        setTabelaCondicoes();
     }
 
     private void setModalCondicao() {
@@ -117,7 +116,7 @@ public class TipoExameController {
             if (!modalReferencia.getItems().isEmpty()) {
                 modalReferencia.getItems().clear();
             }
-            if (listaDeCondicoes.isEmpty()){
+            if (listaDeCondicoes.isEmpty()) {
                 inputPeriodicidade.setDisable(false);
             }
             modalParametro.getChildren().clear();
@@ -132,15 +131,15 @@ public class TipoExameController {
     private void setTabelaCondicoes() {
         colunaReferencia.setCellValueFactory(new PropertyValueFactory<>("referencia"));
         colunaOperador.setCellValueFactory(new PropertyValueFactory<>("operador"));
-        colunaOperador.setCellFactory(c -> new TableCell<Condicao, String>(){
+        colunaOperador.setCellFactory(c -> new TableCell<Condicao, String>() {
                     @Override
                     protected void updateItem(String operador, boolean empty) {
                         super.updateItem(operador, empty);
-                        if (empty || operador == null){
+                        if (empty || operador == null) {
                             setText(null);
-                        }else {
-                            Operador periodo = Operador.from(operador);
-                            setText(periodo.toString());
+                        } else {
+                            Operador caracterOperador = Operador.from(operador);
+                            setText(String.valueOf(caracterOperador));
 
                         }
                     }
@@ -162,9 +161,9 @@ public class TipoExameController {
                 } else {
                     btnRemover.setGraphic(iconeRemover);
                     btnRemover.setOnAction(e -> {
-                    int index = getTableRow().getIndex();
-
+                        int index = getTableRow().getIndex();
                         listaDeCondicoes.remove(index);
+                        condicaoService.deletarCondicao(getTableRow().getItem());
                     });
                     setGraphic(hBox);
                 }
