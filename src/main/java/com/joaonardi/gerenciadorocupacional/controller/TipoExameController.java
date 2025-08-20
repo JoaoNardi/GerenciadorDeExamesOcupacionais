@@ -111,6 +111,7 @@ public class TipoExameController {
 
         modalPeriodicidade.getItems().clear();
         modalPeriodicidade.getItems().addAll(Periodicidade.values());
+        modalPeriodicidade.setValue(Periodicidade.SEM_PERIODICIDADE);
 
         btnCancelarCondicao.setOnAction(event -> {
             if (!modalReferencia.getItems().isEmpty()) {
@@ -176,14 +177,6 @@ public class TipoExameController {
 
 
     public void cadastrarTipoExame() {
-        if (inputNome.getText() == null || inputNome.getText().trim().isEmpty()) {
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Campo obrigatório");
-            alerta.setHeaderText(null);
-            alerta.setContentText("O campo Nome não pode ficar vazio.");
-            alerta.showAndWait();
-            return;
-        }
         if (tipoExame == null || tipoExame.getId() == null) {
             tipoExame = TipoExame.TipoExameBuilder.builder()
                     .id(null)
@@ -227,8 +220,15 @@ public class TipoExameController {
 
     @FXML
     public void handleAdicionarCondicoes(ActionEvent event) {
+        if (inputNome.getText() == null || inputNome.getText().trim().isEmpty()) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Campo obrigatório");
+            alerta.setHeaderText(null);
+            alerta.setContentText("O campo Nome não pode ficar vazio.");
+            alerta.showAndWait();
+            return;
+        }
         cadastrarTipoExame();
-        inputPeriodicidade.setDisable(true);
         modalAddCondicao.setOpacity(1);
         btnAtivaModalCondicao.setOpacity(0);
         btnAtivaModalCondicao.setDisable(true);

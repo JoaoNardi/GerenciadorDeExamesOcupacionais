@@ -34,7 +34,7 @@
             <TableColumn fx:id="colunaReferencia" prefWidth="84.0" text="Referência" />
             <TableColumn fx:id="colunaOperador" prefWidth="66.0" text="Operador" />
             <TableColumn fx:id="colunaParametro" prefWidth="99.0" text="Parametro" />
-            <TableColumn fx:id="colunaPeriodicidade" prefWidth="104.0" text="Periodicidade" />
+            <TableColumn fx:id="colunaPeriodicidade" prefWidth="104.0" text="Periodicidade Padrão" />
             <TableColumn fx:id="colunaAcoes" prefWidth="129.0" text="Ações" />
         </columns>
       </TableView>
