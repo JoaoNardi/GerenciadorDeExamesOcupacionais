@@ -1,9 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
+import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
+import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
+import com.joaonardi.gerenciadorocupacional.dao.CondicaoDAO;
 import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
-import com.joaonardi.gerenciadorocupacional.model.Exame;
-import com.joaonardi.gerenciadorocupacional.model.TipoExame;
+import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 public class ExameService {
     private ExameDAO exameDAO = new ExameDAO();
+    private CondicaoDAO condicaoDAO = new CondicaoDAO();
+    private FuncionarioService funcionarioService = new FuncionarioService();
 
     public Exame lancarExame(Exame exame) {
         Exame exameCadastrado = exameDAO.cadastrarExame(exame);
@@ -28,13 +32,68 @@ public class ExameService {
         ExameCache.carregarExamesVigentes();
     }
 
-    public LocalDate calcularValidadeExame(LocalDate emissaoExame, TipoExame tipoExame) {
+    public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
+        ObservableList<Condicao> listaCondicao = condicaoDAO.listarCondicoesPorTipoExameId(tipoExame.getId());
+        int periodicidade = calcularPeriodicidade(funcionario, tipoExame, listaCondicao);
+
         LocalDate dataValidade;
-        if (tipoExame.getPeriodicidade().equals(0)) {
+        if (tipoExame.getPeriodicidade().equals(0) && listaCondicao.isEmpty()) {
             return null;
         }
-      dataValidade = emissaoExame.plusMonths(tipoExame.getPeriodicidade());
+        dataValidade = emissaoExame.plusMonths(periodicidade);
         return dataValidade;
+    }
+
+    public int calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Condicao> listaCondicao) {
+        int periodicidade = tipoExame.getPeriodicidade(); // periodicidade padrao
+        for (Condicao condicao : listaCondicao) {
+            if (verificaCondicao(funcionario, condicao)) {
+                periodicidade = Math.min(periodicidade, condicao.getPeriodicidade()); // pegar a menor periodicidade em caso de conflito
+            }
+        }
+        return periodicidade;
+    }
+
+    private boolean verificaCondicao(Funcionario funcionario, Condicao condicao) {
+        String referencia = condicao.getReferencia();
+        String operador = condicao.getOperador();
+        String parametro = condicao.getParametro();
+
+        switch (referencia.toLowerCase()) {
+            case "idade":
+                int idade = funcionarioService.calcularIdade(funcionario.getDataNascimento());
+                int valor = Integer.parseInt(parametro);
+                return compara(idade, operador, valor);
+
+            case "setor":
+                return comparaString(SetorCache.getSetorMapeado(funcionario.getSetor()), operador, parametro);
+
+//            case "enfermidade":
+//                return
+        }
+        return false;
+    }
+
+    private boolean compara(int valorFuncionario, String operador, int parametro) {
+        return switch (operador) {
+            case "==" -> valorFuncionario == parametro;
+            case ">" -> valorFuncionario > parametro;
+            case "<" -> valorFuncionario < parametro;
+            case ">=" -> valorFuncionario >= parametro;
+            case "<=" -> valorFuncionario <= parametro;
+            case "!=" -> valorFuncionario != parametro;
+            default -> false;
+        };
+    }
+
+    private boolean comparaString(String valorFuncionario, String operador, String parametro) {
+        return switch (operador) {
+            case "==" -> valorFuncionario.equalsIgnoreCase(parametro);
+            case "!=" -> !valorFuncionario.equalsIgnoreCase(parametro);
+            case "<>" -> valorFuncionario.contains(parametro); // seu operador "contem"
+            case "><" -> !valorFuncionario.contains(parametro); // seu operador "exceto"
+            default -> false;
+        };
     }
 
     public ObservableList<Exame> listarExames() {
@@ -43,7 +102,9 @@ public class ExameService {
     }
 
     public String vencimentos(TableColumn.CellDataFeatures<Exame, String> exame) {
-        if (exame.getValue().getDataValidade() == null){return "Sem Periodicidade" ;}
+        if (exame.getValue().getDataValidade() == null) {
+            return "Sem Periodicidade";
+        }
         Integer dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getValue().getDataValidade());
         String status = "Faltam: " + dias + " para o vencimento";
         if (dias < 0) {

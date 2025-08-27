@@ -40,7 +40,7 @@ public class TipoExameDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
         }

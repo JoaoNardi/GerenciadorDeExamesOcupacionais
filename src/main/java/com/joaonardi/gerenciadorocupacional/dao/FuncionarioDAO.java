@@ -214,11 +214,7 @@ public class FuncionarioDAO {
             DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
 
         }
-        if (listaFuncionariosAtivos.isEmpty()) {
-            JOptionPane.showMessageDialog(null,"Não foi possivel localizar funcionarios"
-                    ,"",JOptionPane.WARNING_MESSAGE);
-            throw new Exception("Não foi possivel localizar funcionarios");
-        }
+
         return listaFuncionariosAtivos;
     }
 

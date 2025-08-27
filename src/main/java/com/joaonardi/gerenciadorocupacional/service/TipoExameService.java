@@ -1,9 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.cache.TipoExameCache;
-import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
 import com.joaonardi.gerenciadorocupacional.dao.TipoExameDAO;
-import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import javafx.collections.ObservableList;
 
@@ -16,7 +14,9 @@ public class TipoExameService {
         } else {
             dao.alterarTipoExame(tipoExame.getId(), tipoExame);
         }
+        TipoExameCache.carregarTiposExames();
         return tipoExame;
+
     }
 
     public void deletarTipoExame(int id){
@@ -27,7 +27,7 @@ public class TipoExameService {
         return TipoExameCache.getTipoExameMapeado(id);
     }
 
-    public ObservableList<TipoExame> carregarTiposExame() {
+    public ObservableList<TipoExame> listarTiposExame() {
         return dao.listarTiposExame();
     }
 }

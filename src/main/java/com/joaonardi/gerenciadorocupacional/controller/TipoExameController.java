@@ -15,8 +15,10 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
+import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.scene.control.Button;
@@ -25,9 +27,8 @@ import javafx.scene.control.Label;
 public class TipoExameController {
     public TextField inputNome;
     public ChoiceBox<Periodicidade> inputPeriodicidade;
-    public Button btnCancelar;
+    public Button btnFechar;
     public Button btnSalvar;
-    public VBox containerCondicoes;
     private ObservableList<Condicao> listaDeCondicoes = FXCollections.observableArrayList();
     private Integer tipoExameId = null;
 
@@ -65,12 +66,9 @@ public class TipoExameController {
         Platform.runLater(() -> {
             Stage stage = (Stage) btnSalvar.getScene().getWindow();
             stage.setOnCloseRequest(windowEvent -> {
-                if (tipoExameId == null) {
-                    return;
-                } else {
+                if (tipoExameId != null) {
                     tipoExameService.deletarTipoExame(tipoExameId);
                 }
-                ;
             });
         });
 
@@ -114,18 +112,22 @@ public class TipoExameController {
         modalPeriodicidade.setValue(Periodicidade.SEM_PERIODICIDADE);
 
         btnCancelarCondicao.setOnAction(event -> {
-            if (!modalReferencia.getItems().isEmpty()) {
-                modalReferencia.getItems().clear();
-            }
-            if (listaDeCondicoes.isEmpty()) {
-                inputPeriodicidade.setDisable(false);
-            }
-            modalParametro.getChildren().clear();
-            modalPeriodicidade.getItems().clear();
-            modalAddCondicao.setOpacity(0);
-            btnAtivaModalCondicao.setOpacity(1);
-            btnAtivaModalCondicao.setDisable(false);
+            actionFecharModalCondicao();
         });
+    }
+
+    private void actionFecharModalCondicao() {
+        if (!modalReferencia.getItems().isEmpty()) {
+            modalReferencia.getItems().clear();
+        }
+        if (listaDeCondicoes.isEmpty()) {
+            inputPeriodicidade.setDisable(false);
+        }
+        modalParametro.getChildren().clear();
+        modalPeriodicidade.getItems().clear();
+        modalAddCondicao.setOpacity(0);
+        btnAtivaModalCondicao.setOpacity(1);
+        btnAtivaModalCondicao.setDisable(false);
     }
 
 
@@ -164,7 +166,9 @@ public class TipoExameController {
                     btnRemover.setOnAction(e -> {
                         int index = getTableRow().getIndex();
                         listaDeCondicoes.remove(index);
-                        condicaoService.deletarCondicao(getTableRow().getItem());
+                        if (getTableRow().getItem() != null) {
+                            condicaoService.deletarCondicao(getTableRow().getItem());
+                        }
                     });
                     setGraphic(hBox);
                 }
@@ -175,8 +179,16 @@ public class TipoExameController {
         listaDeCondicoes.addListener((ListChangeListener<? super Condicao>) change -> tabelaCondicoes.setItems(listaDeCondicoes));
     }
 
-
-    public void cadastrarTipoExame() {
+    public TipoExame cadastrarTipoExame() {
+        if (inputNome == null || inputNome.getText().isEmpty()) {
+            Notifications.create()
+                    .title("Erro")
+                    .text("Nome Invalido")
+                    .hideAfter(Duration.seconds(3))
+                    .owner(janela.stage)
+                    .showError();
+            return null;
+        }
         if (tipoExame == null || tipoExame.getId() == null) {
             tipoExame = TipoExame.TipoExameBuilder.builder()
                     .id(null)
@@ -190,14 +202,29 @@ public class TipoExameController {
                     .periodicidade(inputPeriodicidade.getValue().getValor())
                     .build();
         }
-        tipoExameId = tipoExameService.cadastrarTipoExame(tipoExame).getId();
+        try {
+            tipoExame = tipoExameService.cadastrarTipoExame(tipoExame);
+            Notifications.create()
+                    .title("Sucesso")
+                    .text("Tipo de Exame salvo com sucesso")
+                    .hideAfter(Duration.seconds(3))
+                    .owner(janela.stage)
+                    .showConfirm();
+            return tipoExame;
+        } catch (RuntimeException e) {
+            Notifications.create()
+                    .title("Erro")
+                    .text("Tipo de Exame já cadastrado")
+                    .hideAfter(Duration.seconds(3))
+                    .owner(janela.stage)
+                    .showConfirm();
+        }
+        return null;
     }
 
     public void handleCancelarExame(ActionEvent event) {
-        tipoExameService.deletarTipoExame(tipoExameId);
-        janela.fecharJanela(btnCancelar);
+        janela.fecharJanela(btnFechar);
     }
-
 
     public Condicao criaCondicao() {
         String parametro = null;
@@ -208,7 +235,7 @@ public class TipoExameController {
         Condicao condicao = null;
         condicao = Condicao.CondicaoBuilder.builder()
                 .id(null)
-                .tipoExameId(tipoExameId)
+                .tipoExameId(tipoExame.getId())
                 .referencia(String.valueOf(modalReferencia.getValue()))
                 .operador(String.valueOf(modalOperador.getValue().getOperador()))
                 .parametro(parametro)
@@ -220,15 +247,19 @@ public class TipoExameController {
 
     @FXML
     public void handleAdicionarCondicoes(ActionEvent event) {
-        if (inputNome.getText() == null || inputNome.getText().trim().isEmpty()) {
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Campo obrigatório");
-            alerta.setHeaderText(null);
-            alerta.setContentText("O campo Nome não pode ficar vazio.");
-            alerta.showAndWait();
+        if (inputNome == null || inputNome.getText().isEmpty()) {
+            Notifications.create()
+                    .title("Erro")
+                    .text("Nome Invalido")
+                    .hideAfter(Duration.seconds(3))
+                    .owner(janela.stage)
+                    .showError();
             return;
         }
-        cadastrarTipoExame();
+        if (cadastrarTipoExame() == null){
+            inputNome.clear();
+            return;
+        };
         modalAddCondicao.setOpacity(1);
         btnAtivaModalCondicao.setOpacity(0);
         btnAtivaModalCondicao.setDisable(true);
@@ -240,15 +271,10 @@ public class TipoExameController {
         switch (referencia) {
             case IDADE:
                 container.getItems().addAll(Operador.values());
-                break;
-
             case SETOR:
                 container.getItems().addAll(Operador.IGUAL, Operador.DIFERENTE);
-                break;
-
             case ENFERMIDADE:
                 container.getItems().addAll(Operador.IGUAL, Operador.DIFERENTE);
-                break;
             case null:
                 break;
         }
@@ -258,16 +284,17 @@ public class TipoExameController {
         }
     }
 
-
     private Node criarParametroNode(Referencia referencia) {
         if (referencia == null) {
             Spinner<Integer> spinner = new Spinner<>(14, 100, 45); // faixa de idade
+            spinner.setEditable(true);
             spinner.setPrefWidth(80);
             return spinner;
         }
         switch (referencia) {
             case Referencia.IDADE:
                 Spinner<Integer> spinner = new Spinner<>(14, 100, 45); // faixa de idade
+                spinner.setEditable(true);
                 spinner.setPrefWidth(80);
                 return spinner;
 
@@ -282,6 +309,20 @@ public class TipoExameController {
                 ChoiceBox<Boolean> boolChoice = new ChoiceBox<>();
                 boolChoice.getItems().addAll(true, false);
                 boolChoice.setValue(false);
+                boolChoice.setConverter(new StringConverter<Boolean>() {
+                    @Override
+                    public String toString(Boolean object) {
+                        if (object == null) return "";
+                        return object ? "Verdadeiro" : "Falso";
+                    }
+
+                    @Override
+                    public Boolean fromString(String string) {
+                        if (string.equalsIgnoreCase("Verdadeiro")) return true;
+                        if (string.equalsIgnoreCase("Falso")) return false;
+                        return null;
+                    }
+                });
                 return boolChoice;
 
             default:
@@ -290,7 +331,8 @@ public class TipoExameController {
     }
 
     public void handleSalvarExame(ActionEvent event) {
+        cadastrarTipoExame();
         condicaoService.cadastrarListaCondicao(listaDeCondicoes);
-        janela.fecharJanela(btnSalvar);
+
     }
 }

@@ -34,7 +34,7 @@ public class ExamesController {
 
     @FXML
     private void initialize() throws Exception {
-        ObservableList<TipoExame> exames = tipoExameService.carregarTiposExame();
+        ObservableList<TipoExame> exames = tipoExameService.listarTiposExame();
         FuncionarioCache.carregarFuncionarios(true);
         ObservableList<Funcionario> funcionarios = FuncionarioCache.todosFuncionarios;
         inputFuncionario.setItems(funcionarios);
@@ -75,7 +75,7 @@ public class ExamesController {
         });
         inputTipoExame.setValue(exames.getFirst());
         inputDataEmissao.setValue(LocalDate.now());
-        inputDataValidade.setValue(exameService.calcularValidadeExame(inputDataEmissao.getValue(), inputTipoExame.getValue()));
+        inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
 
     public void handleSalvarExame(ActionEvent event) {
@@ -90,7 +90,7 @@ public class ExamesController {
                     .build();
             exameService.lancarExame(exame);
         }
-        if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null){ // editar exame que nao é nao atualizado ainda
+        if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null) { // editar exame que nao é nao atualizado ainda
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(this.exame.getId())
                     .idTipoExame(inputTipoExame.getValue().getId())
@@ -109,7 +109,8 @@ public class ExamesController {
     }
 
     public void validadeAlteracao(ActionEvent event) {
-        inputDataValidade.setValue(exameService.calcularValidadeExame(inputDataEmissao.getValue(), inputTipoExame.getValue()));
+        inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
+                inputTipoExame.getValue()));
 
     }
 

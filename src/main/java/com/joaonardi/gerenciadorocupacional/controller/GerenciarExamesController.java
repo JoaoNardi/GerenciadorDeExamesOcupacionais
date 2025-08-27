@@ -26,7 +26,7 @@ public class GerenciarExamesController {
     @FXML
     public void initialize() {
 
-        tiposExame = tipoExameService.carregarTiposExame();
+        tiposExame = tipoExameService.listarTiposExame();
 
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaPerioicidade.setCellValueFactory(new PropertyValueFactory<>("periodicidade"));
@@ -54,7 +54,7 @@ public class GerenciarExamesController {
             janela.abrirJanela("/view/TipoExameView.fxml","Editar Exame", null);
             tipoExameController = janela.loader.getController();
             tipoExameController.setTipoExame(tipoExameSelecionado);
-            janela.stage.setOnHidden(e -> {tiposExame.clear(); tiposExame.addAll(tipoExameService.carregarTiposExame());
+            janela.stage.setOnHidden(e -> {tiposExame.clear(); tiposExame.addAll(tipoExameService.listarTiposExame());
                 tabelaExames.setItems(tiposExame);
             });
         }

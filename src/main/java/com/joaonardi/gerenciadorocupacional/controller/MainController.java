@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
+import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.service.*;
@@ -150,8 +151,8 @@ public class MainController {
             return new SimpleStringProperty(exameService.vencimentos(f));
         });
         colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
-            FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
-            FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
+            final FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
+            final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
             Button btnLancarNovoExame = new Button();
             Button btnOpcoesExame = new Button();
 
@@ -195,7 +196,8 @@ public class MainController {
                     .idTipoExame(exame.getIdTipoExame())
                     .idFuncionario(exame.getIdFuncionario())
                     .dataEmissao(datePicker.getValue())
-                    .dataValidade(exameService.calcularValidadeExame(datePicker.getValue(), tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame())))
+                    .dataValidade(exameService.calcularValidadeExame(FuncionarioCache.getFuncionarioMapeado(exame.getIdFuncionario()), datePicker.getValue(),
+                            tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame())))
                     .atualizadoPor(null)
                     .build();
             exame1 = exameService.lancarExame(exame1);
@@ -246,7 +248,7 @@ public class MainController {
         popOver.show(anchor);
     }
 
-    public void handleDeletarExame(Exame exame){
+    public void handleDeletarExame(Exame exame) {
         exameService.deletarExame(exame.getId());
         setTodos();
     }

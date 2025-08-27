@@ -65,7 +65,7 @@ public class ExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
         return exame;
     }
@@ -92,7 +92,7 @@ public class ExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
 
         if (exame == null) {
@@ -111,7 +111,7 @@ public class ExameDAO {
             int i = 1;
             preparedStatement.setInt(i++, exame.getIdTipoExame());
             preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
-            preparedStatement.setString(i++, exame.getDataValidade().format(formato));
+            preparedStatement.setString(i++, (exame.getDataValidade() == null ? null : exame.getDataValidade().format(formato)));
             if (exame.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {
@@ -127,7 +127,7 @@ public class ExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -144,7 +144,7 @@ public class ExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -165,7 +165,7 @@ public class ExameDAO {
                         .idTipoExame(resultSet.getInt("tipo_exame_id"))
                         .idFuncionario(resultSet.getInt("funcionario_id"))
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
-                        .dataValidade( resultSet.getString("data_validade") != null ?
+                        .dataValidade(resultSet.getString("data_validade") != null ?
                                 LocalDate.parse(resultSet.getString("data_validade")) : null)
                         .atualizadoPor(resultSet.getInt("atualizado_por"))
                         .build();
@@ -175,7 +175,7 @@ public class ExameDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
 
         return listaExames;
