@@ -271,10 +271,10 @@ public class TipoExameController {
         switch (referencia) {
             case IDADE:
                 container.getItems().addAll(Operador.values());
-            case SETOR:
+                break;
+            case SETOR, ENFERMIDADE:
                 container.getItems().addAll(Operador.IGUAL, Operador.DIFERENTE);
-            case ENFERMIDADE:
-                container.getItems().addAll(Operador.IGUAL, Operador.DIFERENTE);
+                break;
             case null:
                 break;
         }
