@@ -41,13 +41,13 @@ public class ExamesController {
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
             @Override
             public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + SetorCache.getSetorMapeado(funcionario.getSetor()) : "";
+                return funcionario != null ? funcionario.getNome() + " - " + SetorCache.getSetorMapeado(funcionario.getIdSetor()) : "";
             }
 
             @Override
             public Funcionario fromString(String s) {
                 for (Funcionario f : inputFuncionario.getItems()) {
-                    String funcionario = f.getNome() + " - " + SetorCache.getSetorMapeado(f.getSetor());
+                    String funcionario = f.getNome() + " - " + SetorCache.getSetorMapeado(f.getIdSetor());
                     if (funcionario.equalsIgnoreCase(s)) {
                         return f;
                     }

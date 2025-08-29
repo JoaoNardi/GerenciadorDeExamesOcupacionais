@@ -2,7 +2,7 @@ package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.dao.FuncionarioDAO;
-import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
@@ -13,10 +13,10 @@ public class FuncionarioService {
     private final FuncionarioDAO dao = new FuncionarioDAO();
 
     public void validarCpf(String cpf) throws Exception {
-        if((cpf.length() != 11 || cpf == null)) throw new Exception("cpf Invalido");
+        if ((cpf.length() != 11 || cpf == null)) throw new Exception("cpf Invalido");
     }
 
-    public Integer calcularIdade(LocalDate dataNascimento){
+    public Integer calcularIdade(LocalDate dataNascimento) {
         Integer idade = null;
         idade = LocalDate.now().compareTo(dataNascimento);
         return idade;
@@ -26,11 +26,13 @@ public class FuncionarioService {
         validarCpf(funcionario.getCpf());
         if (funcionario.getId() == null) {
             dao.cadastrarFuncionario(funcionario);
-        } else {dao.alterarFuncionario(funcionario.getId(),funcionario);}
+        } else {
+            dao.alterarFuncionario(funcionario.getId(), funcionario);
+        }
         FuncionarioCache.carregarFuncionarios(true);
     }
 
-    public Funcionario getFuncionarioMapeadoPorId(int id){
+    public Funcionario getFuncionarioMapeadoPorId(int id) {
         return FuncionarioCache.getFuncionarioMapeado(id);
     }
 

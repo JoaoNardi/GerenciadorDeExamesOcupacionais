@@ -69,9 +69,8 @@ public class MainController {
     @FXML
     private void initialize() throws Exception {
         tabelaVencimentos.setVisible(false);
-        mainService.loadInicial();
+        MainService.loadInicial();
         setTodos();
-
     }
 
     private void setTodos() {
@@ -98,13 +97,17 @@ public class MainController {
                     return new ReadOnlyObjectWrapper<>(idade).asString();
                 });
                 colunaSetorGeral.setCellValueFactory(f -> {
-                    String areaSetor = setorService.getSetorMapeadoPorId(f.getValue().getSetor());
+                    String areaSetor = setorService.getSetorMapeadoPorId(f.getValue().getIdSetor());
                     return new SimpleStringProperty(areaSetor);
                 });
                 colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
                     String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
                     return new SimpleStringProperty(dataAniversario);
+                });
+                colunaStatusGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
+
+                    return new SimpleStringProperty(mainService.verificaStatusFuncionario2(funcionarioStringCellDataFeatures.getValue()));
                 });
                 // TODO: add status geral do Funcionario (Tudo certo, Vencimento proximo etc)
                 // TODO: add acoes
@@ -126,7 +129,7 @@ public class MainController {
             return new SimpleStringProperty(idadeFuncionario);
         });
         colunaSetorVencimentos.setCellValueFactory(f -> {
-            int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getSetor();
+            int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getIdSetor();
             String setorNome = String.valueOf(setorService.getSetorMapeadoPorId(setorId));
             return new SimpleStringProperty(setorNome);
         });
@@ -355,6 +358,7 @@ public class MainController {
     }
 
     public void handleBtnGeral(ActionEvent event) throws Exception {
+        mainService.loadInicial();
         setTabelaPrincipal();
         setLabels();
         tabelaPrincipal.setVisible(true);

@@ -5,8 +5,6 @@ import com.joaonardi.gerenciadorocupacional.model.Condicao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.SQLException;
-
 public class CondicaoService {
     private CondicaoDAO condicaoDAO = new CondicaoDAO();
 

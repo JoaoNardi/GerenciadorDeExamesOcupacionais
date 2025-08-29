@@ -1,7 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import com.joaonardi.gerenciadorocupacional.dao.CondicaoDAO;
 import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 public class ExameService {
     private ExameDAO exameDAO = new ExameDAO();
     private CondicaoDAO condicaoDAO = new CondicaoDAO();
-    private FuncionarioService funcionarioService = new FuncionarioService();
+    private final FuncionarioService funcionarioService = new FuncionarioService();
 
     public Exame lancarExame(Exame exame) {
         Exame exameCadastrado = exameDAO.cadastrarExame(exame);
@@ -66,7 +65,7 @@ public class ExameService {
                 return compara(idade, operador, valor);
 
             case "setor":
-                return comparaString(SetorCache.getSetorMapeado(funcionario.getSetor()), operador, parametro);
+                return comparaString(SetorCache.getSetorMapeado(funcionario.getIdSetor()), operador, parametro);
 
 //            case "enfermidade":
 //                return
@@ -77,8 +76,6 @@ public class ExameService {
     private boolean compara(int valorFuncionario, String operador, int parametro) {
         return switch (operador) {
             case "==" -> valorFuncionario == parametro;
-            case ">" -> valorFuncionario > parametro;
-            case "<" -> valorFuncionario < parametro;
             case ">=" -> valorFuncionario >= parametro;
             case "<=" -> valorFuncionario <= parametro;
             case "!=" -> valorFuncionario != parametro;

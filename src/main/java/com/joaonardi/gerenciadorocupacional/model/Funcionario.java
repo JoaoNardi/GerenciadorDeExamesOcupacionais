@@ -11,7 +11,7 @@ public class Funcionario {
     private String cpf;
     private LocalDate dataNascimento;
     private LocalDate dataAdmissao;
-    private Integer setor;
+    private Integer idSetor;
     private Boolean ativo;
 
 
@@ -25,7 +25,7 @@ public class Funcionario {
         private String cpf;
         private LocalDate dataNascimento;
         private LocalDate dataAdmissao;
-        private Integer setor;
+        private Integer idSetor;
         private Boolean ativo;
 
         private FuncionarioBuilder() {
@@ -60,8 +60,8 @@ public class Funcionario {
             return this;
         }
 
-        public FuncionarioBuilder setor(Integer setor) {
-            this.setor = setor;
+        public FuncionarioBuilder idSetor(Integer idSetor) {
+            this.idSetor = idSetor;
             return this;
         }
 
@@ -74,7 +74,7 @@ public class Funcionario {
             Funcionario funcionario = new Funcionario();
             funcionario.dataAdmissao = this.dataAdmissao;
             funcionario.nome = this.nome;
-            funcionario.setor = this.setor;
+            funcionario.idSetor = this.idSetor;
             funcionario.cpf = this.cpf;
             funcionario.dataNascimento = this.dataNascimento;
             funcionario.id = this.id;
@@ -92,7 +92,7 @@ public class Funcionario {
                 ", cpf='" + cpf + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", dataAdmissao=" + dataAdmissao +
-                ", setor=" + setor +
+                ", idSetor=" + idSetor +
                 '}';
     }
 }

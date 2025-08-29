@@ -42,7 +42,7 @@ public class GerenciarFuncionariosController {
         colunaCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
         colunaDataNascimento.setCellValueFactory(new PropertyValueFactory<>("dataNascimento"));
         colunaSetor.setCellValueFactory(f->{
-            String areaSetor = SetorCache.getSetorMapeado(f.getValue().getSetor());
+            String areaSetor = SetorCache.getSetorMapeado(f.getValue().getIdSetor());
         return new SimpleStringProperty(areaSetor);
         });
         colunaDataAdmissao.setCellValueFactory(new PropertyValueFactory<>("dataAdmissao"));

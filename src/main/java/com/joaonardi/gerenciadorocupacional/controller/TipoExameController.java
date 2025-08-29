@@ -5,6 +5,7 @@ import com.joaonardi.gerenciadorocupacional.service.CondicaoService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import com.joaonardi.gerenciadorocupacional.util.TooltipUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -29,6 +30,7 @@ public class TipoExameController {
     public ChoiceBox<Periodicidade> inputPeriodicidade;
     public Button btnFechar;
     public Button btnSalvar;
+    public Button btnInfo;
     private ObservableList<Condicao> listaDeCondicoes = FXCollections.observableArrayList();
     private Integer tipoExameId = null;
 
@@ -57,6 +59,11 @@ public class TipoExameController {
     TipoExameService tipoExameService = new TipoExameService();
 
     public void initialize() {
+        FontIcon iconInfo = new FontIcon(FontAwesomeSolid.INFO);
+        Tooltip tooltip = new Tooltip("A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra");
+        btnInfo.setGraphic(iconInfo);
+        btnInfo.setTooltip(tooltip);
+        TooltipUtils.installWithDelay(btnInfo,tooltip,200);
         modalAddCondicao.setOpacity(0);
         inputPeriodicidade.setValue(Periodicidade.SEM_PERIODICIDADE);
         setores = setorService.carregarSetores();

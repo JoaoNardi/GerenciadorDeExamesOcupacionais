@@ -35,7 +35,7 @@ public class FuncionarioController {
     }
 
     public void setFuncionario(Funcionario funcionario) throws Exception {
-        Setor setor = setorService.consultarSetorPorId(funcionario.getSetor());
+        Setor setor = setorService.consultarSetorPorId(funcionario.getIdSetor());
         this.funcionario = funcionario;
         if (funcionario !=null){
             inputNome.setText(funcionario.getNome());
@@ -56,7 +56,7 @@ public class FuncionarioController {
                 .cpf(inputCpf.getText())
                 .dataNascimento(inputDataNascimento.getValue())
                 .dataAdmissao(inputDataAdmissao.getValue())
-                .setor(inputSetor.getValue().getId())
+                .idSetor(inputSetor.getValue().getId())
                 .ativo(inputAtivo.isSelected()).build();
         } else {
             this.funcionario = Funcionario
@@ -66,7 +66,7 @@ public class FuncionarioController {
                     .cpf(inputCpf.getText())
                     .dataNascimento(inputDataNascimento.getValue())
                     .dataAdmissao(inputDataAdmissao.getValue())
-                    .setor(inputSetor.getValue().getId())
+                    .idSetor(inputSetor.getValue().getId())
                     .ativo(inputAtivo.isSelected()).build();
         }
         try {

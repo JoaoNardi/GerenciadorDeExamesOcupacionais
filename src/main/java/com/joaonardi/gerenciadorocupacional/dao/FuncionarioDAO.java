@@ -1,7 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
-import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,9 +9,6 @@ import javax.swing.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class FuncionarioDAO {
     DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd") ;
@@ -60,7 +56,7 @@ public class FuncionarioDAO {
        preparedStatement.setString(i++, funcionario.getCpf());
        preparedStatement.setString(i++, funcionario.getDataNascimento().format(formato));
        preparedStatement.setString(i++, funcionario.getDataAdmissao().format(formato));
-       preparedStatement.setInt(i++, funcionario.getSetor());
+       preparedStatement.setInt(i++, funcionario.getIdSetor());
        preparedStatement.setBoolean(i++, funcionario.getAtivo());
 
        preparedStatement.execute();
@@ -135,7 +131,7 @@ public class FuncionarioDAO {
                                 .cpf(resultSet.getString("cpf"))
                                 .dataNascimento(LocalDate.parse(resultSet.getString("data_nascimento")))
                                 .dataAdmissao(LocalDate.parse(resultSet.getString("data_admissao")))
-                                .setor(resultSet.getInt("setor_id"))
+                                .idSetor(resultSet.getInt("setor_id"))
                                 .ativo(resultSet.getBoolean("ativo"))
                                 .build();
             }
@@ -164,7 +160,7 @@ public class FuncionarioDAO {
             preparedStatement.setString(i++, funcionario.getCpf());
             preparedStatement.setString(i++, funcionario.getDataNascimento().format(formato));
             preparedStatement.setString(i++, funcionario.getDataAdmissao().format(formato));
-            preparedStatement.setObject(i++, funcionario.getSetor());
+            preparedStatement.setObject(i++, funcionario.getIdSetor());
             preparedStatement.setBoolean(i++, funcionario.getAtivo());
             preparedStatement.setInt(i++, id);
 
@@ -202,7 +198,7 @@ public class FuncionarioDAO {
                         .cpf(resultSet.getString("cpf"))
                         .dataNascimento(LocalDate.parse(resultSet.getString("data_nascimento")))
                         .dataAdmissao(LocalDate.parse(resultSet.getString("data_admissao")))
-                        .setor(resultSet.getInt("setor_id"))
+                        .idSetor(resultSet.getInt("setor_id"))
                         .ativo(resultSet.getBoolean("ativo"))
                         .build();
                 listaFuncionariosAtivos.add(funcionario);
