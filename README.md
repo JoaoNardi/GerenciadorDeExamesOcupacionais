@@ -14,12 +14,17 @@ OBS: Atualmente todos os cruds estao sem delete (crus?)
 <li>🚧 Relatorios </li>
 
 <h3> Stacks </h3>
-<li><strong>Backend : </strong> Java</li>
+<li><strong>Backend : </strong> Java - 21 </li>
 <li><strong>Frontend : </strong> JavaFX</li>
 <li><strong>Banco de dados : </strong> SQLlite</li>
 
 <h3>Escopo Inicial</h3>
 <p>Crud das funções de cadastro e alertas em funcionamento </p>
+
+<h3> Instruções de Uso </h3>
+<li> Clone o repositório: https://github.com/JoaoNardi/GerenciadorDeExamesOcupacionais.git</li>
+<li>Compile e baixe dependências: mvn clean install</li>
+<li>Execute o projeto com o plugin JavaFX: mvn javafx:run</li>
 
 
 <h3>Autores</h3>
