@@ -27,7 +27,6 @@ public class ExameService {
 
     public void editarExame(Exame exame) {
         exameDAO.alterarExame(exame.getId(), exame);
-
         ExameCache.carregarExamesVigentes();
     }
 

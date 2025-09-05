@@ -6,6 +6,7 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 public class MainController {
     ExamesController examesController = new ExamesController();
@@ -32,7 +34,7 @@ public class MainController {
     public TableColumn<Funcionario, String> colunaSetorGeral;
     public TableColumn<Funcionario, String> colunaAniversario;
     public TableColumn<Funcionario, String> colunaStatusGeral;
-    public TableColumn<Funcionario, Button> colunaAcoesGeral;
+    public TableColumn<Funcionario, Node> colunaAcoesGeral;
     //botoes
     public Button btnVencidos;
     public Button btnVencemSemana;
@@ -105,11 +107,64 @@ public class MainController {
                     String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
                     return new SimpleStringProperty(dataAniversario);
                 });
-                colunaStatusGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
+                colunaStatusGeral.setCellValueFactory(cd -> new ReadOnlyStringWrapper("")); // valor dummy
 
-                    return new SimpleStringProperty(mainService.verificaStatusFuncionario2(funcionarioStringCellDataFeatures.getValue()));
+                colunaStatusGeral.setCellFactory(col -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || getIndex() < 0) {
+                            setText(null);
+                        } else {
+                            Funcionario f = getTableView().getItems().get(getIndex());
+                            if (mainService.verificaStatusFuncionario2(f) != null) {
+                                setText(
+                                        "Exames Pendentes: " +
+                                        mainService.verificaStatusFuncionario2(f).stream()
+                                                .map(tipoExame -> tipoExame.getNome()).toList().toString()
+                                                .replace("[","").replace("]",""));
+                            } else { setText("ok");
+                            }
+                        }
+                    }
                 });
-                // TODO: add status geral do Funcionario (Tudo certo, Vencimento proximo etc)
+                colunaAcoesGeral.setCellFactory(coluna -> new TableCell<>() {
+                    final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
+                    Button btnLancarExameTipado = new Button();
+
+                    private final HBox hBox = new HBox(10, btnLancarExameTipado);
+
+                    @Override
+                    protected void updateItem(Node node, boolean b) {
+                        super.updateItem(node, b);
+                        if (b) {
+                            setGraphic(null);
+                        } else {
+                            try {
+                                MainService.loadInicial();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (mainService.verificaStatusFuncionario2(getTableRow().getItem()) != null) {
+                                int idTipoExame = mainService.verificaStatusFuncionario2(getTableRow().getItem()).getFirst().getId();
+
+                                btnLancarExameTipado.setGraphic(iconeLancar);
+                                btnLancarExameTipado.setOnAction(e -> {
+                                    Exame exame = Exame.ExameBuilder.builder()
+                                            .id(null)
+                                            .idTipoExame(idTipoExame)
+                                            .idFuncionario(getTableRow().getItem().getId())
+                                            .dataEmissao(null)
+                                            .dataValidade(null)
+                                            .atualizadoPor(null)
+                                            .build();
+                                    handleLancarExame(exame, btnLancarExameTipado);
+                                });
+                            }
+                            setGraphic(hBox);
+                        }
+                    }
+                });
                 // TODO: add acoes
                 tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
             }
@@ -188,7 +243,7 @@ public class MainController {
 
     @FXML
     private void handleLancarExame(Exame exame, Node anchor) {
-        Label label = new Label("Regularizar");
+        Label label = new Label("Regularizar: " + tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
@@ -204,16 +259,17 @@ public class MainController {
                     .atualizadoPor(null)
                     .build();
             exame1 = exameService.lancarExame(exame1);
-
-            Exame exame2 = Exame.ExameBuilder.builder()
-                    .id(exame.getId())
-                    .idTipoExame(exame.getIdTipoExame())
-                    .idFuncionario(exame.getIdFuncionario())
-                    .dataEmissao(exame.getDataEmissao())
-                    .dataValidade(exame.getDataValidade())
-                    .atualizadoPor(exame1.getId())
-                    .build();
-            exameService.editarExame(exame2);
+            if (exame.getId() != null) {
+                Exame exame2 = Exame.ExameBuilder.builder()
+                        .id(exame.getId())
+                        .idTipoExame(exame.getIdTipoExame())
+                        .idFuncionario(exame.getIdFuncionario())
+                        .dataEmissao(exame.getDataEmissao())
+                        .dataValidade(exame.getDataValidade())
+                        .atualizadoPor(exame1.getId())
+                        .build();
+                exameService.editarExame(exame2);
+            }
         });
 
         VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
@@ -358,11 +414,13 @@ public class MainController {
     }
 
     public void handleBtnGeral(ActionEvent event) throws Exception {
-        mainService.loadInicial();
+        MainService.loadInicial();
+        initialize();
         setTabelaPrincipal();
         setLabels();
+        tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
         tabelaPrincipal.setVisible(true);
         tabelaVencimentos.setVisible(false);
-        tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
+        tabelaPrincipal.refresh();
     }
 }

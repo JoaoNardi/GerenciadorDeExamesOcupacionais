@@ -75,6 +75,7 @@ public class ExamesController {
         });
         inputTipoExame.setValue(exames.getFirst());
         inputDataEmissao.setValue(LocalDate.now());
+        inputFuncionario.setValue(funcionarios.getFirst());
         inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
 
