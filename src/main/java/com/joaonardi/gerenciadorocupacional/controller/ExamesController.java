@@ -48,7 +48,7 @@ public class ExamesController {
             public Funcionario fromString(String s) {
                 for (Funcionario f : inputFuncionario.getItems()) {
                     String funcionario = f.getNome() + " - " + SetorCache.getSetorMapeado(f.getIdSetor());
-                    if (funcionario.equalsIgnoreCase(s)) {
+                    if (funcionario.equals(s)) {
                         return f;
                     }
                 }
