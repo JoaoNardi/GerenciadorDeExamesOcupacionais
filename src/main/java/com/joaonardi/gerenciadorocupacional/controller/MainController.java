@@ -23,10 +23,11 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 public class MainController {
     ExamesController examesController = new ExamesController();
+    FuncionarioController funcionarioController = new FuncionarioController();
+
     //tabela Principal Geral
     public TableView<Funcionario> tabelaPrincipal;
     public TableColumn<Funcionario, String> colunaFuncionarioGeral;
@@ -120,19 +121,23 @@ public class MainController {
                             if (mainService.verificaStatusFuncionario2(f) != null) {
                                 setText(
                                         "Exames Pendentes: " +
-                                        mainService.verificaStatusFuncionario2(f).stream()
-                                                .map(tipoExame -> tipoExame.getNome()).toList().toString()
-                                                .replace("[","").replace("]",""));
-                            } else { setText("ok");
+                                                mainService.verificaStatusFuncionario2(f).stream()
+                                                        .map(tipoExame -> tipoExame.getNome()).toList().toString()
+                                                        .replace("[", "").replace("]", ""));
+                            } else {
+                                setText("ok");
                             }
                         }
                     }
                 });
                 colunaAcoesGeral.setCellFactory(coluna -> new TableCell<>() {
                     final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
-                    Button btnLancarExameTipado = new Button();
+                    final Button btnLancarExameTipado = new Button();
 
-                    private final HBox hBox = new HBox(10, btnLancarExameTipado);
+                    final FontIcon iconeEditar = new FontIcon(FontAwesomeSolid.EDIT);
+                    final Button btnEditarFuncionario = new Button();
+
+                    private final HBox hBox = new HBox(10, btnLancarExameTipado, btnEditarFuncionario);
 
                     @Override
                     protected void updateItem(Node node, boolean b) {
@@ -145,10 +150,20 @@ public class MainController {
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
+                            btnEditarFuncionario.setGraphic(iconeEditar);
+                            btnLancarExameTipado.setGraphic(iconeLancar);
+                            btnLancarExameTipado.setDisable(true);
+                            btnEditarFuncionario.setOnAction(e -> {
+                                try {
+                                    editarFuncionario(getTableRow().getItem());
+                                } catch (Exception ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
                             if (mainService.verificaStatusFuncionario2(getTableRow().getItem()) != null) {
                                 int idTipoExame = mainService.verificaStatusFuncionario2(getTableRow().getItem()).getFirst().getId();
+                                btnLancarExameTipado.setDisable(false);
 
-                                btnLancarExameTipado.setGraphic(iconeLancar);
                                 btnLancarExameTipado.setOnAction(e -> {
                                     Exame exame = Exame.ExameBuilder.builder()
                                             .id(null)
@@ -165,7 +180,6 @@ public class MainController {
                         }
                     }
                 });
-                // TODO: add acoes
                 tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
             }
         } catch (Exception e) {
@@ -239,6 +253,14 @@ public class MainController {
 
 
         tabelaVencimentos.setItems(exameService.listarExamePorVencimento(diasVencimento));
+    }
+    @FXML
+    public void editarFuncionario(Funcionario funcionario) throws Exception {
+        if (funcionario != null){
+            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", null);
+            funcionarioController = janela.loader.getController();
+            funcionarioController.setFuncionario(funcionario);
+        }
     }
 
     @FXML
