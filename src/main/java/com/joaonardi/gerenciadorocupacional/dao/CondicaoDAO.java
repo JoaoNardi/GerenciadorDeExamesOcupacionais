@@ -105,12 +105,9 @@ public class CondicaoDAO {
                 preparedStatement.setString(i++, condicao.getParametro());
                 preparedStatement.setInt(i++, condicao.getPeriodicidade());
                 preparedStatement.addBatch();
-                preparedStatement.execute();
-                connection.commit();
             }
-
             preparedStatement.executeBatch();
-
+            connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
