@@ -48,8 +48,7 @@ public class MainService {
             boolean precisaFazerExame = false;
             if (condicao.getParametro() != null && condicao.getParametro().equalsIgnoreCase(setorFuncionario)) {
                 precisaFazerExame = true;
-            }
-            else {
+            } else {
                 try {
                     int idadeCond = Integer.parseInt(condicao.getParametro());
                     int idadeFuncionario = funcionarioService.calcularIdade(funcionario.getDataNascimento());
@@ -61,10 +60,12 @@ public class MainService {
             }
 
             if (precisaFazerExame && !funcionarioJaTemExame(funcionario, tipoExameCond)) {
-                examesPendentes.add(tipoExameCond);
+                if (!examesPendentes.contains(tipoExameCond)) {
+                    examesPendentes.add(tipoExameCond);
+                }
             }
         }
-        if (examesPendentes.isEmpty()){
+        if (examesPendentes.isEmpty()) {
             return null;
         }
         return examesPendentes;
@@ -81,7 +82,6 @@ public class MainService {
         }
         return false;
     }
-
 
 
     private boolean compara(int valorFuncionario, String operador, int parametro) {
