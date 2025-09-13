@@ -375,12 +375,20 @@ public class MainController {
         janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", this::setTodos);
     }
 
-    public void handleAbrirCertificado(ActionEvent event) {
-        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Certificado", this::setTodos);
+    public void handleTipoCertificado(ActionEvent event) {
+        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", this::setTodos);
     }
 
-    public void handleAbrirGerenciarCertificado(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Certificados", this::setTodos);
+    public void handleGerenciarTiposCertificado(ActionEvent event) {
+        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Tipos Certificados", this::setTodos);
+    }
+
+    public void handleLancarCertificado(ActionEvent event) {
+        janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", this::setTodos);
+    }
+
+    public void handleGerenciarCertificados(ActionEvent event) {
+        janela.abrirJanela("/view/CertificadoView.fxml", "Gerenciar Certificados", this::setTodos);
     }
 
     public void handleLancarExame(ActionEvent event) {

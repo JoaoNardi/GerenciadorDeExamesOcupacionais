@@ -39,8 +39,10 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Certificados">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirCertificado" text="Adicionar Certificado" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarCertificado" text="Gerenciar Certificados" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleTipoCertificado" text="Adicionar Tipo de Certificado" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleGerenciarTiposCertificado" text="Gerenciar Tipos de Certificados" />
+                   <MenuItem mnemonicParsing="false" onAction="#handleLancarCertificado" text="Lançar Certificados" />
+                   <MenuItem mnemonicParsing="false" onAction="#handleGerenciarCertificados" text="Gerenciar Certificados Lançados" />
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Relatórios">

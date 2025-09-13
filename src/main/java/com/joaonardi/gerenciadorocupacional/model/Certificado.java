@@ -10,6 +10,7 @@ public class Certificado {
     private Integer funcionarioId;
     private LocalDate dataEmissao;
     private LocalDate dataValidade;
+    private Integer atualizadoPor;
 
     public static final class CertificadoBuilder {
         private Integer id;
@@ -17,6 +18,7 @@ public class Certificado {
         private Integer funcionarioId;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
+        private Integer atualizadoPor;
 
         private CertificadoBuilder() {
         }
@@ -50,13 +52,19 @@ public class Certificado {
             return this;
         }
 
+        public CertificadoBuilder atualizadoPor(Integer atualizadoPor) {
+            this.atualizadoPor = atualizadoPor;
+            return this;
+        }
+
         public Certificado build() {
             Certificado certificado = new Certificado();
-            certificado.tipoCertificadoId = this.tipoCertificadoId;
-            certificado.id = this.id;
-            certificado.dataEmissao = this.dataEmissao;
             certificado.dataValidade = this.dataValidade;
+            certificado.dataEmissao = this.dataEmissao;
             certificado.funcionarioId = this.funcionarioId;
+            certificado.id = this.id;
+            certificado.atualizadoPor = this.atualizadoPor;
+            certificado.tipoCertificadoId = this.tipoCertificadoId;
             return certificado;
         }
     }

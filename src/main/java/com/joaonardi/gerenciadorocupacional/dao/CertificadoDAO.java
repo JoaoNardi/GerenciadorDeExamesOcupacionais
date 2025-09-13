@@ -16,10 +16,11 @@ public class CertificadoDAO {
     private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
 
     private static final String CADASTRAR_CERTIFICADO = "INSERT INTO CERTIFICADOS (id, id_tipo_certificado, idFuncionario, dataEmissao, " +
-            "dataValidade" +
-            " tempo_validade) VALUES (NULL, ?, ?, ?, ?)";
+            "dataValidade, atualizado_por" +
+            " tempo_validade) VALUES (NULL, ?, ?, ?, ?,?)";
     private static final String CONSULTAR_CERTIFICADO = "SELECT * FROM CERTIFICADOS WHERE id = ?";
-    private static final String ALTERAR_CERTIFICADO = "UPDATE CERTIFICADOS SET tipo_certificado_id = ?, funcionario_id = ? , data_emissão = ? " +
+    private static final String ALTERAR_CERTIFICADO = "UPDATE CERTIFICADOS SET tipo_certificado_id = ?, funcionario_id = ? , data_emissão = ? ," +
+            "atualizado_por = ?" +
             "WHERE id = ?";
     private static final String DELETAR_CERTIFICADO = "DELETE FROM CERTIFICADOS WHERE id = ?";
     private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS";
@@ -36,6 +37,7 @@ public class CertificadoDAO {
             preparedStatement.setInt(i++, certificado.getFuncionarioId());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
+            preparedStatement.setInt(i++, certificado.getAtualizadoPor());
 
             preparedStatement.execute();
             connection.commit();
@@ -86,6 +88,7 @@ public class CertificadoDAO {
             preparedStatement.setInt(i++, certificado.getFuncionarioId());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
+            preparedStatement.setInt(i++, certificado.getAtualizadoPor());
             preparedStatement.setInt(i++, certificado.getId());
 
             int linhasAfetadas = preparedStatement.executeUpdate();

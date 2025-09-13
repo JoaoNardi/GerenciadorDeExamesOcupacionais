@@ -1,7 +1,9 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class TipoCertificado {
     private Integer id;
