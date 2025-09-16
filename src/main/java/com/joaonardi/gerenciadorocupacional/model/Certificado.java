@@ -6,7 +6,7 @@ import java.time.LocalDate;
 @Getter
 public class Certificado {
     private Integer id;
-    private Integer tipoCertificadoId;
+    private Integer idTipoCertificado;
     private Integer funcionarioId;
     private LocalDate dataEmissao;
     private LocalDate dataValidade;
@@ -14,7 +14,7 @@ public class Certificado {
 
     public static final class CertificadoBuilder {
         private Integer id;
-        private Integer tipoCertificadoId;
+        private Integer idTipoCertificado;
         private Integer funcionarioId;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
@@ -32,8 +32,8 @@ public class Certificado {
             return this;
         }
 
-        public CertificadoBuilder tipoCertificadoId(Integer tipoCertificadoId) {
-            this.tipoCertificadoId = tipoCertificadoId;
+        public CertificadoBuilder idTipoCertificado(Integer idTipoCertificado) {
+            this.idTipoCertificado = idTipoCertificado;
             return this;
         }
 
@@ -64,7 +64,7 @@ public class Certificado {
             certificado.funcionarioId = this.funcionarioId;
             certificado.id = this.id;
             certificado.atualizadoPor = this.atualizadoPor;
-            certificado.tipoCertificadoId = this.tipoCertificadoId;
+            certificado.idTipoCertificado = this.idTipoCertificado;
             return certificado;
         }
     }

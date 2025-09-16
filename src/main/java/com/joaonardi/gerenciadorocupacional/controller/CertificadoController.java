@@ -83,9 +83,10 @@ public class CertificadoController {
                 inputTipoCertificado.getValue()));
     }
 
+
     public void handleSalvar(ActionEvent event) {
         Certificado certificado = Certificado.CertificadoBuilder.builder()
-                .tipoCertificadoId(inputTipoCertificado.getValue().getId())
+                .idTipoCertificado(inputTipoCertificado.getValue().getId())
                 .funcionarioId(inputFuncionario.getValue().getId())
                 .dataEmissao(inputDataEmissao.getValue())
                 .dataValidade(certificadoService.calcularValidade(inputDataEmissao.getValue(),inputTipoCertificado.getValue()))

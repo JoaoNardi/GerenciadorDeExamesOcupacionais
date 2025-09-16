@@ -2,11 +2,11 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CertificadoDAO {
     private static PreparedStatement preparedStatement = null;
@@ -15,9 +15,9 @@ public class CertificadoDAO {
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
 
-    private static final String CADASTRAR_CERTIFICADO = "INSERT INTO CERTIFICADOS (id, id_tipo_certificado, idFuncionario, dataEmissao, " +
-            "dataValidade, atualizado_por" +
-            " tempo_validade) VALUES (NULL, ?, ?, ?, ?,?)";
+    private static final String CADASTRAR_CERTIFICADO = "INSERT INTO CERTIFICADOS (id, tipo_certificado_id, funcionario_id, data_emissao, " +
+            "data_validade, atualizado_por)" +
+            "VALUES (NULL, ?, ?, ?, ?,?)";
     private static final String CONSULTAR_CERTIFICADO = "SELECT * FROM CERTIFICADOS WHERE id = ?";
     private static final String ALTERAR_CERTIFICADO = "UPDATE CERTIFICADOS SET tipo_certificado_id = ?, funcionario_id = ? , data_emissão = ? ," +
             "atualizado_por = ?" +
@@ -33,11 +33,16 @@ public class CertificadoDAO {
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR_CERTIFICADO);
             int i = 1;
-            preparedStatement.setInt(i++,certificado.getTipoCertificadoId());
+            preparedStatement.setInt(i++,certificado.getIdTipoCertificado());
             preparedStatement.setInt(i++, certificado.getFuncionarioId());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
-            preparedStatement.setInt(i++, certificado.getAtualizadoPor());
+            if (certificado.getAtualizadoPor() == null) {
+                preparedStatement.setObject(i++, null, Types.INTEGER);
+            } else {
+                preparedStatement.setInt(i++,
+                        certificado.getAtualizadoPor());
+            }
 
             preparedStatement.execute();
             connection.commit();
@@ -84,7 +89,7 @@ public class CertificadoDAO {
         try {
             preparedStatement = connection.prepareStatement(ALTERAR_CERTIFICADO);
             int i = 1;
-            preparedStatement.setInt(i++, certificado.getTipoCertificadoId());
+            preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
             preparedStatement.setInt(i++, certificado.getFuncionarioId());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
@@ -129,9 +134,9 @@ public class CertificadoDAO {
         }
     }
 
-    public List<Certificado> listarCertificados() {
+    public ObservableList<Certificado> listarCertificados() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        List<Certificado> listaCertificados = new ArrayList<>();
+        ObservableList<Certificado> listaCertificados = FXCollections.observableArrayList();
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
@@ -144,6 +149,7 @@ public class CertificadoDAO {
                         .funcionarioId(resultSet.getInt("funcionario_id"))
                         .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
                         .dataValidade(resultSet.getDate("data_validade").toLocalDate())
+                        .atualizadoPor(resultSet.getInt("atualizado_por"))
                         .build();
                 listaCertificados.add(certificado);
             }
