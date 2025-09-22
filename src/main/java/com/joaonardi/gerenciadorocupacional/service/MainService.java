@@ -3,7 +3,6 @@ package com.joaonardi.gerenciadorocupacional.service;
 import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
 import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
-import com.joaonardi.gerenciadorocupacional.cache.TipoExameCache;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,15 +15,15 @@ public class MainService {
     private static ObservableList<Condicao> listaCondicoes = condicaoService.listarTodasCondicoes();
     private TipoExameService tipoExameService = new TipoExameService();
     private FuncionarioService funcionarioService = new FuncionarioService();
+    private static final ExameService exameService = new ExameService();
     public static ObservableList<Exame> listaExames = FXCollections.observableArrayList();
     private final SetorService setorService = new SetorService();
+    private TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
 
     public static void loadInicial() throws Exception {
         listaCondicoes = condicaoService.listarTodasCondicoes();
-        ExameCache.carregarExamesVigentes();
-        listaExames = ExameCache.todosExames;
-        TipoExameCache.carregarTiposExames();
+        listaExames = exameService.listarExamesVingentes();
         FuncionarioCache.carregarFuncionarios(true);
         SetorCache.carregarSetores();
     }
@@ -92,6 +91,13 @@ public class MainService {
             case "!=" -> valorFuncionario != parametro;
             default -> false;
         };
+    }
+
+    public String descreveTipo(Exame f) {
+        return  tipoExameService.getTipoExameMapeadoPorId(f.getIdTipoExame()).getNome();
+    }
+    public String descreveTipo(Certificado f) {
+        return tipoCertificadoService.getTipoCertificadoMapeadoPorId(f.getIdTipoCertificado()).getNome();
     }
 
 }

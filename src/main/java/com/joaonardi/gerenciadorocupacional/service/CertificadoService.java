@@ -1,11 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.cache.CertificadoCache;
-import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
 import com.joaonardi.gerenciadorocupacional.dao.CertificadoDAO;
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
-import com.joaonardi.gerenciadorocupacional.model.Exame;
-import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

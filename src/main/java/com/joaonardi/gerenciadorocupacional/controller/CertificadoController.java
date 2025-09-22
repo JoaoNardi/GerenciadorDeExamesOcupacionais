@@ -33,7 +33,7 @@ public class CertificadoController {
     @FXML
     private void initialize() throws Exception {
         inputDataValidade.setEditable(false);
-        ObservableList<TipoCertificado> certificados = tipoCertificadoService.carregarTiposCertificado();
+        ObservableList<TipoCertificado> certificados = tipoCertificadoService.listarTiposCertificados();
         FuncionarioCache.carregarFuncionarios(true);
         ObservableList<Funcionario> funcionarios = FuncionarioCache.todosFuncionarios;
         inputFuncionario.setItems(funcionarios);
@@ -87,7 +87,7 @@ public class CertificadoController {
     public void handleSalvar(ActionEvent event) {
         Certificado certificado = Certificado.CertificadoBuilder.builder()
                 .idTipoCertificado(inputTipoCertificado.getValue().getId())
-                .funcionarioId(inputFuncionario.getValue().getId())
+                .idFuncionario(inputFuncionario.getValue().getId())
                 .dataEmissao(inputDataEmissao.getValue())
                 .dataValidade(certificadoService.calcularValidade(inputDataEmissao.getValue(),inputTipoCertificado.getValue()))
                 .atualizadoPor(null)

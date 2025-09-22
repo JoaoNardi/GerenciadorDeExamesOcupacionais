@@ -34,7 +34,7 @@ public class CertificadoDAO {
             preparedStatement = connection.prepareStatement(CADASTRAR_CERTIFICADO);
             int i = 1;
             preparedStatement.setInt(i++,certificado.getIdTipoCertificado());
-            preparedStatement.setInt(i++, certificado.getFuncionarioId());
+            preparedStatement.setInt(i++, certificado.getIdFuncionario());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             if (certificado.getAtualizadoPor() == null) {
@@ -66,8 +66,8 @@ public class CertificadoDAO {
             if (resultSet.next()) {
                 certificado = Certificado.CertificadoBuilder.builder()
                         .id(resultSet.getInt("id"))
-                        .tipoCertificadoId(resultSet.getInt("tipo_certificado_id"))
-                        .funcionarioId(resultSet.getInt("funcionario_id"))
+                        .idTipoCertificado(resultSet.getInt("tipo_certificado_id"))
+                        .idFuncionario(resultSet.getInt("funcionario_id"))
                         .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
                         .dataValidade(resultSet.getDate("data_validade").toLocalDate())
                         .build();
@@ -90,7 +90,7 @@ public class CertificadoDAO {
             preparedStatement = connection.prepareStatement(ALTERAR_CERTIFICADO);
             int i = 1;
             preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
-            preparedStatement.setInt(i++, certificado.getFuncionarioId());
+            preparedStatement.setInt(i++, certificado.getIdFuncionario());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
             preparedStatement.setInt(i++, certificado.getAtualizadoPor());
@@ -145,8 +145,8 @@ public class CertificadoDAO {
             while (resultSet.next()) {
                 Certificado certificado = Certificado.CertificadoBuilder.builder()
                         .id(resultSet.getInt("id"))
-                        .tipoCertificadoId(resultSet.getInt("tipo_certificado_id"))
-                        .funcionarioId(resultSet.getInt("funcionario_id"))
+                        .idTipoCertificado(resultSet.getInt("tipo_certificado_id"))
+                        .idFuncionario(resultSet.getInt("funcionario_id"))
                         .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
                         .dataValidade(resultSet.getDate("data_validade").toLocalDate())
                         .atualizadoPor(resultSet.getInt("atualizado_por"))

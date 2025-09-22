@@ -1,32 +1,32 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
-
 @Getter
-public class Exame {
-    @Setter
-    private Integer id;
+public class Exame extends Tipo {
     private Integer idTipoExame;
-    private Integer idFuncionario;
-    private LocalDate dataEmissao;
-    private LocalDate dataValidade;
-    private Integer atualizadoPor;
-
 
     public static final class ExameBuilder {
-        private Integer id;
         private Integer idTipoExame;
+        private Integer id;
         private Integer idFuncionario;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
         private Integer atualizadoPor;
+
+        @Override
+        public String toString() {
+            return "ExameBuilder{" +
+                    "idTipoExame=" + idTipoExame +
+                    ", id=" + id +
+                    ", idFuncionario=" + idFuncionario +
+                    ", dataEmissao=" + dataEmissao +
+                    ", dataValidade=" + dataValidade +
+                    ", atualizadoPor=" + atualizadoPor +
+                    '}';
+        }
 
         private ExameBuilder() {
         }
@@ -35,13 +35,13 @@ public class Exame {
             return new ExameBuilder();
         }
 
-        public ExameBuilder id(Integer id) {
-            this.id = id;
+        public ExameBuilder idTipoExame(Integer idTipoExame) {
+            this.idTipoExame = idTipoExame;
             return this;
         }
 
-        public ExameBuilder idTipoExame(Integer idTipoExame) {
-            this.idTipoExame = idTipoExame;
+        public ExameBuilder id(Integer id) {
+            this.id = id;
             return this;
         }
 
@@ -67,12 +67,12 @@ public class Exame {
 
         public Exame build() {
             Exame exame = new Exame();
-            exame.id = this.id;
+            exame.setId(id);
+            exame.dataEmissao = this.dataEmissao;
+            exame.idTipoExame = this.idTipoExame;
+            exame.dataValidade = this.dataValidade;
             exame.atualizadoPor = this.atualizadoPor;
             exame.idFuncionario = this.idFuncionario;
-            exame.dataEmissao = this.dataEmissao;
-            exame.dataValidade = this.dataValidade;
-            exame.idTipoExame = this.idTipoExame;
             return exame;
         }
     }

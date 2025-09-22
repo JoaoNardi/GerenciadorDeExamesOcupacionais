@@ -26,7 +26,7 @@ public class GerenciarCertificadosController {
     @FXML
     public void initialize() {
 
-        tiposCertificado = tipoCertificadoService.carregarTiposCertificado();
+        tiposCertificado = tipoCertificadoService.listarTiposCertificados();
 
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaPerioicidade.setCellValueFactory(new PropertyValueFactory<>("periodicidade"));
@@ -54,7 +54,7 @@ public class GerenciarCertificadosController {
             janela.abrirJanela("/view/TipoCertificadoView.fxml","Editar Certificado",null);
             tipoCertificadoController = janela.loader.getController();
             tipoCertificadoController.setTipoCertificado(tipoCertificadoSelecionado);
-            janela.stage.setOnHidden(e -> {tiposCertificado.clear(); tiposCertificado.addAll(tipoCertificadoService.carregarTiposCertificado());
+            janela.stage.setOnHidden(e -> {tiposCertificado.clear(); tiposCertificado.addAll(tipoCertificadoService.listarTiposCertificados());
                 tabelaCertificados.setItems(tiposCertificado);
             });
         }

@@ -1,21 +1,19 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
+
 @Getter
-public class Certificado {
-    private Integer id;
+public class Certificado extends Tipo {
     private Integer idTipoCertificado;
-    private Integer funcionarioId;
-    private LocalDate dataEmissao;
-    private LocalDate dataValidade;
-    private Integer atualizadoPor;
+
 
     public static final class CertificadoBuilder {
-        private Integer id;
         private Integer idTipoCertificado;
-        private Integer funcionarioId;
+        private Integer id;
+        private Integer idFuncionario;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
         private Integer atualizadoPor;
@@ -23,13 +21,20 @@ public class Certificado {
         private CertificadoBuilder() {
         }
 
-        public static CertificadoBuilder builder() {
-            return new CertificadoBuilder();
+        @Override
+        public String toString() {
+            return "CertificadoBuilder{" +
+                    "idTipoCertificado=" + idTipoCertificado +
+                    ", id=" + id +
+                    ", idFuncionario=" + idFuncionario +
+                    ", dataEmissao=" + dataEmissao +
+                    ", dataValidade=" + dataValidade +
+                    ", atualizadoPor=" + atualizadoPor +
+                    '}';
         }
 
-        public CertificadoBuilder id(Integer id) {
-            this.id = id;
-            return this;
+        public static CertificadoBuilder builder() {
+            return new CertificadoBuilder();
         }
 
         public CertificadoBuilder idTipoCertificado(Integer idTipoCertificado) {
@@ -37,8 +42,13 @@ public class Certificado {
             return this;
         }
 
-        public CertificadoBuilder funcionarioId(Integer funcionarioId) {
-            this.funcionarioId = funcionarioId;
+        public CertificadoBuilder id(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public CertificadoBuilder idFuncionario(Integer idFuncionario) {
+            this.idFuncionario = idFuncionario;
             return this;
         }
 
@@ -59,12 +69,12 @@ public class Certificado {
 
         public Certificado build() {
             Certificado certificado = new Certificado();
-            certificado.dataValidade = this.dataValidade;
+            certificado.setId(id);
             certificado.dataEmissao = this.dataEmissao;
-            certificado.funcionarioId = this.funcionarioId;
-            certificado.id = this.id;
-            certificado.atualizadoPor = this.atualizadoPor;
+            certificado.dataValidade = this.dataValidade;
             certificado.idTipoCertificado = this.idTipoCertificado;
+            certificado.atualizadoPor = this.atualizadoPor;
+            certificado.idFuncionario = this.idFuncionario;
             return certificado;
         }
     }

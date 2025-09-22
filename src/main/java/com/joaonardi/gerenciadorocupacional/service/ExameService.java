@@ -19,6 +19,10 @@ public class ExameService {
     private CondicaoDAO condicaoDAO = new CondicaoDAO();
     private final FuncionarioService funcionarioService = new FuncionarioService();
 
+    public ObservableList<Exame> listarExamesVingentes(){
+        return exameDAO.listarExamesVigentes(true);
+    }
+
     public Exame lancarExame(Exame exame) {
         Exame exameCadastrado = exameDAO.cadastrarExame(exame);
         ExameCache.carregarExamesVigentes();
@@ -99,10 +103,6 @@ public class ExameService {
         };
     }
 
-    public ObservableList<Exame> listarExames() {
-        ExameCache.carregarExamesVigentes();
-        return ExameCache.todosExames;
-    }
 
     public String vencimentos(TableColumn.CellDataFeatures<Exame, String> exame) {
         if (exame.getValue().getDataValidade() == null) {
@@ -126,11 +126,10 @@ public class ExameService {
     }
 
     public ObservableList<Exame> listarExamePorVencimento(int diasVencimento) {
-
-        List<Exame> list = ExameCache.todosExames;
+        ObservableList<Exame> list = listarExamesVingentes();
         LocalDate hoje = LocalDate.now();
         if (diasVencimento == 183) {
-            return FXCollections.observableArrayList(list);
+            return list;
         } else {
             List<Exame> list2 = list.stream()
                     .filter(f -> {
