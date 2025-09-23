@@ -104,11 +104,11 @@ public class ExameService {
     }
 
 
-    public String vencimentos(TableColumn.CellDataFeatures<Exame, String> exame) {
-        if (exame.getValue().getDataValidade() == null) {
+    public String vencimentos(Tipo tipo) {
+        if (tipo.getDataValidade() == null) {
             return "Sem Periodicidade";
         }
-        Integer dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getValue().getDataValidade());
+        Integer dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), tipo.getDataValidade());
         String status = "Faltam: " + dias + " para o vencimento";
         if (dias < 0) {
             status = "Vencido " + dias + " de atraso";

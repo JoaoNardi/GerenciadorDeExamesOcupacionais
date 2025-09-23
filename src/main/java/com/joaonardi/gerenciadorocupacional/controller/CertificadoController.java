@@ -7,11 +7,13 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.CertificadoService;
+import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.util.Duration;
@@ -25,10 +27,15 @@ public class CertificadoController {
     public ComboBox<TipoCertificado> inputTipoCertificado;
     public DatePicker inputDataEmissao;
     public DatePicker inputDataValidade;
+    public Button btnSalvar;
+    public Button btnCancelar;
+
+    Certificado certificado = null;
 
     Janela janela = new Janela();
     TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     CertificadoService certificadoService = new CertificadoService();
+    FuncionarioService funcionarioService = new FuncionarioService();
 
     @FXML
     private void initialize() throws Exception {
@@ -85,16 +92,43 @@ public class CertificadoController {
 
 
     public void handleSalvar(ActionEvent event) {
-        Certificado certificado = Certificado.CertificadoBuilder.builder()
-                .idTipoCertificado(inputTipoCertificado.getValue().getId())
-                .idFuncionario(inputFuncionario.getValue().getId())
-                .dataEmissao(inputDataEmissao.getValue())
-                .dataValidade(certificadoService.calcularValidade(inputDataEmissao.getValue(),inputTipoCertificado.getValue()))
-                .atualizadoPor(null)
-                .build();
-        certificadoService.cadastrarCertificado(certificado);
+        if (certificado == null) {
+            Certificado certificado = Certificado.CertificadoBuilder.builder()
+                    .idTipoCertificado(inputTipoCertificado.getValue().getId())
+                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .dataEmissao(inputDataEmissao.getValue())
+                    .dataValidade(inputDataValidade.getValue())
+                    .atualizadoPor(null)
+                    .build();
+            certificadoService.cadastrarCertificado(certificado);
+        }
+        if (certificado != null || certificado.getId() == null || certificado.getAtualizadoPor() == null){
+            Certificado certificado = Certificado.CertificadoBuilder.builder()
+                    .id(this.certificado.getId())
+                    .idTipoCertificado(inputTipoCertificado.getValue().getId())
+                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .dataEmissao(inputDataEmissao.getValue())
+                    .dataValidade(inputDataValidade.getValue())
+                    .atualizadoPor(null)
+                    .build();
+            certificadoService.editarCertificado(certificado);
+        }
+        janela.fecharJanela(btnSalvar);
     }
 
     public void handleCancelar(ActionEvent event) {
+        janela.fecharJanela(btnCancelar);
+    }
+
+    public void setCertificado(Certificado certificadoSelecionado) {
+
+        this.certificado = certificadoSelecionado;
+        if (certificado != null) {
+            inputFuncionario.setValue(funcionarioService.getFuncionarioMapeadoPorId(certificado.getIdFuncionario()));
+            inputTipoCertificado.setValue(tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
+            inputDataEmissao.setValue(certificadoSelecionado.getDataEmissao());
+            inputDataValidade.setValue(certificadoSelecionado.getDataEmissao());
+
+        }
     }
 }

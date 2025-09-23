@@ -19,24 +19,25 @@ public class CertificadoDAO {
             "data_validade, atualizado_por)" +
             "VALUES (NULL, ?, ?, ?, ?,?)";
     private static final String CONSULTAR_CERTIFICADO = "SELECT * FROM CERTIFICADOS WHERE id = ?";
-    private static final String ALTERAR_CERTIFICADO = "UPDATE CERTIFICADOS SET tipo_certificado_id = ?, funcionario_id = ? , data_emissão = ? ," +
+    private static final String ALTERAR_CERTIFICADO = "UPDATE CERTIFICADOS SET tipo_certificado_id = ?, funcionario_id = ? , data_emissao = ? , " +
+            "data_validade = ?," +
             "atualizado_por = ?" +
             "WHERE id = ?";
     private static final String DELETAR_CERTIFICADO = "DELETE FROM CERTIFICADOS WHERE id = ?";
-    private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS";
+    private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS WHERE atualizado_por is NULL";
 
     public CertificadoDAO() {
     }
 
-    public void cadastrarCertificado(Certificado certificado) {
+    public Certificado cadastrarCertificado(Certificado certificado) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            preparedStatement = connection.prepareStatement(CADASTRAR_CERTIFICADO);
+            preparedStatement = connection.prepareStatement(CADASTRAR_CERTIFICADO, Statement.RETURN_GENERATED_KEYS);
             int i = 1;
-            preparedStatement.setInt(i++,certificado.getIdTipoCertificado());
+            preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
             preparedStatement.setInt(i++, certificado.getIdFuncionario());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
-            preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
+            preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
             if (certificado.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {
@@ -45,14 +46,21 @@ public class CertificadoDAO {
             }
 
             preparedStatement.execute();
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int idGerado = rs.getInt(1);
+                    certificado.setId(idGerado);
+                }
+            }
             connection.commit();
 
             JOptionPane.showMessageDialog(null, "Certificado cadastrado com sucesso");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
+        return certificado;
     }
 
     public Certificado consultarCertificado(int id) {
@@ -78,7 +86,7 @@ public class CertificadoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
         return certificado;
     }
@@ -93,7 +101,11 @@ public class CertificadoDAO {
             preparedStatement.setInt(i++, certificado.getIdFuncionario());
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
             preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
-            preparedStatement.setInt(i++, certificado.getAtualizadoPor());
+            if (certificado.getAtualizadoPor() == null) {
+                preparedStatement.setObject(i++, null);
+            } else {
+                preparedStatement.setInt(i++, certificado.getAtualizadoPor());
+            }
             preparedStatement.setInt(i++, certificado.getId());
 
             int linhasAfetadas = preparedStatement.executeUpdate();
@@ -108,7 +120,7 @@ public class CertificadoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -130,7 +142,7 @@ public class CertificadoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -157,7 +169,7 @@ public class CertificadoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
 
         return listaCertificados;

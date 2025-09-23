@@ -22,8 +22,8 @@ public class CertificadoService {
         return dataValidade;
     }
 
-    public void cadastrarCertificado(Certificado certificado) {
-        certificadoDAO.cadastrarCertificado(certificado);
+    public Certificado cadastrarCertificado(Certificado certificado) {
+       return certificadoDAO.cadastrarCertificado(certificado);
     }
 
     public ObservableList<Certificado> listarCertificados(){
@@ -59,5 +59,14 @@ public class CertificadoService {
 
             return FXCollections.observableArrayList(list2);
         }
+    }
+
+    public void editarCertificado(Certificado certificado) {
+        certificadoDAO.alterarCertificado(certificado);
+        listarCertificados();
+    }
+
+    public void deletarCertificado(Certificado certificado) {
+        certificadoDAO.deletarCertificado(certificado.getId());
     }
 }

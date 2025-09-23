@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 
 public class MainController {
     ExamesController examesController = new ExamesController();
+    CertificadoController certificadoController = new CertificadoController();
     FuncionarioController funcionarioController = new FuncionarioController();
 
     //tabela Principal Geral
@@ -236,37 +238,65 @@ public class MainController {
                         "/yyyy")) : null;
                 return new SimpleStringProperty(validade);
             });
-//        colunaStatusVencimentos.setCellValueFactory(f -> {
-//            return new SimpleStringProperty(exameService.vencimentos(f.getValue()));
-//        });
-//        colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
-//            final FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
-//            final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
-//            Button btnLancarNovoExame = new Button();
-//            Button btnOpcoesExame = new Button();
-//
-//            private final HBox hBox = new HBox(10, btnLancarNovoExame, btnOpcoesExame);
-//
-//            @Override
-//            protected void updateItem(Node node, boolean b) {
-//                super.updateItem(node, b);
-//                if (b) {
-//                    setGraphic(null);
-//                } else {
-//                    btnOpcoesExame.setGraphic(iconeOpcoes);
-//                    btnOpcoesExame.setOnAction(e -> {
-//                        handleOpcoesExame(getTableView().getItems().get(getIndex()), btnOpcoesExame);
-//
-//                    });
-//                    btnLancarNovoExame.setGraphic(iconeLancar);
-//                    btnLancarNovoExame.setOnAction(e -> {
-//                        Exame exame = getTableView().getItems().get(getIndex()).;
-//                        handleLancarExame(exame, btnLancarNovoExame);
-//                    });
-//                    setGraphic(hBox);
-//                }
-//            }
-//        });
+        colunaStatusVencimentos.setCellValueFactory(f -> {
+            return new SimpleStringProperty(exameService.vencimentos(f.getValue()));
+        });
+        colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
+            final FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
+            final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
+            Button btnLancarNovoTipo = new Button();
+            Button btnOpcoes = new Button();
+
+            private final HBox hBox = new HBox(10, btnLancarNovoTipo, btnOpcoes);
+
+
+            @Override
+            protected void updateItem(Node node, boolean b) {
+                super.updateItem(node, b);
+                if (b || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+                    setGraphic(null);
+                    return;
+                }
+                Tipo linha = coluna.getTableView().getItems().get(getIndex());
+                ObservableValue<?> valorColuna = colunaTipoVencimentos.getCellObservableValue(linha);
+                String tipo = String.valueOf(valorColuna.getValue());
+
+                if (tipo.equals("Exame")) {
+                    if (b) {
+                        setGraphic(null);
+                    } else {
+                        btnOpcoes.setGraphic(iconeOpcoes);
+                        btnOpcoes.setOnAction(e -> {
+                            handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
+
+                        });
+                        btnLancarNovoTipo.setGraphic(iconeLancar);
+                        btnLancarNovoTipo.setOnAction(e -> {
+                            Exame exame = (Exame) getTableView().getItems().get(getIndex());
+                            handleLancarExame(exame, btnLancarNovoTipo);
+                        });
+                        setGraphic(hBox);
+                    }
+                }
+                if (tipo.equals("Certificado")){
+                    if (b) {
+                        setGraphic(null);
+                    } else {
+                        btnOpcoes.setGraphic(iconeOpcoes);
+                        btnOpcoes.setOnAction(e -> {
+                            handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
+
+                        });
+                        btnLancarNovoTipo.setGraphic(iconeLancar);
+                        btnLancarNovoTipo.setOnAction(e -> {
+                            Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
+                            handleLancarExame(certificado, btnLancarNovoTipo);
+                        });
+                        setGraphic(hBox);
+                    }
+                }
+            }
+        });
 
 
             ObservableList<Tipo> listaTudo = FXCollections.observableArrayList();
@@ -325,25 +355,77 @@ public class MainController {
         popOver.setDetachable(false);
         popOver.show(anchor);
     }
+    @FXML
+    private void handleLancarExame(Certificado certificado, Node anchor) {
+        Label label = new Label("Regularizar: " + tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
+        Label label1 = new Label("Data de emissão");
+        DatePicker datePicker = new DatePicker();
+        datePicker.setValue(LocalDate.now());
+        Button btnConfirmar = new Button("Concluir");
+        btnConfirmar.setOnAction(e -> {
+            Certificado certificado1 = Certificado.CertificadoBuilder.builder()
+                    .id(null)
+                    .idTipoCertificado(certificado.getIdTipoCertificado())
+                    .idFuncionario(certificado.getIdFuncionario())
+                    .dataEmissao(datePicker.getValue())
+                    .dataValidade(certificadoService.calcularValidade(datePicker.getValue(),
+                            tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado())))
+                    .atualizadoPor(null)
+                    .build();
+            certificado1 = certificadoService.cadastrarCertificado(certificado1);
+            if (certificado.getId() != null) {
+                Certificado certificado2 = Certificado.CertificadoBuilder.builder()
+                        .id(certificado.getId())
+                        .idTipoCertificado(certificado.getIdTipoCertificado())
+                        .idFuncionario(certificado.getIdFuncionario())
+                        .dataEmissao(certificado.getDataEmissao())
+                        .dataValidade(certificado.getDataValidade())
+                        .atualizadoPor(certificado1.getId())
+                        .build();
+                certificadoService.editarCertificado(certificado2);
+            }
+        });
+
+        VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
+        layout.setPadding(new Insets(10));
+        PopOver popOver = new PopOver(layout);
+        popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+        popOver.setDetachable(false);
+        popOver.show(anchor);
+    }
 
     @FXML
-    private void handleOpcoesExame(Exame exame, Node anchor) {
+    private void handleOpcoes(Tipo tipo, Node anchor, String tipoDescritivo) {
         FontIcon iconeLixeira = new FontIcon(FontAwesomeSolid.TRASH);
         FontIcon iconeEditar = new FontIcon(FontAwesomeSolid.PENCIL_ALT);
         Button btnEditarExame = new Button();
         Button btnDeletarExame = new Button();
         btnEditarExame.setGraphic(iconeEditar);
         btnDeletarExame.setGraphic(iconeLixeira);
-        btnDeletarExame.setOnAction(e -> {
-            handleDeletarExame(exame);
-        });
-        btnEditarExame.setOnAction(event -> {
-            try {
-                handleEditarExame(exame);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        if (tipoDescritivo.equals("Exame")) {
+            btnDeletarExame.setOnAction(e -> {
+                handleDeletarExame((Exame) tipo);
+            });
+            btnEditarExame.setOnAction(event -> {
+                try {
+                    handleEditarExame((Exame) tipo);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        if (tipoDescritivo.equals("Certificado")){
+            btnDeletarExame.setOnAction(e -> {
+                handleDeletarCertificado((Certificado) tipo);
+            });
+            btnEditarExame.setOnAction(event -> {
+                try {
+                    handleEditarCertificado((Certificado) tipo);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
         HBox layout = new HBox(10, btnEditarExame, btnDeletarExame);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(10));
@@ -357,6 +439,10 @@ public class MainController {
         exameService.deletarExame(exame.getId());
         setTodos();
     }
+    public void handleDeletarCertificado(Certificado certificado){
+        certificadoService.deletarCertificado(certificado);
+        setTodos();
+    }
 
     @FXML
     public void handleEditarExame(Exame exame) throws Exception {
@@ -365,6 +451,16 @@ public class MainController {
             janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", this::setTodos);
             examesController = janela.loader.getController();
             examesController.setExame(exameSelecionado);
+        }
+    }
+
+    @FXML
+    public void handleEditarCertificado(Certificado certificado) throws Exception {
+        Certificado certificadoSelecionado = certificado;
+        if (certificadoSelecionado != null) {
+            janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", this::setTodos);
+            certificadoController = janela.loader.getController();
+            certificadoController.setCertificado(certificadoSelecionado);
         }
     }
 
