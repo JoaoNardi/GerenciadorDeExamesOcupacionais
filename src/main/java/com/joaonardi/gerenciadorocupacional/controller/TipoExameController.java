@@ -173,7 +173,7 @@ public class TipoExameController {
                     btnRemover.setOnAction(e -> {
                         int index = getTableRow().getIndex();
                         listaDeCondicoes.remove(index);
-                        if (getTableRow().getItem() != null) {
+                        if (getTableRow().getItem() != null && getTableRow().getItem().getId() != null) {
                             condicaoService.deletarCondicao(getTableRow().getItem());
                         }
                     });
