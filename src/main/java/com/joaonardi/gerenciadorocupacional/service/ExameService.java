@@ -97,8 +97,8 @@ public class ExameService {
         return switch (operador) {
             case "==" -> valorFuncionario.equalsIgnoreCase(parametro);
             case "!=" -> !valorFuncionario.equalsIgnoreCase(parametro);
-            case "<>" -> valorFuncionario.contains(parametro); // seu operador "contem"
-            case "><" -> !valorFuncionario.contains(parametro); // seu operador "exceto"
+            case "<>" -> valorFuncionario.contains(parametro);
+            case "><" -> !valorFuncionario.contains(parametro);
             default -> false;
         };
     }

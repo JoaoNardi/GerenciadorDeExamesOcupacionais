@@ -125,10 +125,10 @@ public class MainController {
                             setText(null);
                         } else {
                             Funcionario f = getTableView().getItems().get(getIndex());
-                            if (mainService.verificaStatusFuncionario2(f) != null) {
+                            if (mainService.verificaStatusFuncionario(f) != null) {
                                 setText(
                                         "Exames Pendentes: " +
-                                                mainService.verificaStatusFuncionario2(f).stream()
+                                                mainService.verificaStatusFuncionario(f).stream()
                                                         .map(tipoExame -> tipoExame.getNome()).toList().toString()
                                                         .replace("[", "").replace("]", ""));
                             } else {
@@ -167,20 +167,28 @@ public class MainController {
                                     throw new RuntimeException(ex);
                                 }
                             });
-                            if (mainService.verificaStatusFuncionario2(getTableRow().getItem()) != null) {
-                                int idTipoExame = mainService.verificaStatusFuncionario2(getTableRow().getItem()).getFirst().getId();
+                            if (mainService.verificaStatusFuncionario(getTableRow().getItem()) != null) {
+                                TipoExame tipoExame = mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
                                 btnLancarExameTipado.setDisable(false);
 
                                 btnLancarExameTipado.setOnAction(e -> {
-                                    Exame exame = Exame.ExameBuilder.builder()
-                                            .id(null)
-                                            .idTipoExame(idTipoExame)
-                                            .idFuncionario(getTableRow().getItem().getId())
-                                            .dataEmissao(null)
-                                            .dataValidade(null)
-                                            .atualizadoPor(null)
-                                            .build();
-                                    handleLancarExame(exame, btnLancarExameTipado);
+                                    Exame exame = mainService.getExameVencido(getTableRow().getItem());
+                                    System.out.println(exame);
+                                    if (exame != null) {
+                                        handleLancarExame(exame, btnLancarExameTipado);
+                                    } else if (exame == null) {
+                                        exame = Exame.ExameBuilder.builder()
+                                                .id(null)
+                                                .idTipoExame(tipoExame.getId())
+                                                .idFuncionario(getTableRow().getItem().getId())
+                                                .dataEmissao(null)
+                                                .dataValidade(null)
+                                                .atualizadoPor(null)
+                                                .build();
+                                        handleLancarExame(exame, btnLancarExameTipado);
+                                    }
+
+
                                 });
                             }
                             setGraphic(hBox);
@@ -220,9 +228,9 @@ public class MainController {
                 String tipo = f.getValue().getClass().getSimpleName();
                 String descricao = "";
                 if (tipo.equals("Exame")) {
-                   descricao = mainService.descreveTipo((Exame) f.getValue());
+                    descricao = mainService.descreveTipo((Exame) f.getValue());
                 }
-                if (tipo.equals("Certificado")){
+                if (tipo.equals("Certificado")) {
                     descricao = mainService.descreveTipo((Certificado) f.getValue());
                 }
 
@@ -238,65 +246,65 @@ public class MainController {
                         "/yyyy")) : null;
                 return new SimpleStringProperty(validade);
             });
-        colunaStatusVencimentos.setCellValueFactory(f -> {
-            return new SimpleStringProperty(exameService.vencimentos(f.getValue()));
-        });
-        colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
-            final FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
-            final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
-            Button btnLancarNovoTipo = new Button();
-            Button btnOpcoes = new Button();
+            colunaStatusVencimentos.setCellValueFactory(f -> {
+                return new SimpleStringProperty(exameService.vencimentos(f.getValue()));
+            });
+            colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
+                final FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
+                final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
+                Button btnLancarNovoTipo = new Button();
+                Button btnOpcoes = new Button();
 
-            private final HBox hBox = new HBox(10, btnLancarNovoTipo, btnOpcoes);
+                private final HBox hBox = new HBox(10, btnLancarNovoTipo, btnOpcoes);
 
 
-            @Override
-            protected void updateItem(Node node, boolean b) {
-                super.updateItem(node, b);
-                if (b || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
-                    setGraphic(null);
-                    return;
-                }
-                Tipo linha = coluna.getTableView().getItems().get(getIndex());
-                ObservableValue<?> valorColuna = colunaTipoVencimentos.getCellObservableValue(linha);
-                String tipo = String.valueOf(valorColuna.getValue());
-
-                if (tipo.equals("Exame")) {
-                    if (b) {
+                @Override
+                protected void updateItem(Node node, boolean b) {
+                    super.updateItem(node, b);
+                    if (b || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
                         setGraphic(null);
-                    } else {
-                        btnOpcoes.setGraphic(iconeOpcoes);
-                        btnOpcoes.setOnAction(e -> {
-                            handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
+                        return;
+                    }
+                    Tipo linha = coluna.getTableView().getItems().get(getIndex());
+                    ObservableValue<?> valorColuna = colunaTipoVencimentos.getCellObservableValue(linha);
+                    String tipo = String.valueOf(valorColuna.getValue());
 
-                        });
-                        btnLancarNovoTipo.setGraphic(iconeLancar);
-                        btnLancarNovoTipo.setOnAction(e -> {
-                            Exame exame = (Exame) getTableView().getItems().get(getIndex());
-                            handleLancarExame(exame, btnLancarNovoTipo);
-                        });
-                        setGraphic(hBox);
+                    if (tipo.equals("Exame")) {
+                        if (b) {
+                            setGraphic(null);
+                        } else {
+                            btnOpcoes.setGraphic(iconeOpcoes);
+                            btnOpcoes.setOnAction(e -> {
+                                handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
+
+                            });
+                            btnLancarNovoTipo.setGraphic(iconeLancar);
+                            btnLancarNovoTipo.setOnAction(e -> {
+                                Exame exame = (Exame) getTableView().getItems().get(getIndex());
+                                handleLancarExame(exame, btnLancarNovoTipo);
+                            });
+                            setGraphic(hBox);
+                        }
+                    }
+                    if (tipo.equals("Certificado")) {
+                        if (b) {
+                            setGraphic(null);
+                        } else {
+                            btnOpcoes.setGraphic(iconeOpcoes);
+                            btnOpcoes.setOnAction(e -> {
+                                handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
+
+                            });
+                            btnLancarNovoTipo.setGraphic(iconeLancar);
+                            btnLancarNovoTipo.setOnAction(e -> {
+                                Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
+                                handleLancarExame(certificado, btnLancarNovoTipo);
+                            });
+                            setGraphic(hBox);
+                        }
                     }
                 }
-                if (tipo.equals("Certificado")){
-                    if (b) {
-                        setGraphic(null);
-                    } else {
-                        btnOpcoes.setGraphic(iconeOpcoes);
-                        btnOpcoes.setOnAction(e -> {
-                            handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
-
-                        });
-                        btnLancarNovoTipo.setGraphic(iconeLancar);
-                        btnLancarNovoTipo.setOnAction(e -> {
-                            Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
-                            handleLancarExame(certificado, btnLancarNovoTipo);
-                        });
-                        setGraphic(hBox);
-                    }
-                }
-            }
-        });
+            });
 
 
             ObservableList<Tipo> listaTudo = FXCollections.observableArrayList();
@@ -355,6 +363,7 @@ public class MainController {
         popOver.setDetachable(false);
         popOver.show(anchor);
     }
+
     @FXML
     private void handleLancarExame(Certificado certificado, Node anchor) {
         Label label = new Label("Regularizar: " + tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
@@ -414,7 +423,7 @@ public class MainController {
                 }
             });
         }
-        if (tipoDescritivo.equals("Certificado")){
+        if (tipoDescritivo.equals("Certificado")) {
             btnDeletarExame.setOnAction(e -> {
                 handleDeletarCertificado((Certificado) tipo);
             });
@@ -439,7 +448,8 @@ public class MainController {
         exameService.deletarExame(exame.getId());
         setTodos();
     }
-    public void handleDeletarCertificado(Certificado certificado){
+
+    public void handleDeletarCertificado(Certificado certificado) {
         certificadoService.deletarCertificado(certificado);
         setTodos();
     }

@@ -1,12 +1,13 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
 import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,33 @@ public class MainService {
         SetorCache.carregarSetores();
     }
 
-    public List<TipoExame> verificaStatusFuncionario2(Funcionario funcionario) {
-        String setorFuncionario = setorService.getSetorMapeadoPorId(funcionario.getIdSetor());
+    public Exame getExameVencido(Funcionario funcionario) {
+        for (Exame exame : listaExames) {
+            if (funcionario.getId() == exame.getIdFuncionario()) {
+                int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getDataValidade());
+                if (dias <= 1) {
+                    return exame;
+                } else {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<TipoExame> verificaStatusFuncionario(Funcionario funcionario) {
         List<TipoExame> examesPendentes = new ArrayList<>();
+
+        for (Exame exame : listaExames) {
+            if (funcionario.getId() == exame.getIdFuncionario()) {
+                int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getDataValidade());
+                if (dias <= 1) {
+                    examesPendentes.add(tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+                }
+            }
+        }
+        String setorFuncionario = setorService.getSetorMapeadoPorId(funcionario.getIdSetor());
+
 
         for (Condicao condicao : listaCondicoes) {
             if (condicao == null) continue;
@@ -94,8 +119,9 @@ public class MainService {
     }
 
     public String descreveTipo(Exame f) {
-        return  tipoExameService.getTipoExameMapeadoPorId(f.getIdTipoExame()).getNome();
+        return tipoExameService.getTipoExameMapeadoPorId(f.getIdTipoExame()).getNome();
     }
+
     public String descreveTipo(Certificado f) {
         return tipoCertificadoService.getTipoCertificadoMapeadoPorId(f.getIdTipoCertificado()).getNome();
     }
