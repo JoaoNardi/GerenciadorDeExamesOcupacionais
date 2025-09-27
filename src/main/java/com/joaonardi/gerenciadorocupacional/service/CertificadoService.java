@@ -23,7 +23,9 @@ public class CertificadoService {
     }
 
     public Certificado cadastrarCertificado(Certificado certificado) {
-       return certificadoDAO.cadastrarCertificado(certificado);
+        Certificado certificadoCadastrado = certificadoDAO.cadastrarCertificado(certificado);
+        listarCertificados();
+       return certificadoCadastrado;
     }
 
     public ObservableList<Certificado> listarCertificados(){
@@ -68,5 +70,6 @@ public class CertificadoService {
 
     public void deletarCertificado(Certificado certificado) {
         certificadoDAO.deletarCertificado(certificado.getId());
+        listarCertificados();
     }
 }

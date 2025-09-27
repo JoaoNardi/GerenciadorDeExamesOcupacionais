@@ -92,18 +92,18 @@ public class CertificadoController {
 
 
     public void handleSalvar(ActionEvent event) {
-        if (certificado == null) {
-            Certificado certificado = Certificado.CertificadoBuilder.builder()
+        if (this.certificado == null) {
+            this.certificado = Certificado.CertificadoBuilder.builder()
                     .idTipoCertificado(inputTipoCertificado.getValue().getId())
                     .idFuncionario(inputFuncionario.getValue().getId())
                     .dataEmissao(inputDataEmissao.getValue())
-                    .dataValidade(inputDataValidade.getValue())
+                    .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
             certificadoService.cadastrarCertificado(certificado);
         }
-        if (certificado != null || certificado.getId() == null || certificado.getAtualizadoPor() == null){
-            Certificado certificado = Certificado.CertificadoBuilder.builder()
+        if (this.certificado != null){
+            this.certificado = Certificado.CertificadoBuilder.builder()
                     .id(this.certificado.getId())
                     .idTipoCertificado(inputTipoCertificado.getValue().getId())
                     .idFuncionario(inputFuncionario.getValue().getId())
