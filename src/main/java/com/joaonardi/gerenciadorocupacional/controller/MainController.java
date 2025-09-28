@@ -127,24 +127,24 @@ public class MainController {
                             Funcionario f = getTableView().getItems().get(getIndex());
                             if (mainService.verificaStatusFuncionario(f) != null) {
                                 setText(
-                                        "Exames Pendentes: " +
+                                        "Pendencias: " +
                                                 mainService.verificaStatusFuncionario(f).stream()
-                                                        .map(tipoExame -> tipoExame.getNome()).toList().toString()
+                                                        .map(TipoDe::getNome).toList().toString()
                                                         .replace("[", "").replace("]", ""));
                             } else {
-                                setText("ok");
+                                setText("Ok");
                             }
                         }
                     }
                 });
                 colunaAcoesGeral.setCellFactory(coluna -> new TableCell<>() {
                     final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
-                    final Button btnLancarExameTipado = new Button();
+                    final Button btnLancarPendencia = new Button();
 
                     final FontIcon iconeEditar = new FontIcon(FontAwesomeSolid.EDIT);
                     final Button btnEditarFuncionario = new Button();
 
-                    private final HBox hBox = new HBox(10, btnLancarExameTipado, btnEditarFuncionario);
+                    private final HBox hBox = new HBox(10, btnLancarPendencia, btnEditarFuncionario);
 
                     @Override
                     protected void updateItem(Node node, boolean b) {
@@ -158,8 +158,8 @@ public class MainController {
                                 throw new RuntimeException(e);
                             }
                             btnEditarFuncionario.setGraphic(iconeEditar);
-                            btnLancarExameTipado.setGraphic(iconeLancar);
-                            btnLancarExameTipado.setDisable(true);
+                            btnLancarPendencia.setGraphic(iconeLancar);
+                            btnLancarPendencia.setDisable(true);
                             btnEditarFuncionario.setOnAction(e -> {
                                 try {
                                     editarFuncionario(getTableRow().getItem());
@@ -168,28 +168,48 @@ public class MainController {
                                 }
                             });
                             if (mainService.verificaStatusFuncionario(getTableRow().getItem()) != null) {
-                                TipoExame tipoExame = mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
-                                btnLancarExameTipado.setDisable(false);
+                                if (mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst().getClass().equals(TipoExame.class)) {
+                                    TipoExame tipoExame = (TipoExame) mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
+                                    btnLancarPendencia.setOnAction(e -> {
+                                        Exame exame = mainService.getExameVencido(getTableRow().getItem());
+                                        System.out.println(exame);
+                                        if (exame != null) {
+                                            handleLancarPendecia(exame, btnLancarPendencia);
+                                        } else if (exame == null) {
+                                            exame = Exame.ExameBuilder.builder()
+                                                    .id(null)
+                                                    .idTipoExame(tipoExame.getId())
+                                                    .idFuncionario(getTableRow().getItem().getId())
+                                                    .dataEmissao(null)
+                                                    .dataValidade(null)
+                                                    .atualizadoPor(null)
+                                                    .build();
+                                            handleLancarPendecia(exame, btnLancarPendencia);
+                                        }
+                                    });
+                                } else {
+                                    TipoCertificado tipoCertificado = (TipoCertificado) mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
+                                    btnLancarPendencia.setOnAction(e -> {
+                                        Certificado certificado = mainService.getCetificadoVencido(getTableRow().getItem());
+                                        System.out.println(certificado);
+                                        if (certificado != null) {
+                                            handleLancarPendecia(certificado, btnLancarPendencia);
+                                        } else if (certificado == null) {
+                                            certificado = Certificado.CertificadoBuilder.builder()
+                                                    .id(null)
+                                                    .idTipoCertificado(tipoCertificado.getId())
+                                                    .idFuncionario(getTableRow().getItem().getId())
+                                                    .dataEmissao(null)
+                                                    .dataValidade(null)
+                                                    .atualizadoPor(null)
+                                                    .build();
+                                            handleLancarPendecia(certificado, btnLancarPendencia);
+                                        }
+                                    });
+                                }
+                                btnLancarPendencia.setDisable(false);
 
-                                btnLancarExameTipado.setOnAction(e -> {
-                                    Exame exame = mainService.getExameVencido(getTableRow().getItem());
-                                    System.out.println(exame);
-                                    if (exame != null) {
-                                        handleLancarExame(exame, btnLancarExameTipado);
-                                    } else if (exame == null) {
-                                        exame = Exame.ExameBuilder.builder()
-                                                .id(null)
-                                                .idTipoExame(tipoExame.getId())
-                                                .idFuncionario(getTableRow().getItem().getId())
-                                                .dataEmissao(null)
-                                                .dataValidade(null)
-                                                .atualizadoPor(null)
-                                                .build();
-                                        handleLancarExame(exame, btnLancarExameTipado);
-                                    }
 
-
-                                });
                             }
                             setGraphic(hBox);
                         }
@@ -281,7 +301,7 @@ public class MainController {
                             btnLancarNovoTipo.setGraphic(iconeLancar);
                             btnLancarNovoTipo.setOnAction(e -> {
                                 Exame exame = (Exame) getTableView().getItems().get(getIndex());
-                                handleLancarExame(exame, btnLancarNovoTipo);
+                                handleLancarPendecia(exame, btnLancarNovoTipo);
                             });
                             setGraphic(hBox);
                         }
@@ -298,7 +318,7 @@ public class MainController {
                             btnLancarNovoTipo.setGraphic(iconeLancar);
                             btnLancarNovoTipo.setOnAction(e -> {
                                 Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
-                                handleLancarExame(certificado, btnLancarNovoTipo);
+                                handleLancarPendecia(certificado, btnLancarNovoTipo);
                             });
                             setGraphic(hBox);
                         }
@@ -326,8 +346,8 @@ public class MainController {
     }
 
     @FXML
-    private void handleLancarExame(Exame exame, Node anchor) {
-        Label label = new Label("Regularizar: " + tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+    private void handleLancarPendecia(Exame exame, Node anchor) {
+        Label label = new Label("Regularizar: " + tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()).getNome());
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
@@ -365,8 +385,8 @@ public class MainController {
     }
 
     @FXML
-    private void handleLancarExame(Certificado certificado, Node anchor) {
-        Label label = new Label("Regularizar: " + tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
+    private void handleLancarPendecia(Certificado certificado, Node anchor) {
+        Label label = new Label("Regularizar: " + tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()).getNome());
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
@@ -521,7 +541,7 @@ public class MainController {
         janela.abrirJanela("/view/CertificadoView.fxml", "Gerenciar Certificados", this::setTodos);
     }
 
-    public void handleLancarExame(ActionEvent event) {
+    public void handleLancarPendecia(ActionEvent event) {
         janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
     }
 

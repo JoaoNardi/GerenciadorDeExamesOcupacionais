@@ -7,8 +7,11 @@ import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CertificadoDAO {
+    DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
@@ -24,7 +27,8 @@ public class CertificadoDAO {
             "atualizado_por = ?" +
             "WHERE id = ?";
     private static final String DELETAR_CERTIFICADO = "DELETE FROM CERTIFICADOS WHERE id = ?";
-    private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS WHERE atualizado_por is NULL";
+    private static final String LISTAR_CERTIFICADOS_VIGENTENS = "SELECT * FROM CERTIFICADOS WHERE atualizado_por is NULL";
+    private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS";
 
     public CertificadoDAO() {
     }
@@ -36,8 +40,8 @@ public class CertificadoDAO {
             int i = 1;
             preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
             preparedStatement.setInt(i++, certificado.getIdFuncionario());
-            preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
-            preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
+            preparedStatement.setString(i++, certificado.getDataEmissao().format(formato));
+            preparedStatement.setString(i++, certificado.getDataValidade() == null ? null : certificado.getDataValidade().format(formato));
             if (certificado.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {
@@ -99,8 +103,8 @@ public class CertificadoDAO {
             int i = 1;
             preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
             preparedStatement.setInt(i++, certificado.getIdFuncionario());
-            preparedStatement.setDate(i++, Date.valueOf(certificado.getDataEmissao()));
-            preparedStatement.setDate(i++, Date.valueOf(certificado.getDataValidade()));
+            preparedStatement.setString(i++, certificado.getDataEmissao().format(formato));
+            preparedStatement.setString(i++, (certificado.getDataValidade() == null ? null : certificado.getDataValidade().format(formato)));
             if (certificado.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null);
             } else {
@@ -146,12 +150,17 @@ public class CertificadoDAO {
         }
     }
 
-    public ObservableList<Certificado> listarCertificados() {
+    public ObservableList<Certificado> listarCertificadosVigentes(boolean inVigentes) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         ObservableList<Certificado> listaCertificados = FXCollections.observableArrayList();
 
         try {
-            preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
+            if (inVigentes) {
+                preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS_VIGENTENS);
+            }
+            if (!inVigentes) {
+                preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
+            }
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -159,8 +168,9 @@ public class CertificadoDAO {
                         .id(resultSet.getInt("id"))
                         .idTipoCertificado(resultSet.getInt("tipo_certificado_id"))
                         .idFuncionario(resultSet.getInt("funcionario_id"))
-                        .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
-                        .dataValidade(resultSet.getDate("data_validade").toLocalDate())
+                        .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
+                        .dataValidade(resultSet.getString("data_validade") != null ?
+                                LocalDate.parse(resultSet.getString("data_validade")) : null)
                         .atualizadoPor(resultSet.getInt("atualizado_por"))
                         .build();
                 listaCertificados.add(certificado);

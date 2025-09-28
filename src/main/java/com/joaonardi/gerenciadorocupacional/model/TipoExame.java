@@ -7,12 +7,7 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class TipoExame {
-    @Setter
-    private Integer id;
-    private String nome;
-    private Integer periodicidade;
-
+public class TipoExame extends TipoDe{
 
     public static final class TipoExameBuilder {
         private Integer id;
@@ -43,9 +38,9 @@ public class TipoExame {
 
         public TipoExame build() {
             TipoExame tipoExame = new TipoExame();
-            tipoExame.id = this.id;
-            tipoExame.nome = this.nome;
+            tipoExame.setId(id);
             tipoExame.periodicidade = this.periodicidade;
+            tipoExame.nome = this.nome;
             return tipoExame;
         }
     }

@@ -29,7 +29,7 @@ public class CertificadoService {
     }
 
     public ObservableList<Certificado> listarCertificados(){
-        return certificadoDAO.listarCertificados();
+        return certificadoDAO.listarCertificadosVigentes(true);
     }
 
     public ObservableList<Certificado> listarCertificadosPorVencimento(int diasVencimento) {

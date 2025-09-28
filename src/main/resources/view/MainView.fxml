@@ -33,7 +33,7 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Tipo de Exame" />
                   <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame" text="Gerenciar Tipo de Exame" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleLancarExame" text="Lançar novo Exame" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleLancarPendecia" text="Lançar novo Exame" />
                   <MenuItem mnemonicParsing="false" onAction="#handleGerenciarExames" text="Gerenciar Exames" />
             </items>
           </Menu>

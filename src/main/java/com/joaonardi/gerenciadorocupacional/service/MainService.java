@@ -20,11 +20,14 @@ public class MainService {
     public static ObservableList<Exame> listaExames = FXCollections.observableArrayList();
     private final SetorService setorService = new SetorService();
     private TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
+    private static final CertificadoService certificadoService = new CertificadoService();
+    public static ObservableList<Certificado> listaCertificados = FXCollections.observableArrayList();
 
 
     public static void loadInicial() throws Exception {
         listaCondicoes = condicaoService.listarTodasCondicoes();
         listaExames = exameService.listarExamesVingentes();
+        listaCertificados = certificadoService.listarCertificados();
         FuncionarioCache.carregarFuncionarios(true);
         SetorCache.carregarSetores();
     }
@@ -43,20 +46,42 @@ public class MainService {
         return null;
     }
 
-    public List<TipoExame> verificaStatusFuncionario(Funcionario funcionario) {
-        List<TipoExame> examesPendentes = new ArrayList<>();
+    public Certificado getCetificadoVencido(Funcionario funcionario) {
+        for (Certificado certificado : listaCertificados) {
+            if (funcionario.getId() == certificado.getIdFuncionario()) {
+                int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
+                if (dias <= 1) {
+                    return certificado;
+                } else {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public ObservableList<TipoDe> verificaStatusFuncionario(Funcionario funcionario) {
+        ObservableList<TipoDe> pendecias = FXCollections.observableArrayList();
+
+        for (Certificado certificado : listaCertificados) {
+            if (funcionario.getId().equals(certificado.getIdFuncionario())) {
+                int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
+                if (dias <= 1) {
+                    pendecias.add(tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
+                }
+            }
+        }
 
         for (Exame exame : listaExames) {
-            if (funcionario.getId() == exame.getIdFuncionario()) {
+            if (funcionario.getId().equals(exame.getIdFuncionario())) {
                 int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getDataValidade());
                 if (dias <= 1) {
-                    examesPendentes.add(tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+                    pendecias.add(tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+
                 }
             }
         }
         String setorFuncionario = setorService.getSetorMapeadoPorId(funcionario.getIdSetor());
-
-
         for (Condicao condicao : listaCondicoes) {
             if (condicao == null) continue;
 
@@ -84,15 +109,15 @@ public class MainService {
             }
 
             if (precisaFazerExame && !funcionarioJaTemExame(funcionario, tipoExameCond)) {
-                if (!examesPendentes.contains(tipoExameCond)) {
-                    examesPendentes.add(tipoExameCond);
+                if (!pendecias.contains(tipoExameCond)) {
+                    pendecias.add(tipoExameCond);
                 }
             }
         }
-        if (examesPendentes.isEmpty()) {
+        if (pendecias.isEmpty()) {
             return null;
         }
-        return examesPendentes;
+        return pendecias;
     }
 
     private boolean funcionarioJaTemExame(Funcionario funcionario, TipoExame tipoExameCond) {

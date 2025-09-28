@@ -5,11 +5,7 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class TipoCertificado {
-    private Integer id;
-    private String nome;
-    private Integer periodicidade;
-
+public class TipoCertificado extends TipoDe{
 
     public static final class TipoCertificadoBuilder {
         private Integer id;
