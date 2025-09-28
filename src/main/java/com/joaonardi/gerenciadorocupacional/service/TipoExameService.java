@@ -19,7 +19,6 @@ public class TipoExameService {
         }
         carregarTipoExames();
         return tipoExame;
-
     }
 
     public void deletarTipoExame(int id) {

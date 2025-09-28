@@ -1,13 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
+import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -31,7 +28,7 @@ public class GerenciarFuncionariosController {
     FuncionarioController funcionarioController = new FuncionarioController();
     Janela janela = new Janela();
     FuncionarioService funcionarioService = new FuncionarioService();
-    ObservableList<Funcionario> funcionariosList = FXCollections.observableArrayList();
+    SetorService setorService = new SetorService();
 
     @FXML
     private void initialize() throws Exception {
@@ -41,9 +38,9 @@ public class GerenciarFuncionariosController {
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
         colunaDataNascimento.setCellValueFactory(new PropertyValueFactory<>("dataNascimento"));
-        colunaSetor.setCellValueFactory(f->{
-            String areaSetor = SetorCache.getSetorMapeado(f.getValue().getIdSetor());
-        return new SimpleStringProperty(areaSetor);
+        colunaSetor.setCellValueFactory(f -> {
+            String areaSetor = setorService.getSetorMapeado(f.getValue().getIdSetor());
+            return new SimpleStringProperty(areaSetor);
         });
         colunaDataAdmissao.setCellValueFactory(new PropertyValueFactory<>("dataAdmissao"));
         colunaAtivo.setCellValueFactory(new PropertyValueFactory<>("ativo"));
@@ -51,20 +48,15 @@ public class GerenciarFuncionariosController {
 
     }
 
-    private void recarregarListaFuncionarios(){
-        try {
-            FuncionarioCache.carregarFuncionarios(listarAtivos);
-            funcionariosList = FuncionarioCache.todosFuncionarios;
-            tabelaFuncionarios.setItems(funcionariosList);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private void recarregarListaFuncionarios() {
+        funcionarioService.carregarFuncionarios(listarAtivos);
+        tabelaFuncionarios.setItems(funcionarioService.listarFuncionarios());
     }
 
     @FXML
     public void handleEditar() throws Exception {
         Funcionario funcionarioSelecionado = tabelaFuncionarios.getSelectionModel().getSelectedItem();
-        if (funcionarioSelecionado != null){
+        if (funcionarioSelecionado != null) {
             janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", null);
             funcionarioController = janela.loader.getController();
             funcionarioController.setFuncionario(funcionarioSelecionado);
@@ -73,10 +65,9 @@ public class GerenciarFuncionariosController {
 
     @FXML
     private void handleTableDoubleClick(javafx.scene.input.MouseEvent mouseEvent) throws Exception {
-        if (mouseEvent.getClickCount() == 2){
+        if (mouseEvent.getClickCount() == 2) {
             handleEditar();
         }
-
     }
 
     public void handleListarAtivos(ActionEvent event) {

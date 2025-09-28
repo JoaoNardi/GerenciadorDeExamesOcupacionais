@@ -66,7 +66,7 @@ public class TipoExameController {
         TooltipUtils.installWithDelay(btnInfo,tooltip,200);
         modalAddCondicao.setOpacity(0);
         inputPeriodicidade.setValue(Periodicidade.SEM_PERIODICIDADE);
-        setores = setorService.carregarSetores();
+        setores = setorService.listarSetores();
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
         setTabelaCondicoes();
         listaDeCondicoes.addListener((ListChangeListener<? super Condicao>) change -> tabelaCondicoes.setItems(listaDeCondicoes));

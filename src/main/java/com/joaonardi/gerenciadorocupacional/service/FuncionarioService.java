@@ -1,16 +1,25 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.dao.FuncionarioDAO;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class FuncionarioService {
 
     private final FuncionarioDAO dao = new FuncionarioDAO();
+    private static Map<Integer, Funcionario> funcionariosMap;
+    public static ObservableList<Funcionario> funcionariosList;
+
+    public void carregarFuncionarios(boolean ativos){
+     funcionariosList = dao.listaFuncionariosPorStatus(ativos);
+     funcionariosMap = funcionariosList.stream()
+             .collect(Collectors.toMap(Funcionario::getId, f->f));
+    }
 
     public void validarCpf(String cpf) throws Exception {
         if ((cpf.length() != 11 || cpf == null)) throw new Exception("cpf Invalido");
@@ -29,14 +38,14 @@ public class FuncionarioService {
         } else {
             dao.alterarFuncionario(funcionario.getId(), funcionario);
         }
-        FuncionarioCache.carregarFuncionarios(true);
+        carregarFuncionarios(true);
     }
 
     public Funcionario getFuncionarioMapeadoPorId(int id) {
-        return FuncionarioCache.getFuncionarioMapeado(id);
+        return funcionariosMap.get(id);
     }
 
-    public ObservableList<Funcionario> listarFuncionarios(boolean inAtivo) throws Exception {
-        return dao.listaFuncionariosPorStatus(inAtivo);
+    public ObservableList<Funcionario> listarFuncionarios() {
+        return funcionariosList;
     }
 }

@@ -1,13 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.cache.ExameCache;
-import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import com.joaonardi.gerenciadorocupacional.dao.CondicaoDAO;
 import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -18,20 +15,26 @@ public class ExameService {
     private ExameDAO exameDAO = new ExameDAO();
     private CondicaoDAO condicaoDAO = new CondicaoDAO();
     private final FuncionarioService funcionarioService = new FuncionarioService();
+    SetorService setorService = new SetorService();
+    ObservableList<Exame> examesList = FXCollections.observableArrayList();
 
-    public ObservableList<Exame> listarExamesVingentes(){
-        return exameDAO.listarExamesVigentes(true);
+    public void carregarExamesVigentes() {
+        examesList = exameDAO.listarExamesVigentes(true);
+    }
+
+    public ObservableList<Exame> listarExamesVingentes() {
+        return examesList;
     }
 
     public Exame lancarExame(Exame exame) {
         Exame exameCadastrado = exameDAO.cadastrarExame(exame);
-        ExameCache.carregarExamesVigentes();
+        carregarExamesVigentes();
         return exameCadastrado;
     }
 
     public void editarExame(Exame exame) {
         exameDAO.alterarExame(exame.getId(), exame);
-        ExameCache.carregarExamesVigentes();
+        carregarExamesVigentes();
     }
 
     public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
@@ -39,7 +42,7 @@ public class ExameService {
 
         Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, listaCondicao);
 
-        if (periodicidade== null){
+        if (periodicidade == null) {
             return null;
         }
         LocalDate dataValidade;
@@ -75,7 +78,7 @@ public class ExameService {
                 return compara(idade, operador, valor);
 
             case "setor":
-                return comparaString(SetorCache.getSetorMapeado(funcionario.getIdSetor()), operador, parametro);
+                return comparaString(setorService.getSetorMapeado(funcionario.getIdSetor()), operador, parametro);
 
 //            case "enfermidade":
 //                return
@@ -108,7 +111,7 @@ public class ExameService {
         if (tipo.getDataValidade() == null) {
             return "Sem Periodicidade";
         }
-        Integer dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), tipo.getDataValidade());
+        int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), tipo.getDataValidade());
         String status = "Faltam: " + dias + " para o vencimento";
         if (dias < 0) {
             status = "Vencido " + dias + " de atraso";
@@ -121,17 +124,15 @@ public class ExameService {
         } else if (dias <= 182) {
             status = "Vence neste semestre, em : " + dias + " dias ";
         }
-
         return status;
     }
 
     public ObservableList<Exame> listarExamePorVencimento(int diasVencimento) {
-        ObservableList<Exame> list = listarExamesVingentes();
         LocalDate hoje = LocalDate.now();
         if (diasVencimento == 183) {
-            return list;
+            return examesList;
         } else {
-            List<Exame> list2 = list.stream()
+            List<Exame> list2 = examesList.stream()
                     .filter(f -> {
                         LocalDate validade = f.getDataValidade();
                         if (validade == null) {
@@ -158,6 +159,6 @@ public class ExameService {
 
     public void deletarExame(int id) {
         exameDAO.deletarExame(id);
-        ExameCache.carregarExamesVigentes();
+        carregarExamesVigentes();
     }
 }

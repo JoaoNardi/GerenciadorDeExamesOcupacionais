@@ -13,6 +13,12 @@ import java.util.stream.Collectors;
 
 public class CertificadoService {
     CertificadoDAO certificadoDAO = new CertificadoDAO();
+    List<Certificado> certificadosList = FXCollections.observableArrayList();
+
+    public void carregarCertificadosVigentes(){
+        certificadosList = certificadoDAO.listarCertificadosVigentes(true);
+    }
+
     public LocalDate calcularValidade(LocalDate dataEmissao, TipoCertificado tipoCertificado){
         LocalDate dataValidade;
         if (tipoCertificado.getPeriodicidade().equals(0)) {
@@ -33,12 +39,11 @@ public class CertificadoService {
     }
 
     public ObservableList<Certificado> listarCertificadosPorVencimento(int diasVencimento) {
-        List<Certificado> list = listarCertificados();
         LocalDate hoje = LocalDate.now();
         if (diasVencimento == 183) {
-            return FXCollections.observableArrayList(list);
+            return FXCollections.observableArrayList(certificadosList);
         } else {
-            List<Certificado> list2 = list.stream()
+            List<Certificado> list2 = certificadosList.stream()
                     .filter(f -> {
                         LocalDate validade = f.getDataValidade();
                         if (validade == null) {

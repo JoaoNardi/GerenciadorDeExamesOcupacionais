@@ -1,13 +1,12 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.ExameService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
+import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
-import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,27 +26,27 @@ public class ExamesController {
     public Button btnSalvar;
     public Button btnCancelar;
     Janela janela = new Janela();
+    SetorService setorService = new SetorService();
     FuncionarioService funcionarioService = new FuncionarioService();
     TipoExameService tipoExameService = new TipoExameService();
     ExameService exameService = new ExameService();
     Exame exame = null;
 
     @FXML
-    private void initialize() throws Exception {
+    private void initialize() {
         ObservableList<TipoExame> exames = tipoExameService.listarTiposExame();
-        FuncionarioCache.carregarFuncionarios(true);
-        ObservableList<Funcionario> funcionarios = FuncionarioCache.todosFuncionarios;
-        inputFuncionario.setItems(funcionarios);
+        funcionarioService.carregarFuncionarios(true);
+        inputFuncionario.setItems(funcionarioService.listarFuncionarios());
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
             @Override
             public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + SetorCache.getSetorMapeado(funcionario.getIdSetor()) : "";
+                return funcionario != null ? funcionario.getNome() + " - " + setorService.getSetorMapeado(funcionario.getIdSetor()) : "";
             }
 
             @Override
             public Funcionario fromString(String s) {
                 for (Funcionario f : inputFuncionario.getItems()) {
-                    String funcionario = f.getNome() + " - " + SetorCache.getSetorMapeado(f.getIdSetor());
+                    String funcionario = f.getNome() + " - " + setorService.getSetorMapeado(f.getIdSetor());
                     if (funcionario.equals(s)) {
                         return f;
                     }
@@ -75,7 +74,7 @@ public class ExamesController {
         });
         inputTipoExame.setValue(exames.getFirst());
         inputDataEmissao.setValue(LocalDate.now());
-        inputFuncionario.setValue(funcionarios.getFirst());
+        inputFuncionario.setValue(funcionarioService.listarFuncionarios().getFirst());
         inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
 

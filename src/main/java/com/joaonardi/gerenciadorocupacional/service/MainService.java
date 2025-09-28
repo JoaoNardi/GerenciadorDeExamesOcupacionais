@@ -1,35 +1,32 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
-import com.joaonardi.gerenciadorocupacional.cache.SetorCache;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainService {
+
     private static final CondicaoService condicaoService = new CondicaoService();
     private static ObservableList<Condicao> listaCondicoes = condicaoService.listarTodasCondicoes();
     private TipoExameService tipoExameService = new TipoExameService();
-    private FuncionarioService funcionarioService = new FuncionarioService();
+    private static final FuncionarioService funcionarioService = new FuncionarioService();
     private static final ExameService exameService = new ExameService();
     public static ObservableList<Exame> listaExames = FXCollections.observableArrayList();
-    private final SetorService setorService = new SetorService();
+    private static final SetorService setorService = new SetorService();
     private TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     private static final CertificadoService certificadoService = new CertificadoService();
     public static ObservableList<Certificado> listaCertificados = FXCollections.observableArrayList();
 
 
-    public static void loadInicial() throws Exception {
+    public static void loadInicial() {
+        funcionarioService.carregarFuncionarios(true);
         listaCondicoes = condicaoService.listarTodasCondicoes();
         listaExames = exameService.listarExamesVingentes();
         listaCertificados = certificadoService.listarCertificados();
-        FuncionarioCache.carregarFuncionarios(true);
-        SetorCache.carregarSetores();
+        setorService.carregarSetores();
     }
 
     public Exame getExameVencido(Funcionario funcionario) {
@@ -81,7 +78,7 @@ public class MainService {
                 }
             }
         }
-        String setorFuncionario = setorService.getSetorMapeadoPorId(funcionario.getIdSetor());
+        String setorFuncionario = setorService.getSetorMapeado(funcionario.getIdSetor());
         for (Condicao condicao : listaCondicoes) {
             if (condicao == null) continue;
 

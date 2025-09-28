@@ -30,7 +30,7 @@ public class FuncionarioController {
 
     @FXML
     public void initialize() {
-        List<Setor> setores = setorService.carregarSetores();
+        List<Setor> setores = setorService.listarSetores();
         inputSetor.getItems().addAll(setores);
     }
 

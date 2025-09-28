@@ -177,9 +177,7 @@ public class FuncionarioDAO {
         }
     }
 
-    public ObservableList<Funcionario> listaFuncionariosPorStatus(Boolean ativo) throws Exception {
-
-        // arrumar isso aqui
+    public ObservableList<Funcionario> listaFuncionariosPorStatus(Boolean ativo) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Funcionario funcionario = null;
         ObservableList<Funcionario> listaFuncionariosAtivos = FXCollections.observableArrayList();

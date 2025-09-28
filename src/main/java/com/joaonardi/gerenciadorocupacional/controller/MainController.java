@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.cache.FuncionarioCache;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
@@ -76,6 +75,8 @@ public class MainController {
 
     @FXML
     private void initialize() throws Exception {
+        exameService.carregarExamesVigentes();
+        certificadoService.carregarCertificadosVigentes();
         tipoExameService.carregarTipoExames();
         tipoCertificadoService.carregarTiposCertificado();
         tabelaVencimentos.setVisible(false);
@@ -91,15 +92,24 @@ public class MainController {
     private void setLabels() {
         labelTodos.setText(String.valueOf(exameService.listarExamePorVencimento(183).size() +
                 certificadoService.listarCertificadosPorVencimento(183).size()));
-        labelVencidos.setText(String.valueOf(exameService.listarExamePorVencimento(0).size()));
-        labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()));
-        labelVencemMes.setText(String.valueOf(exameService.listarExamePorVencimento(30).size()));
-        labelVencemSemestre.setText(String.valueOf(exameService.listarExamePorVencimento(182).size()));
+
+        labelVencidos.setText(String.valueOf(exameService.listarExamePorVencimento(0).size() +
+                certificadoService.listarCertificadosPorVencimento(0).size()));
+
+        labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()
+                +certificadoService.listarCertificadosPorVencimento(7).size()));
+
+        labelVencemMes.setText(String.valueOf(exameService.listarExamePorVencimento(30).size() +
+                certificadoService.listarCertificadosPorVencimento(30).size()));
+
+        labelVencemSemestre.setText(String.valueOf(exameService.listarExamePorVencimento(182).size() +
+                certificadoService.listarCertificadosPorVencimento(182).size()));
     }
 
     private void setTabelaPrincipal() {
+        funcionarioService.carregarFuncionarios(true);
         try {
-            if (!funcionarioService.listarFuncionarios(true).isEmpty()) {
+            if (!funcionarioService.listarFuncionarios().isEmpty()) {
                 colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
                 colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
@@ -107,7 +117,7 @@ public class MainController {
                     return new ReadOnlyObjectWrapper<>(idade).asString();
                 });
                 colunaSetorGeral.setCellValueFactory(f -> {
-                    String areaSetor = setorService.getSetorMapeadoPorId(f.getValue().getIdSetor());
+                    String areaSetor = setorService.getSetorMapeado(f.getValue().getIdSetor());
                     return new SimpleStringProperty(areaSetor);
                 });
                 colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
@@ -215,7 +225,7 @@ public class MainController {
                         }
                     }
                 });
-                tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
+                tabelaPrincipal.setItems(funcionarioService.listarFuncionarios());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -237,7 +247,7 @@ public class MainController {
             });
             colunaSetorVencimentos.setCellValueFactory(f -> {
                 int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getIdSetor();
-                String setorNome = String.valueOf(setorService.getSetorMapeadoPorId(setorId));
+                String setorNome = String.valueOf(setorService.getSetorMapeado(setorId));
                 return new SimpleStringProperty(setorNome);
             });
             colunaTipoVencimentos.setCellValueFactory(f -> {
@@ -358,7 +368,7 @@ public class MainController {
                     .idTipoExame(exame.getIdTipoExame())
                     .idFuncionario(exame.getIdFuncionario())
                     .dataEmissao(datePicker.getValue())
-                    .dataValidade(exameService.calcularValidadeExame(FuncionarioCache.getFuncionarioMapeado(exame.getIdFuncionario()), datePicker.getValue(),
+                    .dataValidade(exameService.calcularValidadeExame(funcionarioService.getFuncionarioMapeadoPorId(exame.getIdFuncionario()), datePicker.getValue(),
                             tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame())))
                     .atualizadoPor(null)
                     .build();
@@ -476,21 +486,19 @@ public class MainController {
 
     @FXML
     public void handleEditarExame(Exame exame) throws Exception {
-        Exame exameSelecionado = exame;
-        if (exameSelecionado != null) {
+        if (exame != null) {
             janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", this::setTodos);
             examesController = janela.loader.getController();
-            examesController.setExame(exameSelecionado);
+            examesController.setExame(exame);
         }
     }
 
     @FXML
     public void handleEditarCertificado(Certificado certificado) throws Exception {
-        Certificado certificadoSelecionado = certificado;
-        if (certificadoSelecionado != null) {
+        if (certificado != null) {
             janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", this::setTodos);
             certificadoController = janela.loader.getController();
-            certificadoController.setCertificado(certificadoSelecionado);
+            certificadoController.setCertificado(certificado);
         }
     }
 
@@ -593,7 +601,6 @@ public class MainController {
         initialize();
         setTabelaPrincipal();
         setLabels();
-        tabelaPrincipal.setItems(funcionarioService.listarFuncionarios(true));
         tabelaPrincipal.setVisible(true);
         tabelaVencimentos.setVisible(false);
         tabelaPrincipal.refresh();
