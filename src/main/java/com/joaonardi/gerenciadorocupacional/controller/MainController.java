@@ -182,7 +182,6 @@ public class MainController {
                                     TipoExame tipoExame = (TipoExame) mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
                                     btnLancarPendencia.setOnAction(e -> {
                                         Exame exame = mainService.getExameVencido(getTableRow().getItem());
-                                        System.out.println(exame);
                                         if (exame != null) {
                                             handleLancarPendecia(exame, btnLancarPendencia);
                                         } else if (exame == null) {
@@ -201,7 +200,6 @@ public class MainController {
                                     TipoCertificado tipoCertificado = (TipoCertificado) mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
                                     btnLancarPendencia.setOnAction(e -> {
                                         Certificado certificado = mainService.getCetificadoVencido(getTableRow().getItem());
-                                        System.out.println(certificado);
                                         if (certificado != null) {
                                             handleLancarPendecia(certificado, btnLancarPendencia);
                                         } else if (certificado == null) {

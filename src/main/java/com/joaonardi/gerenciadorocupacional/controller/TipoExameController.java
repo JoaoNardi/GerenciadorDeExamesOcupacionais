@@ -59,6 +59,7 @@ public class TipoExameController {
     TipoExameService tipoExameService = new TipoExameService();
 
     public void initialize() {
+        setorService.carregarSetores();
         FontIcon iconInfo = new FontIcon(FontAwesomeSolid.INFO);
         Tooltip tooltip = new Tooltip("A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra");
         btnInfo.setGraphic(iconInfo);
