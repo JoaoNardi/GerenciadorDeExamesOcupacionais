@@ -22,11 +22,14 @@ public class MainService {
 
 
     public static void loadInicial() {
+        setorService.carregarSetores();
         funcionarioService.carregarFuncionarios(true);
+        exameService.carregarExamesVigentes();
+        certificadoService.carregarCertificadosVigentes();
         listaCondicoes = condicaoService.listarTodasCondicoes();
         listaExames = exameService.listarExamesVingentes();
         listaCertificados = certificadoService.listarCertificados();
-        setorService.carregarSetores();
+
     }
 
     public Exame getExameVencido(Funcionario funcionario) {
@@ -84,7 +87,7 @@ public class MainService {
 
             TipoExame tipoExameCond = null;
             if (condicao.getTipoExameId() != null) {
-                var tipoExame = tipoExameService.getTipoExameMapeadoPorId(condicao.getTipoExameId());
+                TipoExame tipoExame = tipoExameService.getTipoExameMapeadoPorId(condicao.getTipoExameId());
                 if (tipoExame != null) {
                     tipoExameCond = tipoExame;
                 }
