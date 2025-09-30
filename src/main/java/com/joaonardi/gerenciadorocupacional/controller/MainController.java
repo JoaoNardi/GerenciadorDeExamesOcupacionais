@@ -232,8 +232,6 @@ public class MainController {
 
     private void setTabelaSecundaria() {
         try {
-
-
             colunaFuncionarioVencimentos.setCellValueFactory(f -> {
                 String nomeFuncionario = String.valueOf(funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getNome());
                 return new SimpleStringProperty(nomeFuncionario);
@@ -555,43 +553,47 @@ public class MainController {
     }
 
     public void handleBtnVencidos(ActionEvent event) {
-        setTabelaSecundaria();
-        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 0;
+        setLabels();
+        setTabelaSecundaria();
+        tabelaVencimentos.refresh();
     }
 
     public void handleBtnSemana(ActionEvent event) {
-        setTabelaSecundaria();
-        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 7;
+        setLabels();
+        setTabelaSecundaria();
+        tabelaVencimentos.refresh();
     }
 
     public void handleBtnMes(ActionEvent event) {
-        setTabelaSecundaria();
-        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 30;
+        setTabelaSecundaria();
+        setLabels();
     }
 
     public void handleBtnSemestre(ActionEvent event) {
-        setTabelaSecundaria();
-        setLabels();
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 182;
+        setLabels();
+        setTabelaSecundaria();
+        tabelaVencimentos.refresh();
     }
 
     public void handleBtnTodos(ActionEvent event) {
-        setLabels();
         tabelaVencimentos.setVisible(true);
         tabelaPrincipal.setVisible(false);
         diasVencimento = 183;
+        setLabels();
         setTabelaSecundaria();
+        tabelaVencimentos.refresh();
     }
 
     public void handleBtnGeral(ActionEvent event) throws Exception {
