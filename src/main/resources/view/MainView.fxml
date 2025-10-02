@@ -40,7 +40,6 @@
                         <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame"
                                   text="Gerenciar Tipo de Exame"/>
                         <MenuItem mnemonicParsing="false" onAction="#handleLancarPendecia" text="Lançar novo Exame"/>
-                        <MenuItem mnemonicParsing="false" onAction="#handleGerenciarExames" text="Gerenciar Exames"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Certificados">
@@ -51,14 +50,11 @@
                                   text="Gerenciar Tipos de Certificados"/>
                         <MenuItem mnemonicParsing="false" onAction="#handleLancarCertificado"
                                   text="Lançar Certificados"/>
-                        <MenuItem mnemonicParsing="false" onAction="#handleGerenciarCertificados"
-                                  text="Gerenciar Certificados Lançados"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Relatórios">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Por Funcionário"/>
-                        <MenuItem mnemonicParsing="false" text="Por Tipos"/>
                     </items>
                 </Menu>
             </menus>
@@ -173,15 +169,18 @@
                 <TableColumn fx:id="colunaFuncionarioGeral" prefWidth="200.0"
                              style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Funcionário"/>
                 <TableColumn fx:id="colunaIdadeGeral" prefWidth="70.0"
-                             style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Idade"/>
+                             style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"
+                             text="Idade"/>
                 <TableColumn fx:id="colunaSetorGeral" prefWidth="135.0"
                              style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Setor"/>
                 <TableColumn fx:id="colunaAniversario" minWidth="0.0" prefWidth="126.0"
-                             style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Aniversário"/>
+                             style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"
+                             text="Aniversário"/>
                 <TableColumn fx:id="colunaStatusGeral" minWidth="492.0" prefWidth="511.0"
                              style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Status Geral"/>
                 <TableColumn fx:id="colunaAcoesGeral" maxWidth="112.0" prefWidth="110.0"
-                             style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Ações"/>
+                             style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"
+                             text="Ações"/>
             </columns>
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -192,14 +191,18 @@
                    AnchorPane.rightAnchor="50.0">
             <columns>
                 <TableColumn fx:id="colunaFuncionarioVencimentos" prefWidth="200.0" text="Funcionário"/>
-                <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="56.0" text="Idade"/>
-                <TableColumn fx:id="colunaSetorVencimentos" prefWidth="110.0" text="Setor"/>
+                <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="50.0" text="Idade"
+                             style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colunaSetorVencimentos" prefWidth="100.0" text="Setor"/>
                 <TableColumn fx:id="colunaTipoVencimentos" prefWidth="70.0" text="Tipo"/>
-                <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="135.0" text="Descrição"/>
-                <TableColumn fx:id="colunaEmissaoVencimentos" prefWidth="110.0" text="Data Emissão"/>
-                <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="110.0" text="Data Validade"/>
-                <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="328.0" text="Status"/>
-                <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" text="Ações"/>
+                <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="125.0" text="Descrição"/>
+                <TableColumn fx:id="colunaEmissaoVencimentos" prefWidth="100.0" text="Data Emissão"
+                             style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="100.0" text="Data Validade"
+                             style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="330.0" text="Status"/>
+                <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" text="Ações"
+                             style="-fx-alignment: CENTER;"/>
             </columns>
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>

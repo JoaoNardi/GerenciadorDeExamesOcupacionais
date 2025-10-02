@@ -541,15 +541,8 @@ public class MainController {
         janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", this::setTodos);
     }
 
-    public void handleGerenciarCertificados(ActionEvent event) {
-        janela.abrirJanela("/view/CertificadoView.fxml", "Gerenciar Certificados", this::setTodos);
-    }
-
     public void handleLancarPendecia(ActionEvent event) {
         janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
-    }
-
-    public void handleGerenciarExames(ActionEvent event) {
     }
 
     public void handleBtnVencidos(ActionEvent event) {
