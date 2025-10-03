@@ -23,7 +23,7 @@ public class MainService {
 
     public static void loadInicial() {
         setorService.carregarSetores();
-        funcionarioService.carregarFuncionarios(true);
+        funcionarioService.carregarFuncionariosPorStatus(true);
         exameService.carregarExamesVigentes();
         certificadoService.carregarCertificadosVigentes();
         listaCondicoes = condicaoService.listarTodasCondicoes();
