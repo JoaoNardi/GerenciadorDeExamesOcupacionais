@@ -38,7 +38,7 @@ public class CertificadoController {
     private void initialize() {
         inputDataValidade.setEditable(false);
         ObservableList<TipoCertificado> certificados = tipoCertificadoService.listarTiposCertificados();
-        funcionarioService.carregarFuncionarios(true);
+        funcionarioService.carregarFuncionariosPorStatus(true);
         inputFuncionario.setItems(funcionarioService.listarFuncionarios());
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
             @Override

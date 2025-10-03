@@ -35,7 +35,7 @@ public class ExamesController {
     @FXML
     private void initialize() {
         ObservableList<TipoExame> exames = tipoExameService.listarTiposExame();
-        funcionarioService.carregarFuncionarios(true);
+        funcionarioService.carregarFuncionariosPorStatus(true);
         inputFuncionario.setItems(funcionarioService.listarFuncionarios());
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
             @Override

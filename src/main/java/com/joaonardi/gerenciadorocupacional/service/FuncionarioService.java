@@ -15,10 +15,16 @@ public class FuncionarioService {
     private static Map<Integer, Funcionario> funcionariosMap;
     public static ObservableList<Funcionario> funcionariosList;
 
-    public void carregarFuncionarios(boolean ativos){
+    public void carregarFuncionariosPorStatus(boolean ativos){
      funcionariosList = dao.listaFuncionariosPorStatus(ativos);
      funcionariosMap = funcionariosList.stream()
              .collect(Collectors.toMap(Funcionario::getId, f->f));
+    }
+
+    public void carregarTodosFuncionarios(){
+        funcionariosList = dao.listaFuncionariosPorStatus();
+        funcionariosMap = funcionariosList.stream()
+                .collect(Collectors.toMap(Funcionario::getId, f->f));
     }
 
     public void validarCpf(String cpf) throws Exception {
@@ -38,7 +44,7 @@ public class FuncionarioService {
         } else {
             dao.alterarFuncionario(funcionario.getId(), funcionario);
         }
-        carregarFuncionarios(true);
+        carregarFuncionariosPorStatus(true);
     }
 
     public Funcionario getFuncionarioMapeadoPorId(int id) {

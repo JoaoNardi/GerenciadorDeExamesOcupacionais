@@ -49,7 +49,7 @@ public class GerenciarFuncionariosController {
     }
 
     private void recarregarListaFuncionarios() {
-        funcionarioService.carregarFuncionarios(listarAtivos);
+        funcionarioService.carregarFuncionariosPorStatus(listarAtivos);
         tabelaFuncionarios.setItems(funcionarioService.listarFuncionarios());
     }
 
