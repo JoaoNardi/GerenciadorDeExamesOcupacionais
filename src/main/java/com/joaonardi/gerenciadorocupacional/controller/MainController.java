@@ -74,7 +74,7 @@ public class MainController {
     int diasVencimento = 0;
 
     @FXML
-    private void initialize() throws Exception {
+    private void initialize() {
         exameService.carregarExamesVigentes();
         certificadoService.carregarCertificadosVigentes();
         tipoExameService.carregarTipoExames();
@@ -107,7 +107,7 @@ public class MainController {
     }
 
     private void setTabelaPrincipal() {
-        funcionarioService.carregarFuncionarios(true);
+        funcionarioService.carregarFuncionariosPorStatus(true);
         try {
             if (!funcionarioService.listarFuncionarios().isEmpty()) {
                 colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
@@ -543,6 +543,11 @@ public class MainController {
 
     public void handleLancarPendecia(ActionEvent event) {
         janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
+    }
+
+    public void handleAbrirRelatorioFuncionario(ActionEvent event) {
+        janela.abrirJanela("/view/RelatoriosPorFuncionariosView.fxml", "Relatórios por Funcionários", this::setTodos);
+
     }
 
     public void handleBtnVencidos(ActionEvent event) {

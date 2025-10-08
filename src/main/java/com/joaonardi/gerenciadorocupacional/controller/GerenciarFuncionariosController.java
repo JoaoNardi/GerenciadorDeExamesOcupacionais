@@ -24,7 +24,6 @@ public class GerenciarFuncionariosController {
     public Button inputEditar;
 
     boolean listarAtivos = true;
-    ToggleGroup toggleAtivo = new ToggleGroup();
     FuncionarioController funcionarioController = new FuncionarioController();
     Janela janela = new Janela();
     FuncionarioService funcionarioService = new FuncionarioService();

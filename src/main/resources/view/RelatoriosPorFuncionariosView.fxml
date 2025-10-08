@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="769.0" prefWidth="1004.0" xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.joaonardi.gerenciadorocupacional.controller.RelatoriosPorFuncionariosControlller">
+    <children>
+        <Pane layoutX="263.0" layoutY="12.0" prefHeight="75.0" prefWidth="544.0"
+              style="-fx-background-color: silver; -fx-background-radius: 8;">
+            <children>
+                <Label layoutX="518.0" layoutY="23.0" prefHeight="17.0" prefWidth="0.0" text="*" textFill="RED"/>
+            </children>
+        </Pane>
+        <Label layoutX="101.0" layoutY="21.0" prefHeight="25.0" prefWidth="87.0" text="Funcionário">
+            <font>
+                <Font size="16.0"/>
+            </font>
+        </Label>
+        <ComboBox fx:id="inputFuncionario" editable="true" layoutX="68.0" layoutY="45.0" prefHeight="25.0"
+                  prefWidth="165.0" promptText="Pesquise ou selecione"/>
+        <Button fx:id="btnGerarRelatório" layoutX="850.0" layoutY="17.0" mnemonicParsing="false"
+                onAction="#handleGerarRelatorio" prefHeight="35.0" prefWidth="126.0" text="Gerar relatório">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Button>
+        <DatePicker fx:id="inputDataInicial" layoutX="284.0" layoutY="46.0"/>
+        <DatePicker fx:id="inputDataFinal" layoutX="474.0" layoutY="46.0"/>
+        <Label layoutX="520.0" layoutY="21.0" prefHeight="25.0" prefWidth="104.0" text="Data Final">
+            <font>
+                <Font size="16.0"/>
+            </font>
+        </Label>
+        <Label layoutX="325.0" layoutY="21.0" prefHeight="25.0" prefWidth="104.0" text="Data Inicial">
+            <font>
+                <Font size="16.0"/>
+            </font>
+        </Label>
+        <RadioButton fx:id="inputPorEmissao" layoutX="676.0" layoutY="25.0" mnemonicParsing="false"
+                     onAction="#handlePorEmissao" selected="true" text="Por Emissão">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </RadioButton>
+        <RadioButton fx:id="inputPorValidade" layoutX="676.0" layoutY="50.0" mnemonicParsing="false"
+                     onAction="#handlePorValidade" text="Por Validade">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </RadioButton>
+        <HBox alignment="CENTER" layoutX="826.0" layoutY="61.0" prefHeight="35.0" prefWidth="174.0" spacing="15.0">
+            <children>
+                <Button fx:id="btnImprimir" mnemonicParsing="false">
+                    <tooltip>
+                        <Tooltip showDelay="200ms" text="Imprimir"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="btnSalvarPDF" mnemonicParsing="false">
+                    <tooltip>
+                        <Tooltip showDelay="200ms" text="Exportar PDF"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="btnSalvarPlanilha" mnemonicParsing="false">
+                    <tooltip>
+                        <Tooltip showDelay="200ms" text="Exportar Planilha Excel"/>
+                    </tooltip>
+                </Button>
+            </children>
+        </HBox>
+        <TableView fx:id="tabelaVencimentos" layoutX="41.0" layoutY="151.0" prefHeight="584.0" prefWidth="916.0"
+                   style="-fx-border-radius: 10; -fx-background-radius: 10;">
+            <columns>
+                <TableColumn fx:id="colunaTipo" prefWidth="75.0" text="Tipo"/>
+                <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="159.0" text="Descrição"/>
+                <TableColumn fx:id="colunaEmissaoVencimentos" prefWidth="109.0" style="-fx-alignment: CENTER;"
+                             text="Data Emissão"/>
+                <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="113.0" style="-fx-alignment: CENTER;"
+                             text="Data Validade"/>
+                <TableColumn fx:id="colunaStatus" text="Status"/>
+            </columns>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+        </TableView>
+        <Label layoutX="74.0" layoutY="56.0"/>
+        <RadioButton fx:id="inputExame" layoutX="45.0" layoutY="87.0" mnemonicParsing="false"
+                     onAction="#handleInputExame" selected="true" text="Exame">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </RadioButton>
+        <RadioButton fx:id="inputCertificado" layoutX="45.0" layoutY="112.0" mnemonicParsing="false"
+                     onAction="#handleInputCertificado" selected="true" text="Certificado">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </RadioButton>
+        <ChoiceBox fx:id="inputTipoDe" layoutX="150.0" layoutY="100.0" onMousePressed="#handleCarregarTiposDe"
+                   prefWidth="150.0"/>
+        <Label layoutX="201.0" layoutY="79.0" text="Tipo">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label layoutX="186.0" layoutY="24.0" text="*" textFill="RED"/>
+        <Label layoutX="405.0" layoutY="17.0" text="*" textFill="RED"/>
+        <Label layoutX="592.0" layoutY="17.0" prefHeight="17.0" prefWidth="0.0" text="*" textFill="RED"/>
+        <Label layoutX="10.0" layoutY="6.0" text="* Obrigatório" textFill="RED"/>
+    </children>
+</AnchorPane>
