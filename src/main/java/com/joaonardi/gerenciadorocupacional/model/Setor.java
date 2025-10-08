@@ -5,15 +5,18 @@ import lombok.Getter;
 public class Setor {
     private Integer id;
     private String area;
-    private Integer grauRisco;
 
     public Setor(){}
 
-    //builder
+    @Override
+    public String toString() {
+        return area;
+
+    }
+
     public static final class SetorBuilder {
         private Integer id;
         private String area;
-        private Integer grauRisco;
 
         private SetorBuilder() {
         }
@@ -32,23 +35,11 @@ public class Setor {
             return this;
         }
 
-        public SetorBuilder grauRisco(Integer grauRisco) {
-            this.grauRisco = grauRisco;
-            return this;
-        }
-
         public Setor build() {
             Setor setor = new Setor();
-            setor.area = this.area;
             setor.id = this.id;
-            setor.grauRisco = this.grauRisco;
+            setor.area = this.area;
             return setor;
         }
-
-    }
-    @Override
-    public String toString() {
-        return area;
-
     }
 }

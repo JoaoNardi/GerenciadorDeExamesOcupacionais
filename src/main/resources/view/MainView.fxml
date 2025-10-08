@@ -39,7 +39,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Tipo de Exame"/>
                         <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame"
                                   text="Gerenciar Tipo de Exame"/>
-                        <MenuItem mnemonicParsing="false" onAction="#handleLancarPendecia" text="Lançar novo Exame"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleLancarExame" text="Lançar novo Exame"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Certificados">
@@ -200,8 +200,8 @@
                              style="-fx-alignment: CENTER;"/>
                 <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="100.0" text="Data Validade"
                              style="-fx-alignment: CENTER;"/>
-                <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="330.0" text="Status"/>
-                <TableColumn fx:id="colunaAcoesVencimentos" maxWidth="500.0" text="Ações"
+                <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="310.0" text="Status"/>
+                <TableColumn fx:id="colunaAcoesVencimentos" prefWidth="110.00" text="Ações"
                              style="-fx-alignment: CENTER;"/>
             </columns>
             <padding>

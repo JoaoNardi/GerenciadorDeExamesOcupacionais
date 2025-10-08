@@ -1,13 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.dao.SetorDAO;
-import com.joaonardi.gerenciadorocupacional.model.GrauDeRisco;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,36 +13,18 @@ import javafx.scene.input.MouseEvent;
 
 public class GerenciarSetoresControlller {
     public TableView<Setor> tabelaSetores;
-    public TableColumn colunaArea;
-    public TableColumn colunaRisco;
+    public TableColumn<Setor, String> colunaArea;
 
-    ObservableList<Setor> setores;
+    ObservableList<Setor> setores = FXCollections.observableArrayList();
     Janela janela = new Janela();
     SetorController setorController = new SetorController();
     SetorService setorService = new SetorService();
-    private SetorDAO setorDAO;
 
     @FXML
     public void initialize() {
-
+        setorService.carregarSetores();
         setores = setorService.listarSetores();
-
         colunaArea.setCellValueFactory(new PropertyValueFactory<>("area"));
-        colunaRisco.setCellValueFactory(new PropertyValueFactory<>("grauRisco"));
-        colunaRisco.setCellFactory(c -> new TableCell<Setor, Integer>(){
-                    @Override
-                    protected void updateItem(Integer grauRisco, boolean empty) {
-                        super.updateItem(grauRisco, empty);
-                        if (empty || grauRisco == null){
-                            setText(null);
-                        }else {
-                            GrauDeRisco risco = GrauDeRisco.values()[grauRisco];
-                            setText(risco.toString());
-
-                        }
-                    }
-                }
-        );
         tabelaSetores.setItems(setores);
     }
 

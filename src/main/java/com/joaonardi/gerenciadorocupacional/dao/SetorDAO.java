@@ -18,11 +18,11 @@ public class SetorDAO {
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
 
-    private static final String CADASTRAR_SETOR = "INSERT INTO SETORES (id, area, grau_risco) VALUES (NULL, ?, ?)";
+    private static final String CADASTRAR_SETOR = "INSERT INTO SETORES (id, area) VALUES (NULL, ?)";
 
     private static final String CONSULTAR_SETOR = "SELECT * FROM SETORES WHERE id = ?";
 
-    private static final String ALTERAR_SETOR = "UPDATE SETORES SET area = ?, grau_risco = ? WHERE id = ?";
+    private static final String ALTERAR_SETOR = "UPDATE SETORES SET area = ? WHERE id = ?";
 
     private static final String DELETAR_SETOR = "DELETE FROM SETORES WHERE id = ?";
 
@@ -37,7 +37,6 @@ public class SetorDAO {
             preparedStatement = connection.prepareStatement(CADASTRAR_SETOR);
             int i = 1;
             preparedStatement.setString(i++, setor.getArea());
-            preparedStatement.setInt(i++, setor.getGrauRisco());
 
             preparedStatement.execute();
             connection.commit();
@@ -62,7 +61,6 @@ public class SetorDAO {
                 setor = Setor.SetorBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .area(resultSet.getString("area"))
-                        .grauRisco(resultSet.getInt("grau_risco"))
                         .build();
             }
         } catch (SQLException e) {
@@ -86,7 +84,6 @@ public class SetorDAO {
             preparedStatement = connection.prepareStatement(ALTERAR_SETOR);
             int i = 1;
             preparedStatement.setString(i++, setor.getArea());
-            preparedStatement.setInt(i++, setor.getGrauRisco());
             preparedStatement.setInt(i++, id);
 
             preparedStatement.executeUpdate();
@@ -129,7 +126,6 @@ public class SetorDAO {
                 Setor setor = Setor.SetorBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .area(resultSet.getString("area"))
-                        .grauRisco(resultSet.getInt("grau_risco"))
                         .build();
                 listaSetores.add(setor);
             }

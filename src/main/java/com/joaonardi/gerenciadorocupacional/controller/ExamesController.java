@@ -34,7 +34,7 @@ public class ExamesController {
 
     @FXML
     private void initialize() {
-        ObservableList<TipoExame> exames = tipoExameService.listarTiposExame();
+        ObservableList<TipoExame> tipoExamesLista = tipoExameService.listarTiposExame();
         funcionarioService.carregarFuncionariosPorStatus(true);
         inputFuncionario.setItems(funcionarioService.listarFuncionarios());
         inputFuncionario.setConverter(new StringConverter<Funcionario>() {
@@ -54,7 +54,7 @@ public class ExamesController {
                 return null;
             }
         });
-        inputTipoExame.setItems(exames);
+        inputTipoExame.setItems(tipoExamesLista);
         inputTipoExame.setConverter(new StringConverter<TipoExame>() {
             @Override
             public String toString(TipoExame tipoExame) {
@@ -72,7 +72,7 @@ public class ExamesController {
                 return null;
             }
         });
-        inputTipoExame.setValue(exames.getFirst());
+        inputTipoExame.setValue(tipoExamesLista.getFirst());
         inputDataEmissao.setValue(LocalDate.now());
         inputFuncionario.setValue(funcionarioService.listarFuncionarios().getFirst());
         inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));

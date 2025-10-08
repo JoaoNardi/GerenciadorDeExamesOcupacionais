@@ -19,6 +19,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -98,7 +100,7 @@ public class MainController {
                 certificadoService.listarCertificadosPorVencimento(0).size()));
 
         labelVencemSemana.setText(String.valueOf(exameService.listarExamePorVencimento(7).size()
-                +certificadoService.listarCertificadosPorVencimento(7).size()));
+                + certificadoService.listarCertificadosPorVencimento(7).size()));
 
         labelVencemMes.setText(String.valueOf(exameService.listarExamePorVencimento(30).size() +
                 certificadoService.listarCertificadosPorVencimento(30).size()));
@@ -155,10 +157,11 @@ public class MainController {
                     final FontIcon iconeEditar = new FontIcon(FontAwesomeSolid.EDIT);
                     final Button btnEditarFuncionario = new Button();
 
-                    private final HBox hBox = new HBox(10, btnLancarPendencia, btnEditarFuncionario);
+                    private final HBox hBox = new HBox(15, btnLancarPendencia, btnEditarFuncionario);
 
                     @Override
                     protected void updateItem(Node node, boolean b) {
+                        hBox.setAlignment(Pos.CENTER);
                         super.updateItem(node, b);
                         if (b) {
                             setGraphic(null);
@@ -295,11 +298,12 @@ public class MainController {
                 Button btnLancarNovoTipo = new Button();
                 Button btnOpcoes = new Button();
 
-                private final HBox hBox = new HBox(10, btnLancarNovoTipo, btnOpcoes);
+                private final HBox hBox = new HBox(15, btnLancarNovoTipo, btnOpcoes);
 
 
                 @Override
                 protected void updateItem(Node node, boolean b) {
+                    hBox.setAlignment(Pos.CENTER);
                     super.updateItem(node, b);
                     if (b || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
                         setGraphic(null);
@@ -552,11 +556,39 @@ public class MainController {
     }
 
     public void handleLancarCertificado(ActionEvent event) {
-        janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", this::setTodos);
+        try {
+            tipoCertificadoService.carregarTiposCertificado();
+            if (tipoCertificadoService.listarTiposCertificados().isEmpty()) {
+                Notifications.create()
+                        .owner(janela.stage)
+                        .title("Atenção")
+                        .text("Nenhum Tipo Certificado Cadastrado")
+                        .hideAfter(Duration.seconds(3))
+                        .showError();
+                return;
+            }
+            janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", this::setTodos);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void handleLancarPendecia(ActionEvent event) {
-        janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
+    public void handleLancarExame(ActionEvent event) {
+        try {
+            tipoExameService.carregarTipoExames();
+            if (tipoExameService.listarTiposExame().isEmpty()) {
+                Notifications.create()
+                        .owner(janela.stage)
+                        .title("Atenção")
+                        .text("Nenhum Tipo Exame Cadastrado")
+                        .hideAfter(Duration.seconds(3))
+                        .showError();
+                return;
+            }
+            janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void handleAbrirRelatorioFuncionario(ActionEvent event) {

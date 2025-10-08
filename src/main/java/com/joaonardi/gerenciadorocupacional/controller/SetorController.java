@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-import com.joaonardi.gerenciadorocupacional.model.GrauDeRisco;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
@@ -16,7 +15,6 @@ public class SetorController {
 
 
     public TextField inputArea;
-    public ChoiceBox<GrauDeRisco> inputGrauRisco;
     public Button btnCancelar;
     public Button btnSalvar;
 
@@ -25,14 +23,12 @@ public class SetorController {
     private Setor setor;
     @FXML
     public void initialize() {
-        inputGrauRisco.getItems().addAll(GrauDeRisco.values());
     }
 
     public void setSetor(Setor setor) {
         this.setor = setor;
         if (setor !=null){
             inputArea.setText(setor.getArea());
-            inputGrauRisco.setValue(GrauDeRisco.values()[setor.getGrauRisco()]);
         }
     }
 
@@ -42,12 +38,11 @@ public class SetorController {
         setor = Setor.SetorBuilder.builder()
                 .id(null)
                 .area(inputArea.getText())
-                .grauRisco(inputGrauRisco.getValue().getValor()).build();
+                .build();
         } else {
             setor = Setor.SetorBuilder.builder()
                     .id(this.setor.getId())
                     .area(inputArea.getText())
-                    .grauRisco(inputGrauRisco.getValue().getValor())
                     .build();
         }
         service.cadastrarSetor(setor);
@@ -56,7 +51,6 @@ public class SetorController {
     @FXML
     public void handleCancelarSetor(ActionEvent event) {
         janela.fecharJanela(btnCancelar);
-
     }
 
 }
