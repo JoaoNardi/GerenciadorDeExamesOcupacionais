@@ -2,25 +2,23 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
-import com.joaonardi.gerenciadorocupacional.model.Tipo;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
 import com.joaonardi.gerenciadorocupacional.service.*;
+import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.javafx.FontIconConverter;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class RelatoriosPorFuncionariosControlller {
     // Services
@@ -51,7 +49,7 @@ public class RelatoriosPorFuncionariosControlller {
     public Button btnSalvarPDF;
     public Button btnSalvarPlanilha;
 
-
+    Janela janela = new Janela();
     private boolean isListarExames = true;
     private boolean isListarCertifiados = true;
 
@@ -64,7 +62,8 @@ public class RelatoriosPorFuncionariosControlller {
         loadAll();
         setInputs();
         setIcones();
-        enableDisableBtns(true);
+        disableButtons(true);
+        tabelaVencimentos.setItems(null);
     }
 
     private void loadAll() {
@@ -85,7 +84,7 @@ public class RelatoriosPorFuncionariosControlller {
         btnSalvarPlanilha.setGraphic(iconeExcel);
     }
 
-    private void enableDisableBtns(boolean able) {
+    private void disableButtons(boolean able) {
         btnImprimir.setDisable(able);
         btnSalvarPDF.setDisable(able);
         btnSalvarPlanilha.setDisable(able);
@@ -145,7 +144,6 @@ public class RelatoriosPorFuncionariosControlller {
                 return null;
             }
         });
-
     }
 
     public void setTabelaVencimentos() {
@@ -186,7 +184,6 @@ public class RelatoriosPorFuncionariosControlller {
             throw new RuntimeException(e);
         }
 
-
     }
 
     public void handlePorEmissao(ActionEvent event) {
@@ -221,7 +218,6 @@ public class RelatoriosPorFuncionariosControlller {
         }
     }
 
-
     public void handleGerarRelatorio(ActionEvent event) {
         String inputData = "";
         if (inputPorEmissao.isSelected()) {
@@ -229,6 +225,15 @@ public class RelatoriosPorFuncionariosControlller {
         }
         if (inputPorValidade.isSelected()) {
             inputData = "Validade";
+        }
+        if (inputDataFinal.getValue().isBefore(inputDataInicial.getValue())) {
+            Notifications.create().title("Erro")
+                    .text("Período de datas inválido")
+                    .hideAfter(Duration.seconds(3))
+                    .owner(janela.stage)
+                    .showError();
+            initialize();
+            return;
         }
         tabelaVencimentos.setItems(relatorioService.montarRelatorio(inputFuncionario.getValue(), inputData, inputDataInicial.getValue(),
                 inputDataFinal.getValue(),
