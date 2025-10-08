@@ -10,12 +10,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.time.LocalDate;
+
 
 public class GerenciarFuncionariosController {
     public TableView<Funcionario> tabelaFuncionarios;
     public TableColumn<Funcionario, String> colunaNome;
     public TableColumn<Funcionario, String> colunaCpf;
-    public TableColumn<Funcionario, String> colunaDataNascimento;
+    public TableColumn<Funcionario, LocalDate> colunaDataNascimento;
     public TableColumn<Funcionario, String> colunaSetor;
     public TableColumn<Funcionario, String> colunaDataAdmissao;
     public TableColumn<Funcionario, Boolean> colunaAtivo;

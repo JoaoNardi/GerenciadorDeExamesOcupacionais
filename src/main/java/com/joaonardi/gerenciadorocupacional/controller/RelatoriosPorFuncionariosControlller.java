@@ -5,6 +5,7 @@ import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
 import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,8 +40,8 @@ public class RelatoriosPorFuncionariosControlller {
     public TableView<RelatorioItem> tabelaVencimentos;
     public TableColumn<RelatorioItem, String> colunaTipo;
     public TableColumn<RelatorioItem, String> colunaDescricaoVencimentos;
-    public TableColumn<RelatorioItem, String> colunaEmissaoVencimentos;
-    public TableColumn<RelatorioItem, String> colunaValidadeVencimentos;
+    public TableColumn<RelatorioItem, LocalDate> colunaEmissaoVencimentos;
+    public TableColumn<RelatorioItem, LocalDate> colunaValidadeVencimentos;
     public TableColumn<RelatorioItem, String> colunaStatus;
     public RadioButton inputExame;
     public RadioButton inputCertificado;
@@ -164,12 +165,26 @@ public class RelatoriosPorFuncionariosControlller {
                 return new SimpleStringProperty(descricao);
             });
             colunaEmissaoVencimentos.setCellValueFactory(f -> {
-                String emissao = f.getValue().getDataEmissao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                return new SimpleStringProperty(emissao);
+                LocalDate emissao = f.getValue().getDataEmissao();
+                return new SimpleObjectProperty<>(emissao);
+            });
+            colunaEmissaoVencimentos.setCellFactory(column -> new TableCell<>() {
+                @Override
+                protected void updateItem(LocalDate item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "" : DateTimeFormatter.ofPattern("dd/MM/yyyy").format(item));
+                }
             });
             colunaValidadeVencimentos.setCellValueFactory(f -> {
-                String validade = f.getValue().getDataValidade().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                return new SimpleStringProperty(validade);
+                LocalDate validade = f.getValue().getDataValidade();
+                return new SimpleObjectProperty<>(validade);
+            });
+            colunaValidadeVencimentos.setCellFactory(column -> new TableCell<>() {
+                @Override
+                protected void updateItem(LocalDate item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "" : DateTimeFormatter.ofPattern("dd/MM/yyyy").format(item));
+                }
             });
             colunaStatus.setCellValueFactory(f -> {
                 String status = "";
