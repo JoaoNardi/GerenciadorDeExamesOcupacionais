@@ -269,9 +269,17 @@ public class RelatoriosPorFuncionariosControlller {
             initialize();
             return;
         }
-        tabelaVencimentos.setItems(relatorioService.montarRelatorio(inputFuncionario.getValue(), inputData, inputDataInicial.getValue(),
+        btnSalvarPDF.setDisable(false);
+        relatorioService.carregarRelatorio(inputFuncionario.getValue(), inputData, inputDataInicial.getValue(),
                 inputDataFinal.getValue(),
-                inputTipoDe.getValue(), inputExame.isSelected(), inputCertificado.isSelected()));
+                inputTipoDe.getValue(), inputExame.isSelected(), inputCertificado.isSelected());
+        relatorioLista = relatorioService.listarRelatorio();
+        tabelaVencimentos.setItems(relatorioLista);
         setTabelaVencimentos();
+    }
+
+    public void handleSalvarPDF(ActionEvent event) {
+        relatorioService.gerarPDF(janela.stage, relatorioLista, inputFuncionario.getValue(),tabelaVencimentos,inputDataInicial.getValue(),
+                inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 }
