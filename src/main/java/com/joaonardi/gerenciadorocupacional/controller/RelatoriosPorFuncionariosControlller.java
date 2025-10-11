@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
@@ -37,12 +38,16 @@ public class RelatoriosPorFuncionariosControlller {
     public RadioButton inputPorEmissao;
     public RadioButton inputPorValidade;
     public String tipoData = "Emissao";
+    //Tabela 1
     public TableView<RelatorioItem> tabelaVencimentos;
+    public TableColumn<RelatorioItem, Integer> colunaId;
     public TableColumn<RelatorioItem, String> colunaTipo;
     public TableColumn<RelatorioItem, String> colunaDescricaoVencimentos;
     public TableColumn<RelatorioItem, LocalDate> colunaEmissaoVencimentos;
     public TableColumn<RelatorioItem, LocalDate> colunaValidadeVencimentos;
     public TableColumn<RelatorioItem, String> colunaStatus;
+    public TableColumn<RelatorioItem, Integer> colunaAtualizadoPor;
+
     public RadioButton inputExame;
     public RadioButton inputCertificado;
     public ChoiceBox<TipoDe> inputTipoDe;
@@ -57,6 +62,7 @@ public class RelatoriosPorFuncionariosControlller {
     //Dados a serem carregados
     private ObservableList<Funcionario> funcionariosLista = FXCollections.observableArrayList();
     private ObservableList<TipoDe> tiposDeLista = FXCollections.observableArrayList();
+    private ObservableList<RelatorioItem> relatorioLista = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
@@ -94,13 +100,15 @@ public class RelatoriosPorFuncionariosControlller {
     public void handleCarregarTiposDe() {
         tiposDeLista.clear();
         tiposDeLista.add(null);
-        if (isListarExames) {
-            tipoExameService.carregarTipoExames();
-            tiposDeLista.addAll(tipoExameService.listarTiposExame());
-        }
-        if (isListarCertifiados) {
-            tipoCertificadoService.carregarTiposCertificado();
-            tiposDeLista.addAll(tipoCertificadoService.listarTiposCertificados());
+        if (!inputExame.isSelected() || !inputCertificado.isSelected()) {
+            if (isListarExames) {
+                tipoExameService.carregarTipoExames();
+                tiposDeLista.addAll(tipoExameService.listarTiposExame());
+            } else
+            if (isListarCertifiados) {
+                tipoCertificadoService.carregarTiposCertificado();
+                tiposDeLista.addAll(tipoCertificadoService.listarTiposCertificados());
+            }
         }
     }
 
@@ -126,7 +134,6 @@ public class RelatoriosPorFuncionariosControlller {
                 return null;
             }
         });
-
         inputTipoDe.setItems(tiposDeLista);
         inputTipoDe.setConverter(new StringConverter<TipoDe>() {
             @Override
@@ -149,7 +156,9 @@ public class RelatoriosPorFuncionariosControlller {
 
     public void setTabelaVencimentos() {
         try {
-
+            colunaId.setCellValueFactory(f -> {
+                return new SimpleObjectProperty<>(f.getValue().getId());
+            });
             colunaTipo.setCellValueFactory(f -> {
                 String tipo = f.getValue().getOrigem();
                 return new SimpleStringProperty(tipo);
@@ -195,6 +204,9 @@ public class RelatoriosPorFuncionariosControlller {
                 }
                 return new SimpleStringProperty(status);
             });
+            colunaAtualizadoPor.setCellValueFactory(f -> {
+                return new SimpleObjectProperty<>(f.getValue().getAtualizadoPor());
+            });
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -235,6 +247,13 @@ public class RelatoriosPorFuncionariosControlller {
 
     public void handleGerarRelatorio(ActionEvent event) {
         String inputData = "";
+        if (inputExame.isSelected() && inputCertificado.isSelected()) {
+            colunaId.setVisible(false);
+            colunaAtualizadoPor.setVisible(false);
+        } else {
+            colunaId.setVisible(true);
+            colunaAtualizadoPor.setVisible(true);
+        }
         if (inputPorEmissao.isSelected()) {
             inputData = "Emissao";
         }
