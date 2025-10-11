@@ -9,29 +9,32 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.VerticalPositionMark;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
 import org.controlsfx.control.Notifications;
 
+
 import java.awt.*;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class RelatorioService {
     DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private RelatorioDAO relatorioDAO = new RelatorioDAO();
-    private SetorService setorService = new SetorService();
+    private final RelatorioDAO relatorioDAO = new RelatorioDAO();
+    private final SetorService setorService = new SetorService();
     private ObservableList<RelatorioItem> relatorioItemsLista = FXCollections.observableArrayList();
-    private TipoExameService tipoExameService = new TipoExameService();
-    private TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
+    private final TipoExameService tipoExameService = new TipoExameService();
+    private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
     public void carregarRelatorio(Funcionario funcionario, String inputData, LocalDate dataInicial, LocalDate dataFinal, TipoDe tipoDe, boolean exame,
                                   boolean certificado) {
@@ -42,6 +45,92 @@ public class RelatorioService {
         return relatorioItemsLista;
     }
 
+    public void imprimir(Stage stage, ObservableList<RelatorioItem> relatorioLista,
+                         Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
+                         boolean inputCertificado, TipoDe tipoDe) {
+        setorService.carregarSetores();
+        tipoCertificadoService.carregarTiposCertificado();
+        tipoExameService.carregarTipoExames();
+
+        try {
+            File fileTemp = File.createTempFile("relatorioPorFuncionario", ".pdf");
+            fileTemp.deleteOnExit();
+
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, new FileOutputStream(fileTemp));
+            document.open();
+
+            Paragraph titulo = new Paragraph("Relatório por Funcionário");
+            titulo.add(new Chunk(new VerticalPositionMark()));
+            titulo.add("Data de geração: " + LocalDate.now().format(formatoData));
+            document.add(titulo);
+            document.add(new Paragraph("Nome: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
+            document.add(new Paragraph(" "));
+            Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
+            document.add(filtros);
+            if (tipoDe == null) {
+                filtros.add("Todos");
+            } else {
+                filtros.add(tipoDe.getNome());
+            }
+            if (inputExame && !inputCertificado && tipoDe == null) {
+                filtros.add(" - Exames - ");
+            }
+            if (inputCertificado && !inputExame && tipoDe == null) {
+                filtros.add(" - Certificados - ");
+            }
+            document.add(new Paragraph(" "));
+
+            int colunas = 0;
+            for (TableColumn<?, ?> col : tableView.getColumns()) {
+                if (col.isVisible()) colunas++;
+            }
+
+            PdfPTable tabela = new PdfPTable(colunas);
+            tabela.setWidthPercentage(100);
+
+            for (TableColumn<RelatorioItem, ?> col : tableView.getColumns()) {
+                if (col.isVisible()) {
+                    PdfPCell cell = new PdfPCell(new Phrase(col.getText()));
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    tabela.addCell(cell);
+                }
+            }
+
+            for (RelatorioItem item : relatorioLista) {
+                for (TableColumn<RelatorioItem, ?> col : tableView.getColumns()) {
+                    if (col.isVisible()) {
+                        Object value = col.getCellObservableValue(item) != null
+                                ? col.getCellObservableValue(item).getValue()
+                                : null;
+                        String textoCelula;
+                        if (value instanceof LocalDate) {
+                            textoCelula = ((LocalDate) value).format(formatoData);
+                        } else if (value != null) {
+                            textoCelula = value.toString();
+                        } else {
+                            textoCelula = "";
+                        }
+                        tabela.addCell(textoCelula);
+                    }
+                }
+            }
+            document.add(tabela);
+            document.close();
+            PDDocument documentPrinter = Loader.loadPDF(fileTemp);
+            Frame owner = new Frame();
+            owner.setVisible(true);
+            PrinterJob job = PrinterJob.getPrinterJob();
+            if (job.printDialog()) {
+                job.setPageable(new PDFPageable(documentPrinter));
+                job.print();
+            }
+            owner.dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao gerar arquivo de impressão", e);
+        }
+    }
 
     public void gerarPDF(Stage stage, ObservableList<RelatorioItem> relatorioLista,
                          Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
@@ -137,7 +226,7 @@ public class RelatorioService {
             document.add(tabela);
             document.close();
             Notifications.create().title("Sucesso")
-                    .text( " ✅ Clique aqui para abrir! " + "\n"  + " PDF salvo em: " + file.getAbsolutePath()).owner(stage).hideAfter(Duration.seconds(5)).onAction(event -> {
+                    .text(" ✅ Clique aqui para abrir! " + "\n" + " PDF salvo em: " + file.getAbsolutePath()).owner(stage).hideAfter(Duration.seconds(5)).onAction(event -> {
                         try {
                             Desktop.getDesktop().open(file);
                         } catch (IOException e) {

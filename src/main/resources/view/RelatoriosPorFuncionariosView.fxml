@@ -66,7 +66,7 @@
         </RadioButton>
         <HBox alignment="CENTER" layoutX="826.0" layoutY="61.0" prefHeight="35.0" prefWidth="174.0" spacing="15.0">
             <children>
-                <Button fx:id="btnImprimir" mnemonicParsing="false">
+                <Button fx:id="btnImprimir" mnemonicParsing="false" onAction="#handleImprimir">
                     <tooltip>
                         <Tooltip showDelay="200ms" text="Imprimir"/>
                     </tooltip>

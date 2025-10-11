@@ -270,6 +270,7 @@ public class RelatoriosPorFuncionariosControlller {
             return;
         }
         btnSalvarPDF.setDisable(false);
+        btnImprimir.setDisable(false);
         relatorioService.carregarRelatorio(inputFuncionario.getValue(), inputData, inputDataInicial.getValue(),
                 inputDataFinal.getValue(),
                 inputTipoDe.getValue(), inputExame.isSelected(), inputCertificado.isSelected());
@@ -280,6 +281,11 @@ public class RelatoriosPorFuncionariosControlller {
 
     public void handleSalvarPDF(ActionEvent event) {
         relatorioService.gerarPDF(janela.stage, relatorioLista, inputFuncionario.getValue(),tabelaVencimentos,inputDataInicial.getValue(),
+                inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
+    }
+
+    public void handleImprimir(ActionEvent event) {
+        relatorioService.imprimir(janela.stage, relatorioLista, inputFuncionario.getValue(),tabelaVencimentos,inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 }
