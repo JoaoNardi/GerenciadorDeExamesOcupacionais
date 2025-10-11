@@ -67,7 +67,6 @@ public class RelatorioService {
             document.add(new Paragraph("Nome: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
             document.add(new Paragraph(" "));
             Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
-            document.add(filtros);
             if (tipoDe == null) {
                 filtros.add("Todos");
             } else {
@@ -79,6 +78,7 @@ public class RelatorioService {
             if (inputCertificado && !inputExame && tipoDe == null) {
                 filtros.add(" - Certificados - ");
             }
+            document.add(filtros);
             document.add(new Paragraph(" "));
 
             int colunas = 0;
@@ -174,7 +174,6 @@ public class RelatorioService {
             document.add(new Paragraph("Nome: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
             document.add(new Paragraph(" "));
             Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
-            document.add(filtros);
             if (tipoDe == null) {
                 filtros.add("Todos");
             } else {
@@ -186,7 +185,7 @@ public class RelatorioService {
             if (inputCertificado && !inputExame && tipoDe == null) {
                 filtros.add(" - Certificados - ");
             }
-
+            document.add(filtros);
             document.add(new Paragraph(" "));
 
             int colunas = 0;
