@@ -11,12 +11,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class ExameDAO {
-    DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
-
-    private static final String DRIVER = "org.sqlite.JDBC";
-    private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
 
     private static final String CADASTRAR_EXAME = "INSERT INTO EXAMES (id, tipo_exame_id, funcionario_id, data_emissao, data_validade, " +
             "atualizado_por)"

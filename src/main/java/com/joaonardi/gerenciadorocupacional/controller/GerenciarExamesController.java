@@ -15,13 +15,13 @@ import javafx.scene.input.MouseEvent;
 
 public class GerenciarExamesController {
     public TableView<TipoExame> tabelaExames;
-    public TableColumn colunaNome;
-    public TableColumn colunaPerioicidade;
+    public TableColumn<TipoExame, String> colunaNome;
+    public TableColumn<TipoExame, Integer> colunaPerioicidade;
 
     ObservableList<TipoExame> tiposExame;
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
     TipoExameController tipoExameController = new TipoExameController();
-    TipoExameService tipoExameService = new TipoExameService();
+    final TipoExameService tipoExameService = new TipoExameService();
 
     @FXML
     public void initialize() {
@@ -30,7 +30,7 @@ public class GerenciarExamesController {
 
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaPerioicidade.setCellValueFactory(new PropertyValueFactory<>("periodicidade"));
-        colunaPerioicidade.setCellFactory(c -> new TableCell<Exame, Integer>(){
+        colunaPerioicidade.setCellFactory(c -> new TableCell<>(){
                     @Override
                     protected void updateItem(Integer periodicidade, boolean empty) {
                         super.updateItem(periodicidade, empty);

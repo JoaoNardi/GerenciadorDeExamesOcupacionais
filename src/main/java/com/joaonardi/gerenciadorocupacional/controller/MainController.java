@@ -65,15 +65,15 @@ public class MainController {
     public TableColumn<Tipo, Node> colunaAcoesVencimentos;
 
 
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
 
-    TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
-    FuncionarioService funcionarioService = new FuncionarioService();
-    ExameService exameService = new ExameService();
-    MainService mainService = new MainService();
-    SetorService setorService = new SetorService();
-    TipoExameService tipoExameService = new TipoExameService();
-    CertificadoService certificadoService = new CertificadoService();
+    final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
+    final FuncionarioService funcionarioService = new FuncionarioService();
+    final ExameService exameService = new ExameService();
+    final MainService mainService = new MainService();
+    final SetorService setorService = new SetorService();
+    final TipoExameService tipoExameService = new TipoExameService();
+    final CertificadoService certificadoService = new CertificadoService();
     int diasVencimento = 0;
 
     @FXML
@@ -289,14 +289,12 @@ public class MainController {
                     setText(empty || item == null ? "" : DateTimeFormatter.ofPattern("dd/MM/yyyy").format(item));
                 }
             });
-            colunaStatusVencimentos.setCellValueFactory(f -> {
-                return new SimpleStringProperty(exameService.vencimentos(f.getValue()));
-            });
+            colunaStatusVencimentos.setCellValueFactory(f -> new SimpleStringProperty(exameService.vencimentos(f.getValue())));
             colunaAcoesVencimentos.setCellFactory(coluna -> new TableCell<>() {
                 final FontIcon iconeOpcoes = new FontIcon(FontAwesomeSolid.LIST);
                 final FontIcon iconeLancar = new FontIcon(FontAwesomeSolid.CHECK);
-                Button btnLancarNovoTipo = new Button();
-                Button btnOpcoes = new Button();
+                final Button btnLancarNovoTipo = new Button();
+                final Button btnOpcoes = new Button();
 
                 private final HBox hBox = new HBox(15, btnLancarNovoTipo, btnOpcoes);
 
@@ -318,10 +316,7 @@ public class MainController {
                             setGraphic(null);
                         } else {
                             btnOpcoes.setGraphic(iconeOpcoes);
-                            btnOpcoes.setOnAction(e -> {
-                                handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
-
-                            });
+                            btnOpcoes.setOnAction(e -> handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo));
                             btnLancarNovoTipo.setGraphic(iconeLancar);
                             btnLancarNovoTipo.setOnAction(e -> {
                                 Exame exame = (Exame) getTableView().getItems().get(getIndex());
@@ -335,10 +330,7 @@ public class MainController {
                             setGraphic(null);
                         } else {
                             btnOpcoes.setGraphic(iconeOpcoes);
-                            btnOpcoes.setOnAction(e -> {
-                                handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo);
-
-                            });
+                            btnOpcoes.setOnAction(e -> handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo));
                             btnLancarNovoTipo.setGraphic(iconeLancar);
                             btnLancarNovoTipo.setOnAction(e -> {
                                 Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
@@ -456,9 +448,7 @@ public class MainController {
         btnEditarExame.setGraphic(iconeEditar);
         btnDeletarExame.setGraphic(iconeLixeira);
         if (tipoDescritivo.equals("Exame")) {
-            btnDeletarExame.setOnAction(e -> {
-                handleDeletarExame((Exame) tipo);
-            });
+            btnDeletarExame.setOnAction(e -> handleDeletarExame((Exame) tipo));
             btnEditarExame.setOnAction(event -> {
                 try {
                     handleEditarExame((Exame) tipo);
@@ -468,9 +458,7 @@ public class MainController {
             });
         }
         if (tipoDescritivo.equals("Certificado")) {
-            btnDeletarExame.setOnAction(e -> {
-                handleDeletarCertificado((Certificado) tipo);
-            });
+            btnDeletarExame.setOnAction(e -> handleDeletarCertificado((Certificado) tipo));
             btnEditarExame.setOnAction(event -> {
                 try {
                     handleEditarCertificado((Certificado) tipo);
@@ -499,7 +487,7 @@ public class MainController {
     }
 
     @FXML
-    public void handleEditarExame(Exame exame) throws Exception {
+    public void handleEditarExame(Exame exame) {
         if (exame != null) {
             janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", this::setTodos);
             examesController = janela.loader.getController();
@@ -508,7 +496,7 @@ public class MainController {
     }
 
     @FXML
-    public void handleEditarCertificado(Certificado certificado) throws Exception {
+    public void handleEditarCertificado(Certificado certificado) {
         if (certificado != null) {
             janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", this::setTodos);
             certificadoController = janela.loader.getController();
@@ -523,17 +511,17 @@ public class MainController {
     }
 
     @FXML
-    public void handleAbrirGerenciarFuncionario(ActionEvent event) {
+    public void handleAbrirGerenciarFuncionario() {
         janela.abrirJanela("/view/GerenciarFuncionariosView.fxml", "Gerenciar Funcionarios", this::setTodos);
     }
 
     @FXML
-    public void handleAbrirSetor(ActionEvent event) {
+    public void handleAbrirSetor() {
         janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", this::setTodos);
     }
 
     @FXML
-    public void handleAbrirGerenciarSetor(ActionEvent event) {
+    public void handleAbrirGerenciarSetor() {
         janela.abrirJanela("/view/GerenciarSetoresView.fxml", "Gerenciar Setores", this::setTodos);
     }
 
@@ -543,19 +531,19 @@ public class MainController {
     }
 
     @FXML
-    public void handleAbrirGerenciarExame(ActionEvent event) {
+    public void handleAbrirGerenciarExame() {
         janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", this::setTodos);
     }
 
-    public void handleTipoCertificado(ActionEvent event) {
+    public void handleTipoCertificado() {
         janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", this::setTodos);
     }
 
-    public void handleGerenciarTiposCertificado(ActionEvent event) {
+    public void handleGerenciarTiposCertificado() {
         janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Tipos Certificados", this::setTodos);
     }
 
-    public void handleLancarCertificado(ActionEvent event) {
+    public void handleLancarCertificado() {
         try {
             tipoCertificadoService.carregarTiposCertificado();
             if (tipoCertificadoService.listarTiposCertificados().isEmpty()) {
@@ -573,7 +561,7 @@ public class MainController {
         }
     }
 
-    public void handleLancarExame(ActionEvent event) {
+    public void handleLancarExame() {
         try {
             tipoExameService.carregarTipoExames();
             if (tipoExameService.listarTiposExame().isEmpty()) {
@@ -591,12 +579,12 @@ public class MainController {
         }
     }
 
-    public void handleAbrirRelatorioFuncionario(ActionEvent event) {
+    public void handleAbrirRelatorioFuncionario() {
         janela.abrirJanela("/view/RelatoriosPorFuncionariosView.fxml", "Relatórios por Funcionários", this::setTodos);
 
     }
 
-    public void handleBtnVencidos(ActionEvent event) {
+    public void handleBtnVencidos() {
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 0;
@@ -605,7 +593,7 @@ public class MainController {
         tabelaVencimentos.refresh();
     }
 
-    public void handleBtnSemana(ActionEvent event) {
+    public void handleBtnSemana() {
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 7;
@@ -614,7 +602,7 @@ public class MainController {
         tabelaVencimentos.refresh();
     }
 
-    public void handleBtnMes(ActionEvent event) {
+    public void handleBtnMes() {
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 30;
@@ -622,7 +610,7 @@ public class MainController {
         setLabels();
     }
 
-    public void handleBtnSemestre(ActionEvent event) {
+    public void handleBtnSemestre() {
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
         diasVencimento = 182;
@@ -631,7 +619,7 @@ public class MainController {
         tabelaVencimentos.refresh();
     }
 
-    public void handleBtnTodos(ActionEvent event) {
+    public void handleBtnTodos() {
         tabelaVencimentos.setVisible(true);
         tabelaPrincipal.setVisible(false);
         diasVencimento = 183;
@@ -640,7 +628,7 @@ public class MainController {
         tabelaVencimentos.refresh();
     }
 
-    public void handleBtnGeral(ActionEvent event) throws Exception {
+    public void handleBtnGeral() {
         MainService.loadInicial();
         initialize();
         setTabelaPrincipal();

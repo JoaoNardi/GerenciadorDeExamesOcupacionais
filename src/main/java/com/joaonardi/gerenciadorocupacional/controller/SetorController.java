@@ -18,12 +18,9 @@ public class SetorController {
     public Button btnCancelar;
     public Button btnSalvar;
 
-    SetorService service = new SetorService();
-    Janela janela = new Janela();
+    final SetorService service = new SetorService();
+    final Janela janela = new Janela();
     private Setor setor;
-    @FXML
-    public void initialize() {
-    }
 
     public void setSetor(Setor setor) {
         this.setor = setor;

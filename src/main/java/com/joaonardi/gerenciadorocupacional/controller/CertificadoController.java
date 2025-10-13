@@ -28,11 +28,11 @@ public class CertificadoController {
 
     Certificado certificado = null;
 
-    Janela janela = new Janela();
-    TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
-    CertificadoService certificadoService = new CertificadoService();
-    FuncionarioService funcionarioService = new FuncionarioService();
-    SetorService setorService = new SetorService();
+    final Janela janela = new Janela();
+    final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
+    final CertificadoService certificadoService = new CertificadoService();
+    final FuncionarioService funcionarioService = new FuncionarioService();
+    final SetorService setorService = new SetorService();
 
     @FXML
     private void initialize() {
@@ -40,7 +40,7 @@ public class CertificadoController {
         ObservableList<TipoCertificado> certificados = tipoCertificadoService.listarTiposCertificados();
         funcionarioService.carregarFuncionariosPorStatus(true);
         inputFuncionario.setItems(funcionarioService.listarFuncionarios());
-        inputFuncionario.setConverter(new StringConverter<Funcionario>() {
+        inputFuncionario.setConverter(new StringConverter<>() {
             @Override
             public String toString(Funcionario funcionario) {
                 return funcionario != null ? funcionario.getNome() + " - " + setorService.getSetorMapeado(funcionario.getIdSetor()) : "";
@@ -58,7 +58,7 @@ public class CertificadoController {
             }
         });
         inputTipoCertificado.setItems(certificados);
-        inputTipoCertificado.setConverter(new StringConverter<TipoCertificado>() {
+        inputTipoCertificado.setConverter(new StringConverter<>() {
             @Override
             public String toString(TipoCertificado tipoCertificado) {
                 return tipoCertificado != null ? tipoCertificado.getNome() + " - " + tipoCertificado.getPeriodicidade() + " Meses" : "";

@@ -6,7 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class CondicaoService {
-    private CondicaoDAO condicaoDAO = new CondicaoDAO();
+    private final CondicaoDAO condicaoDAO = new CondicaoDAO();
 
     public void cadastrarCondicao(Condicao condicao) {
         condicaoDAO.cadastrarCondicao(condicao);

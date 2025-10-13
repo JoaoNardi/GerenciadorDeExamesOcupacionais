@@ -19,36 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RelatorioDAO {
-    DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
-    private static String sql = """
-                WITH filtros(funcionarioId, inputData, dataInicial, dataFinal, tipoDeId, exame, certificado) AS (
-                    VALUES(?, ?, ?, ?, ?, ?, ?)
-                )
-                SELECT e.id, 'Exame' AS origem, e.funcionario_id, e.tipo_exame_id AS tipo_id, e.data_emissao, e.data_validade, e.atualizado_por
-                FROM exames e, filtros f
-                WHERE (f.exame = 1)
-                  AND (f.funcionarioId IS NULL OR e.funcionario_id = f.funcionarioId)
-                  AND (f.tipoDeId IS NULL OR e.tipo_exame_id = f.tipoDeId)
-                  AND (
-                      (f.inputData = 'Emissao' AND date(e.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                      OR
-                      (f.inputData = 'Validade' AND date(e.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                  )
-                UNION ALL
-                SELECT c.id, 'Certificado' AS origem, c.funcionario_id, c.tipo_certificado_id AS tipo_id, c.data_emissao, c.data_validade, c.atualizado_por
-                FROM certificados c, filtros f
-                WHERE (f.certificado = 1)
-                  AND (f.funcionarioId IS NULL OR c.funcionario_id = f.funcionarioId)
-                  AND (f.tipoDeId IS NULL OR c.tipo_certificado_id = f.tipoDeId)
-                  AND (
-                      (f.inputData = 'Emissao' AND date(c.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                      OR
-                      (f.inputData = 'Validade' AND date(c.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                  )
-                ORDER BY data_emissao;
-            """;
 
 
     public ObservableList<RelatorioItem> montarRelatorio(
@@ -62,6 +35,33 @@ public class RelatorioDAO {
         ObservableList<RelatorioItem> lista = FXCollections.observableArrayList();
         try {
             Connection connection = DBConexao.getInstance().abrirConexao();
+            String sql = """
+                        WITH filtros(funcionarioId, inputData, dataInicial, dataFinal, tipoDeId, exame, certificado) AS (
+                            VALUES(?, ?, ?, ?, ?, ?, ?)
+                        )
+                        SELECT e.id, 'Exame' AS origem, e.funcionario_id, e.tipo_exame_id AS tipo_id, e.data_emissao, e.data_validade, e.atualizado_por
+                        FROM exames e, filtros f
+                        WHERE (f.exame = 1)
+                          AND (f.funcionarioId IS NULL OR e.funcionario_id = f.funcionarioId)
+                          AND (f.tipoDeId IS NULL OR e.tipo_exame_id = f.tipoDeId)
+                          AND (
+                              (f.inputData = 'Emissao' AND date(e.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                              OR
+                              (f.inputData = 'Validade' AND date(e.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                          )
+                        UNION ALL
+                        SELECT c.id, 'Certificado' AS origem, c.funcionario_id, c.tipo_certificado_id AS tipo_id, c.data_emissao, c.data_validade, c.atualizado_por
+                        FROM certificados c, filtros f
+                        WHERE (f.certificado = 1)
+                          AND (f.funcionarioId IS NULL OR c.funcionario_id = f.funcionarioId)
+                          AND (f.tipoDeId IS NULL OR c.tipo_certificado_id = f.tipoDeId)
+                          AND (
+                              (f.inputData = 'Emissao' AND date(c.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                              OR
+                              (f.inputData = 'Validade' AND date(c.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                          )
+                        ORDER BY data_emissao;
+                    """;
             preparedStatement = connection.prepareStatement(sql);
             int i = 1;
             preparedStatement.setInt(i++,funcionario.getId());

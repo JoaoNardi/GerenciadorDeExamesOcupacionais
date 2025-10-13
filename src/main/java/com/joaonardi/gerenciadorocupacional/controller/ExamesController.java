@@ -25,11 +25,11 @@ public class ExamesController {
     public DatePicker inputDataValidade;
     public Button btnSalvar;
     public Button btnCancelar;
-    Janela janela = new Janela();
-    SetorService setorService = new SetorService();
-    FuncionarioService funcionarioService = new FuncionarioService();
-    TipoExameService tipoExameService = new TipoExameService();
-    ExameService exameService = new ExameService();
+    final Janela janela = new Janela();
+    final SetorService setorService = new SetorService();
+    final FuncionarioService funcionarioService = new FuncionarioService();
+    final TipoExameService tipoExameService = new TipoExameService();
+    final ExameService exameService = new ExameService();
     Exame exame = null;
 
     @FXML
@@ -37,7 +37,7 @@ public class ExamesController {
         ObservableList<TipoExame> tipoExamesLista = tipoExameService.listarTiposExame();
         funcionarioService.carregarFuncionariosPorStatus(true);
         inputFuncionario.setItems(funcionarioService.listarFuncionarios());
-        inputFuncionario.setConverter(new StringConverter<Funcionario>() {
+        inputFuncionario.setConverter(new StringConverter<>() {
             @Override
             public String toString(Funcionario funcionario) {
                 return funcionario != null ? funcionario.getNome() + " - " + setorService.getSetorMapeado(funcionario.getIdSetor()) : "";
@@ -55,7 +55,7 @@ public class ExamesController {
             }
         });
         inputTipoExame.setItems(tipoExamesLista);
-        inputTipoExame.setConverter(new StringConverter<TipoExame>() {
+        inputTipoExame.setConverter(new StringConverter<>() {
             @Override
             public String toString(TipoExame tipoExame) {
                 return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame.getPeriodicidade() + " Meses" : "";

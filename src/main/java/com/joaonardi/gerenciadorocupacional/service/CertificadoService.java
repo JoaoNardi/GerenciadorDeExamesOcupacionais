@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CertificadoService {
-    CertificadoDAO certificadoDAO = new CertificadoDAO();
+    final CertificadoDAO certificadoDAO = new CertificadoDAO();
     List<Certificado> certificadosList = FXCollections.observableArrayList();
 
     public void carregarCertificadosVigentes(){

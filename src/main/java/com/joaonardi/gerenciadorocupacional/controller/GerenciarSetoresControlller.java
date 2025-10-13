@@ -16,9 +16,9 @@ public class GerenciarSetoresControlller {
     public TableColumn<Setor, String> colunaArea;
 
     ObservableList<Setor> setores = FXCollections.observableArrayList();
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
     SetorController setorController = new SetorController();
-    SetorService setorService = new SetorService();
+    final SetorService setorService = new SetorService();
 
     @FXML
     public void initialize() {

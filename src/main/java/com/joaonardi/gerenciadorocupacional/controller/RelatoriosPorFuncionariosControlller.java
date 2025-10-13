@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -27,9 +26,9 @@ public class RelatoriosPorFuncionariosControlller {
     // Services
     private static final FuncionarioService funcionarioService = new FuncionarioService();
     private static final SetorService setorService = new SetorService();
-    TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
-    TipoExameService tipoExameService = new TipoExameService();
-    RelatorioService relatorioService = new RelatorioService();
+    final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
+    final TipoExameService tipoExameService = new TipoExameService();
+    final RelatorioService relatorioService = new RelatorioService();
 
     //Elementos JavaFX
     @FXML
@@ -56,7 +55,7 @@ public class RelatoriosPorFuncionariosControlller {
     public Button btnSalvarPDF;
     public Button btnSalvarPlanilha;
 
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
     private boolean isListarExames = true;
     private boolean isListarCertifiados = true;
 
@@ -146,7 +145,7 @@ public class RelatoriosPorFuncionariosControlller {
         inputDataFinal.setValue(LocalDate.now());
         inputFuncionario.setItems(funcionariosLista);
         inputFuncionario.setValue(funcionariosLista.getFirst());
-        inputFuncionario.setConverter(new StringConverter<Funcionario>() {
+        inputFuncionario.setConverter(new StringConverter<>() {
             @Override
             public String toString(Funcionario funcionario) {
                 return funcionario != null ? funcionario.getNome() + " - " + setorService.getSetorMapeado(funcionario.getIdSetor()) : "";
@@ -164,7 +163,7 @@ public class RelatoriosPorFuncionariosControlller {
             }
         });
         inputTipoDe.setItems(tiposDeLista);
-        inputTipoDe.setConverter(new StringConverter<TipoDe>() {
+        inputTipoDe.setConverter(new StringConverter<>() {
             @Override
             public String toString(TipoDe tipoDe) {
                 return tipoDe != null ? tipoDe.getNome() : "Todos";
@@ -317,7 +316,7 @@ public class RelatoriosPorFuncionariosControlller {
     }
 
     public void handleImprimir() {
-        relatorioService.imprimir(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
+        relatorioService.imprimir(relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 

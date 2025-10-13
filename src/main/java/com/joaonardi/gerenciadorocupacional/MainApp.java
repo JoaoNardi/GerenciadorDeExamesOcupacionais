@@ -11,7 +11,7 @@ import java.io.IOException;
 public class MainApp extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         try {
             // Carrega o arquivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainView.fxml"));

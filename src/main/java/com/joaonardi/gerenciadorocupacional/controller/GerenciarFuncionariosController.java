@@ -27,12 +27,12 @@ public class GerenciarFuncionariosController {
 
     boolean listarAtivos = true;
     FuncionarioController funcionarioController = new FuncionarioController();
-    Janela janela = new Janela();
-    FuncionarioService funcionarioService = new FuncionarioService();
-    SetorService setorService = new SetorService();
+    final Janela janela = new Janela();
+    final FuncionarioService funcionarioService = new FuncionarioService();
+    final SetorService setorService = new SetorService();
 
     @FXML
-    private void initialize() throws Exception {
+    private void initialize() {
         inputInativo.setSelected(false);
         inputAtivo.setSelected(true);
         recarregarListaFuncionarios();

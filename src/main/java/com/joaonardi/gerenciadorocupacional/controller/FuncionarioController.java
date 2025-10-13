@@ -22,11 +22,11 @@ public class FuncionarioController {
     public Button btnSalvar;
     public Button btnCancelar;
     public CheckBox inputAtivo;
-    FuncionarioService funcionarioService = new FuncionarioService();
-    SetorService setorService = new SetorService();
+    final FuncionarioService funcionarioService = new FuncionarioService();
+    final SetorService setorService = new SetorService();
     private Funcionario funcionario;
 
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
 
     @FXML
     public void initialize() {

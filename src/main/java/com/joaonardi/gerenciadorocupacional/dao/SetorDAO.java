@@ -15,9 +15,6 @@ public class SetorDAO {
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
-    private static final String DRIVER = "org.sqlite.JDBC";
-    private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
-
     private static final String CADASTRAR_SETOR = "INSERT INTO SETORES (id, area) VALUES (NULL, ?)";
 
     private static final String CONSULTAR_SETOR = "SELECT * FROM SETORES WHERE id = ?";

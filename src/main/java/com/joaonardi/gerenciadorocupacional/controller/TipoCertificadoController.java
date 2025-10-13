@@ -16,9 +16,9 @@ public class TipoCertificadoController {
     public Button btnCancelar;
     public Button btnSalvar;
 
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
     private TipoCertificado tipoCertificado;
-    TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
+    final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
     public void initialize() {
         inputPeriodicidade.getItems().addAll(Periodicidade.values());

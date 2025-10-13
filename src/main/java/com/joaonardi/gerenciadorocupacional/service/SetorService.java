@@ -13,7 +13,7 @@ public class SetorService {
 
     private final SetorDAO dao = new SetorDAO();
     private static Map<Integer, String> setoresMap;
-    private static SetorDAO setorDAO = new SetorDAO();
+    private static final SetorDAO setorDAO = new SetorDAO();
     ObservableList<Setor> setorList = FXCollections.observableArrayList();
 
     public void cadastrarSetor(Setor setor) {

@@ -11,38 +11,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class FuncionarioDAO {
-    DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
-    private static String DRIVER = "org.sqlite.JDBC";
-    private static String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
-
-    private static String CADASTRAR_FUNCIONARIO = " INSERT INTO FUNCIONARIOS "
-            + "(id, nome ,cpf, data_nascimento, data_admissao, setor_id, ativo)"
-            + "VALUES (NULL, ?, ?, ?, ?, ?, ?) ";
-
-    private static String CONSULTAR_FUNCIONARIO = " SELECT * FROM FUNCIONARIOS "
-            + "WHERE ID = ?";
-
-    private static String ALTERAR_FUNCIONARIO = "UPDATE FUNCIONARIOS SET "
-            + "nome = ?,  cpf = ?, data_nascimento = ?, data_admissao = ?, setor_id = ?, ativo = ?"
-            + "WHERE id = ?";
-
-    private static String ALTERAR_ATIVO = "UPDATE FUNCIONARIOS SET "
-            + "ativo = ?"
-            + "WHERE id = ?";
-    private static String DELETAR_FUNCIONARIO = "DELETE FROM FUNCIONARIOS "
-            + "WHERE id = ? and ativo = false ";
-
-
-    private static String LISTAR_FUNCIONARIOS_POR_STATUS = "SELECT * FROM FUNCIONARIOS "
-            + "WHERE 1=1 AND ativo = ? ";
-
-    private static String LISTAR_TODOS_FUNCIONARIOS = "SELECT * FROM FUNCIONARIOS ";
-
     public FuncionarioDAO() {
-
     }
 
     //passar os avisos para a controller
@@ -50,6 +23,9 @@ public class FuncionarioDAO {
     public void cadastrarFuncionario(Funcionario funcionario) {
 
         Connection connection = DBConexao.getInstance().abrirConexao();
+        String CADASTRAR_FUNCIONARIO = " INSERT INTO FUNCIONARIOS "
+                + "(id, nome ,cpf, data_nascimento, data_admissao, setor_id, ativo)"
+                + "VALUES (NULL, ?, ?, ?, ?, ?, ?) ";
         String query = CADASTRAR_FUNCIONARIO;
         try {
             preparedStatement = connection.prepareStatement(query);
@@ -75,6 +51,9 @@ public class FuncionarioDAO {
 
     public void alterarAtivo(String id, Boolean ativo) {
         Connection connection = DBConexao.getInstance().abrirConexao();
+        String ALTERAR_ATIVO = "UPDATE FUNCIONARIOS SET "
+                + "ativo = ?"
+                + "WHERE id = ?";
         String query = ALTERAR_ATIVO;
         try {
             preparedStatement = connection.prepareStatement(query);
@@ -97,6 +76,8 @@ public class FuncionarioDAO {
 
     public void deletarFuncionario(String id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
+        String DELETAR_FUNCIONARIO = "DELETE FROM FUNCIONARIOS "
+                + "WHERE id = ? and ativo = false ";
         String query = DELETAR_FUNCIONARIO;
         try {
             preparedStatement = connection.prepareStatement(query);
@@ -118,6 +99,8 @@ public class FuncionarioDAO {
     public Funcionario consultarFuncionario(String id) throws Exception {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Funcionario funcionario = null;
+        String CONSULTAR_FUNCIONARIO = " SELECT * FROM FUNCIONARIOS "
+                + "WHERE ID = ?";
         String query = CONSULTAR_FUNCIONARIO;
         try {
             preparedStatement = connection.prepareStatement(query);
@@ -154,6 +137,9 @@ public class FuncionarioDAO {
 
     public void alterarFuncionario(int id, Funcionario funcionario) {
         Connection connection = DBConexao.getInstance().abrirConexao();
+        String ALTERAR_FUNCIONARIO = "UPDATE FUNCIONARIOS SET "
+                + "nome = ?,  cpf = ?, data_nascimento = ?, data_admissao = ?, setor_id = ?, ativo = ?"
+                + "WHERE id = ?";
         String query = ALTERAR_FUNCIONARIO;
         try {
             preparedStatement = connection.prepareStatement(query);
@@ -183,6 +169,8 @@ public class FuncionarioDAO {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Funcionario funcionario = null;
         ObservableList<Funcionario> listaFuncionariosAtivos = FXCollections.observableArrayList();
+        String LISTAR_FUNCIONARIOS_POR_STATUS = "SELECT * FROM FUNCIONARIOS "
+                + "WHERE 1=1 AND ativo = ? ";
         String query = LISTAR_FUNCIONARIOS_POR_STATUS;
 
         try {
@@ -216,6 +204,7 @@ public class FuncionarioDAO {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Funcionario funcionario = null;
         ObservableList<Funcionario> listaFuncionariosAtivos = FXCollections.observableArrayList();
+        String LISTAR_TODOS_FUNCIONARIOS = "SELECT * FROM FUNCIONARIOS ";
         String query = LISTAR_TODOS_FUNCIONARIOS;
 
         try {

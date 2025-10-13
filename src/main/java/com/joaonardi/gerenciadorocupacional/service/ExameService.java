@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExameService {
-    private ExameDAO exameDAO = new ExameDAO();
-    private CondicaoDAO condicaoDAO = new CondicaoDAO();
+    private final ExameDAO exameDAO = new ExameDAO();
+    private final CondicaoDAO condicaoDAO = new CondicaoDAO();
     private final FuncionarioService funcionarioService = new FuncionarioService();
-    SetorService setorService = new SetorService();
+    final SetorService setorService = new SetorService();
     ObservableList<Exame> examesList = FXCollections.observableArrayList();
 
     public void carregarExamesVigentes() {

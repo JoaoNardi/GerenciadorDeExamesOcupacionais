@@ -32,7 +32,7 @@ public class TipoExameController {
     public Button btnSalvar;
     public Button btnInfo;
     private ObservableList<Condicao> listaDeCondicoes = FXCollections.observableArrayList();
-    private Integer tipoExameId = null;
+    private final Integer tipoExameId = null;
 
     public TableView<Condicao> tabelaCondicoes;
     public TableColumn<Condicao, String> colunaReferencia;
@@ -50,13 +50,13 @@ public class TipoExameController {
     public Button btnCancelarCondicao;
     public Button btnAtivaModalCondicao;
 
-    SetorService setorService = new SetorService();
+    final SetorService setorService = new SetorService();
     ObservableList<Setor> setores = null;
-    CondicaoService condicaoService = new CondicaoService();
+    final CondicaoService condicaoService = new CondicaoService();
 
-    Janela janela = new Janela();
+    final Janela janela = new Janela();
     private TipoExame tipoExame;
-    TipoExameService tipoExameService = new TipoExameService();
+    final TipoExameService tipoExameService = new TipoExameService();
 
     public void initialize() {
         setorService.carregarSetores();
@@ -106,22 +106,16 @@ public class TipoExameController {
         modalReferencia.setValue(Referencia.IDADE); // valor inicial
 
         operadorChoiceBoxPorReferencia(modalReferencia.getValue(), modalOperador);
-        modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> {
-            operadorChoiceBoxPorReferencia(newVal, modalOperador);
-        });
+        modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> operadorChoiceBoxPorReferencia(newVal, modalOperador));
 
         modalParametro.getChildren().setAll(criarParametroNode(modalReferencia.getValue()));
-        modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> {
-            modalParametro.getChildren().setAll(criarParametroNode(modalReferencia.getValue()));
-        });
+        modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> modalParametro.getChildren().setAll(criarParametroNode(modalReferencia.getValue())));
 
         modalPeriodicidade.getItems().clear();
         modalPeriodicidade.getItems().addAll(Periodicidade.values());
         modalPeriodicidade.setValue(Periodicidade.SEM_PERIODICIDADE);
 
-        btnCancelarCondicao.setOnAction(event -> {
-            actionFecharModalCondicao();
-        });
+        btnCancelarCondicao.setOnAction(event -> actionFecharModalCondicao());
     }
 
     private void actionFecharModalCondicao() {
@@ -159,8 +153,8 @@ public class TipoExameController {
         colunaParametro.setCellValueFactory(new PropertyValueFactory<>("parametro"));
         colunaPeriodicidade.setCellValueFactory(new PropertyValueFactory<>("periodicidade"));
         colunaAcoes.setCellFactory(coluna -> new TableCell<>() {
-            FontIcon iconeRemover = new FontIcon(FontAwesomeSolid.TRASH);
-            Button btnRemover = new Button();
+            final FontIcon iconeRemover = new FontIcon(FontAwesomeSolid.TRASH);
+            final Button btnRemover = new Button();
 
             private final HBox hBox = new HBox(10, btnRemover);
 
@@ -267,7 +261,7 @@ public class TipoExameController {
         if (cadastrarTipoExame() == null){
             inputNome.clear();
             return;
-        };
+        }
         modalAddCondicao.setOpacity(1);
         btnAtivaModalCondicao.setOpacity(0);
         btnAtivaModalCondicao.setDisable(true);
@@ -317,7 +311,7 @@ public class TipoExameController {
                 ChoiceBox<Boolean> boolChoice = new ChoiceBox<>();
                 boolChoice.getItems().addAll(true, false);
                 boolChoice.setValue(false);
-                boolChoice.setConverter(new StringConverter<Boolean>() {
+                boolChoice.setConverter(new StringConverter<>() {
                     @Override
                     public String toString(Boolean object) {
                         if (object == null) return "";

@@ -17,7 +17,6 @@ import javafx.util.Duration;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -35,7 +34,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class RelatorioService {
-    DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    final DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final RelatorioDAO relatorioDAO = new RelatorioDAO();
     private final SetorService setorService = new SetorService();
     private ObservableList<RelatorioItem> relatorioItemsLista = FXCollections.observableArrayList();
@@ -51,7 +50,7 @@ public class RelatorioService {
         return relatorioItemsLista;
     }
 
-    public void imprimir(Stage stage, ObservableList<RelatorioItem> relatorioLista,
+    public void imprimir(ObservableList<RelatorioItem> relatorioLista,
                          Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
                          boolean inputCertificado, TipoDe tipoDe) {
         setorService.carregarSetores();
@@ -251,7 +250,6 @@ public class RelatorioService {
         try {
             Workbook arquivo = new XSSFWorkbook();
             Sheet planilha = arquivo.createSheet("RelatorioPorFuncionario");
-            int i = 1;
             Row informacoes = planilha.createRow(0);
             informacoes.createCell(0).setCellValue("RELATORIO POR FUNCIONARIO  - " + "Data de Geração: " + LocalDate.now().format(formatoData) + " " +
                     " " +
