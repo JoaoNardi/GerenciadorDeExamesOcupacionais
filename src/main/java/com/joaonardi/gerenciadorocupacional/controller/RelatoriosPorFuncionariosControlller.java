@@ -10,12 +10,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
@@ -64,7 +62,7 @@ public class RelatoriosPorFuncionariosControlller {
 
     //Dados a serem carregados
     private ObservableList<Funcionario> funcionariosLista = FXCollections.observableArrayList();
-    private ObservableList<TipoDe> tiposDeLista = FXCollections.observableArrayList();
+    private final ObservableList<TipoDe> tiposDeLista = FXCollections.observableArrayList();
     private ObservableList<RelatorioItem> relatorioLista = FXCollections.observableArrayList();
 
     @FXML
@@ -102,9 +100,7 @@ public class RelatoriosPorFuncionariosControlller {
 
     public void alteracaoInput(Node node) {
         Runnable resetTabela = () -> {
-            btnSalvarPlanilha.setDisable(true);
-            btnImprimir.setDisable(true);
-            btnSalvarPDF.setDisable(true);
+            disableButtons(true);
             tabelaVencimentos.setItems(null);
             tabelaVencimentos.refresh();
         };
@@ -197,16 +193,14 @@ public class RelatoriosPorFuncionariosControlller {
 
     public void setTabelaVencimentos() {
         try {
-            colunaId.setCellValueFactory(f -> {
-                return new SimpleObjectProperty<>(f.getValue().getId());
-            });
+            colunaId.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getId()));
             colunaTipo.setCellValueFactory(f -> {
                 String tipo = f.getValue().getOrigem();
                 return new SimpleStringProperty(tipo);
             });
             colunaDescricaoVencimentos.setCellValueFactory(f -> {
                 String tipo = f.getValue().getOrigem();
-                String descricao = "";
+                String descricao;
                 if (tipo.equalsIgnoreCase("Exame")) {
                     descricao = tipoExameService.getTipoExameMapeadoPorId(f.getValue().getTipoId()).getNome();
                 } else {
@@ -237,7 +231,7 @@ public class RelatoriosPorFuncionariosControlller {
                 }
             });
             colunaStatus.setCellValueFactory(f -> {
-                String status = "";
+                String status;
                 if (f.getValue().getAtualizadoPor() == null) {
                     status = "Vigente";
                 } else {
@@ -245,28 +239,26 @@ public class RelatoriosPorFuncionariosControlller {
                 }
                 return new SimpleStringProperty(status);
             });
-            colunaAtualizadoPor.setCellValueFactory(f -> {
-                return new SimpleObjectProperty<>(f.getValue().getAtualizadoPor());
-            });
+            colunaAtualizadoPor.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getAtualizadoPor()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void handlePorEmissao(ActionEvent event) {
+    public void handlePorEmissao() {
         inputPorEmissao.setSelected(true);
         inputPorValidade.setSelected(false);
         tipoData = "Validadade";
     }
 
-    public void handlePorValidade(ActionEvent event) {
+    public void handlePorValidade() {
         inputPorEmissao.setSelected(false);
         inputPorValidade.setSelected(true);
         tipoData = "Emissao";
     }
 
-    public void handleInputExame(ActionEvent event) {
+    public void handleInputExame() {
         if (isListarExames) {
             inputExame.setSelected(false);
             isListarExames = false;
@@ -276,7 +268,7 @@ public class RelatoriosPorFuncionariosControlller {
         }
     }
 
-    public void handleInputCertificado(ActionEvent event) {
+    public void handleInputCertificado() {
         if (isListarCertifiados) {
             inputCertificado.setSelected(false);
             isListarCertifiados = false;
@@ -286,7 +278,7 @@ public class RelatoriosPorFuncionariosControlller {
         }
     }
 
-    public void handleGerarRelatorio(ActionEvent event) {
+    public void handleGerarRelatorio() {
         String inputData = "";
         if (inputExame.isSelected() && inputCertificado.isSelected()) {
             colunaId.setVisible(false);
@@ -310,9 +302,7 @@ public class RelatoriosPorFuncionariosControlller {
             initialize();
             return;
         }
-        btnSalvarPDF.setDisable(false);
-        btnImprimir.setDisable(false);
-        btnSalvarPlanilha.setDisable(false);
+        disableButtons(false);
         relatorioService.carregarRelatorio(inputFuncionario.getValue(), inputData, inputDataInicial.getValue(),
                 inputDataFinal.getValue(),
                 inputTipoDe.getValue(), inputExame.isSelected(), inputCertificado.isSelected());
@@ -321,17 +311,17 @@ public class RelatoriosPorFuncionariosControlller {
         setTabelaVencimentos();
     }
 
-    public void handleSalvarPDF(ActionEvent event) {
+    public void handleSalvarPDF() {
         relatorioService.gerarPDF(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 
-    public void handleImprimir(ActionEvent event) {
+    public void handleImprimir() {
         relatorioService.imprimir(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 
-    public void handleSalvarExcel(ActionEvent event) {
+    public void handleSalvarExcel() {
         relatorioService.gerarExcel(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
