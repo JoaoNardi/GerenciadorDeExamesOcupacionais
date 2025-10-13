@@ -76,7 +76,7 @@
                         <Tooltip showDelay="200ms" text="Exportar PDF"/>
                     </tooltip>
                 </Button>
-                <Button fx:id="btnSalvarPlanilha" mnemonicParsing="false">
+                <Button fx:id="btnSalvarPlanilha" mnemonicParsing="false" onAction="#handleSalvarExcel">
                     <tooltip>
                         <Tooltip showDelay="200ms" text="Exportar Planilha Excel"/>
                     </tooltip>

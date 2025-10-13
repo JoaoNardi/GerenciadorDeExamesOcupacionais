@@ -17,6 +17,12 @@ import javafx.util.Duration;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.Notifications;
 
 
@@ -64,7 +70,7 @@ public class RelatorioService {
             titulo.add(new Chunk(new VerticalPositionMark()));
             titulo.add("Data de geração: " + LocalDate.now().format(formatoData));
             document.add(titulo);
-            document.add(new Paragraph("Nome: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
+            document.add(new Paragraph("Funcionario: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
             document.add(new Paragraph(" "));
             Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
             if (tipoDe == null) {
@@ -171,7 +177,7 @@ public class RelatorioService {
             titulo.add(new Chunk(new VerticalPositionMark()));
             titulo.add("Data de geração: " + LocalDate.now().format(formatoData));
             document.add(titulo);
-            document.add(new Paragraph("Nome: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
+            document.add(new Paragraph("Funcionario: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
             document.add(new Paragraph(" "));
             Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
             if (tipoDe == null) {
@@ -236,5 +242,95 @@ public class RelatorioService {
             e.printStackTrace();
             throw new RuntimeException("Erro ao gerar PDF", e);
         }
+    }
+
+    public void gerarExcel(Stage stage, ObservableList<RelatorioItem> relatorioLista,
+                           Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
+                           boolean inputCertificado, TipoDe tipoDe){
+
+        try {
+            Workbook arquivo = new XSSFWorkbook();
+            Sheet planilha = arquivo.createSheet("RelatorioPorFuncionario");
+            int i = 1;
+            Row informacoes = planilha.createRow(0);
+            informacoes.createCell(0).setCellValue("RELATORIO POR FUNCIONARIO  - " + "Data de Geração: " + LocalDate.now().format(formatoData) + " " +
+                    " " +
+                    "Funcionario: " + funcionario.getNome() +" - Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor()) + "  " +
+                    "Periódo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - " + (inputCertificado && inputExame?
+                    "Todos" : tipoDe.getNome()));
+            planilha.addMergedRegion(new CellRangeAddress(0,0,0,20));
+
+            Row cabecalho = planilha.createRow(1);
+
+            int c = 0;
+            for (TableColumn<RelatorioItem, ?> col : tableView.getColumns()) {
+                if (col.isVisible()) {
+                    cabecalho.createCell(c++).setCellValue(col.getText());
+                }
+            }
+
+            int r = 2;
+            for (RelatorioItem item : relatorioLista) {
+                Row tabela = planilha.createRow(r);
+                int t = 0;
+                for (TableColumn<RelatorioItem, ?> col : tableView.getColumns()) {
+                    if (col.isVisible()) {
+                        Object value = col.getCellObservableValue(item) != null
+                                ? col.getCellObservableValue(item).getValue()
+                                : null;
+                        String textoCelula;
+                        if (value instanceof LocalDate) {
+                            textoCelula = ((LocalDate) value).format(formatoData);
+                        } else if (value != null) {
+                            textoCelula = value.toString();
+                        } else {
+                            textoCelula = "";
+                        }
+                        tabela.createCell(t).setCellValue(textoCelula);
+                        planilha.autoSizeColumn(t);
+                        t++;
+                    }
+                }
+                r++;
+            }
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Salvar relatório Excel");
+
+            String userHome = System.getProperty("user.home");
+            File desktopDir = new File(userHome, "Desktop");
+            File areaDeTrabalhoDir = new File(userHome, "Área de Trabalho");
+
+            if (desktopDir.exists()) {
+                fileChooser.setInitialDirectory(desktopDir);
+            } else if (areaDeTrabalhoDir.exists()) {
+                fileChooser.setInitialDirectory(areaDeTrabalhoDir);
+            } else {
+                fileChooser.setInitialDirectory(new File(userHome));
+            }
+
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Arquivos XLSX (*.xlsx)", "*.xlsx")
+            );
+            fileChooser.setInitialFileName("relatorioPorFuncionario.xlsx");
+            File file = fileChooser.showSaveDialog(stage);
+            if (file == null) return;
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                arquivo.write(out);
+            }
+            Notifications.create().title("Sucesso")
+                    .text(" ✅ Clique aqui para abrir! " + "\n" + " Excel salvo em: " + file.getAbsolutePath()).owner(stage).hideAfter(Duration.seconds(5)).onAction(event -> {
+                        try {
+                            Desktop.getDesktop().open(file);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).showInformation();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }
