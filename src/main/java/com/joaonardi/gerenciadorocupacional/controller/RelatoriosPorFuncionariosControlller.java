@@ -10,9 +10,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
@@ -97,6 +100,37 @@ public class RelatoriosPorFuncionariosControlller {
         btnSalvarPlanilha.setDisable(able);
     }
 
+    public void alteracaoInput(Node node) {
+        Runnable resetTabela = () -> {
+            btnSalvarPlanilha.setDisable(true);
+            btnImprimir.setDisable(true);
+            btnSalvarPDF.setDisable(true);
+            tabelaVencimentos.setItems(null);
+            tabelaVencimentos.refresh();
+        };
+        if (node instanceof TextField textField)
+            textField.textProperty().addListener((obs, o, n) -> resetTabela.run());
+
+        if (node instanceof TextArea textArea)
+            textArea.textProperty().addListener((obs, o, n) -> resetTabela.run());
+
+        if (node instanceof ChoiceBox<?> choiceBox)
+            choiceBox.valueProperty().addListener((obs, o, n) -> resetTabela.run());
+
+        if (node instanceof ComboBox<?> comboBox)
+            comboBox.valueProperty().addListener((obs, o, n) -> resetTabela.run());
+
+        if (node instanceof DatePicker datePicker)
+            datePicker.valueProperty().addListener((obs, o, n) -> resetTabela.run());
+
+        if (node instanceof RadioButton radioButton)
+            radioButton.selectedProperty().addListener((obs, o, n) -> resetTabela.run());
+
+        if (node instanceof CheckBox checkBox)
+            checkBox.selectedProperty().addListener((obs, o, n) -> resetTabela.run());
+
+    }
+
     public void handleCarregarTiposDe() {
         tiposDeLista.clear();
         tiposDeLista.add(null);
@@ -104,8 +138,7 @@ public class RelatoriosPorFuncionariosControlller {
             if (isListarExames) {
                 tipoExameService.carregarTipoExames();
                 tiposDeLista.addAll(tipoExameService.listarTiposExame());
-            } else
-            if (isListarCertifiados) {
+            } else if (isListarCertifiados) {
                 tipoCertificadoService.carregarTiposCertificado();
                 tiposDeLista.addAll(tipoCertificadoService.listarTiposCertificados());
             }
@@ -152,6 +185,14 @@ public class RelatoriosPorFuncionariosControlller {
                 return null;
             }
         });
+        alteracaoInput(inputFuncionario);
+        alteracaoInput(inputPorEmissao);
+        alteracaoInput(inputPorValidade);
+        alteracaoInput(inputDataInicial);
+        alteracaoInput(inputDataFinal);
+        alteracaoInput(inputTipoDe);
+        alteracaoInput(inputCertificado);
+        alteracaoInput(inputExame);
     }
 
     public void setTabelaVencimentos() {
@@ -281,16 +322,17 @@ public class RelatoriosPorFuncionariosControlller {
     }
 
     public void handleSalvarPDF(ActionEvent event) {
-        relatorioService.gerarPDF(janela.stage, relatorioLista, inputFuncionario.getValue(),tabelaVencimentos,inputDataInicial.getValue(),
+        relatorioService.gerarPDF(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 
     public void handleImprimir(ActionEvent event) {
-        relatorioService.imprimir(janela.stage, relatorioLista, inputFuncionario.getValue(),tabelaVencimentos,inputDataInicial.getValue(),
+        relatorioService.imprimir(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
+
     public void handleSalvarExcel(ActionEvent event) {
-        relatorioService.gerarExcel(janela.stage, relatorioLista, inputFuncionario.getValue(),tabelaVencimentos,inputDataInicial.getValue(),
+        relatorioService.gerarExcel(janela.stage, relatorioLista, inputFuncionario.getValue(), tabelaVencimentos, inputDataInicial.getValue(),
                 inputDataFinal.getValue(), inputExame.isSelected(), inputCertificado.isSelected(), inputTipoDe.getValue());
     }
 }
