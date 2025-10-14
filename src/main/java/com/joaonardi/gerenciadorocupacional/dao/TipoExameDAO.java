@@ -7,8 +7,6 @@ import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TipoExameDAO {
     private static PreparedStatement preparedStatement = null;
@@ -81,12 +79,9 @@ public class TipoExameDAO {
             preparedStatement.setInt(i++,tipoExame.getPeriodicidade());
             preparedStatement.setInt(i++, id);
 
-            int linhasAfetadas = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
 
-            if (linhasAfetadas > 0) {
-            } else {
-            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

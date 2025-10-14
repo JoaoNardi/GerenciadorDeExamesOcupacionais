@@ -4,7 +4,6 @@ import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -34,7 +33,7 @@ public class TipoCertificadoController {
 
     }
     @FXML
-    public void handleSalvarCertificado(ActionEvent event) {
+    public void handleSalvarCertificado() {
         if (tipoCertificado == null || tipoCertificado.getId() ==null){
             tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
                     .id(null)
@@ -52,7 +51,7 @@ public class TipoCertificadoController {
         janela.fecharJanela(btnSalvar);
     }
 
-    public void handleCancelarCertificado(ActionEvent event) {
+    public void handleCancelarCertificado() {
         janela.fecharJanela(btnCancelar);
     }
 

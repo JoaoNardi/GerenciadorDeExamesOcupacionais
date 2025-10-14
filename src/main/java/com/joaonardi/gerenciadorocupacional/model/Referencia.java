@@ -1,5 +1,8 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Referencia {
     IDADE("Idade"),
     SETOR("Setor"),
@@ -9,10 +12,6 @@ public enum Referencia {
 
     Referencia(String label) {
         this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
     }
 
     public static Referencia from(String label) {
@@ -26,15 +25,10 @@ public enum Referencia {
 
     @Override
     public String toString() {
-        switch (this) {
-            case IDADE:
-                return "Idade";
-            case SETOR:
-                return "Setor";
-            case ENFERMIDADE:
-                return "Enfermidade";
-            default:
-                return "Sem Referencia";
-        }
+        return switch (this) {
+            case IDADE -> "Idade";
+            case SETOR -> "Setor";
+            case ENFERMIDADE -> "Enfermidade";
+        };
     }
 }

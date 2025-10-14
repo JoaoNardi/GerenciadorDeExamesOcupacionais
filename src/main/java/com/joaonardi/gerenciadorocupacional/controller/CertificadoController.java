@@ -81,13 +81,13 @@ public class CertificadoController {
         inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),inputTipoCertificado.getValue()));
     }
 
-    public void validadeAlteracao(ActionEvent event) {
+    public void validadeAlteracao() {
         inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
                 inputTipoCertificado.getValue()));
     }
 
 
-    public void handleSalvar(ActionEvent event) {
+    public void handleSalvar() {
         if (this.certificado == null) {
             this.certificado = Certificado.CertificadoBuilder.builder()
                     .idTipoCertificado(inputTipoCertificado.getValue().getId())
@@ -112,7 +112,7 @@ public class CertificadoController {
         janela.fecharJanela(btnSalvar);
     }
 
-    public void handleCancelar(ActionEvent event) {
+    public void handleCancelar() {
         janela.fecharJanela(btnCancelar);
     }
 

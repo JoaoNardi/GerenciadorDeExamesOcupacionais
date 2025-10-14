@@ -6,24 +6,19 @@ import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import com.joaonardi.gerenciadorocupacional.util.TooltipUtils;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 
 public class TipoExameController {
     public TextField inputNome;
@@ -32,11 +27,10 @@ public class TipoExameController {
     public Button btnSalvar;
     public Button btnInfo;
     private ObservableList<Condicao> listaDeCondicoes = FXCollections.observableArrayList();
-    private final Integer tipoExameId = null;
 
     public TableView<Condicao> tabelaCondicoes;
     public TableColumn<Condicao, String> colunaReferencia;
-    public TableColumn colunaOperador;
+    public TableColumn<Condicao, String> colunaOperador;
     public TableColumn<Condicao, String> colunaParametro;
     public TableColumn<Condicao, String> colunaPeriodicidade;
     public TableColumn<Condicao, Node> colunaAcoes;
@@ -71,15 +65,6 @@ public class TipoExameController {
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
         setTabelaCondicoes();
         listaDeCondicoes.addListener((ListChangeListener<? super Condicao>) change -> tabelaCondicoes.setItems(listaDeCondicoes));
-        Platform.runLater(() -> {
-            Stage stage = (Stage) btnSalvar.getScene().getWindow();
-            stage.setOnCloseRequest(windowEvent -> {
-                if (tipoExameId != null) {
-                    tipoExameService.deletarTipoExame(tipoExameId);
-                }
-            });
-        });
-
     }
 
     public void setTipoExame(TipoExame tipoExameSelecionado) {
@@ -89,7 +74,9 @@ public class TipoExameController {
             inputNome.setText(tipoExame.getNome());
             inputPeriodicidade.setValue(Periodicidade.fromValor(tipoExameSelecionado.getPeriodicidade()));
         }
-        listaDeCondicoes = condicaoService.listarCondicoesPorTipoExameId(tipoExameSelecionado.getId());
+        if (tipoExameSelecionado != null) {
+            listaDeCondicoes = condicaoService.listarCondicoesPorTipoExameId(tipoExameSelecionado.getId());
+        }
         setTabelaCondicoes();
     }
 
@@ -136,7 +123,7 @@ public class TipoExameController {
     private void setTabelaCondicoes() {
         colunaReferencia.setCellValueFactory(new PropertyValueFactory<>("referencia"));
         colunaOperador.setCellValueFactory(new PropertyValueFactory<>("operador"));
-        colunaOperador.setCellFactory(c -> new TableCell<Condicao, String>() {
+        colunaOperador.setCellFactory(c -> new TableCell<>() {
                     @Override
                     protected void updateItem(String operador, boolean empty) {
                         super.updateItem(operador, empty);
@@ -224,17 +211,17 @@ public class TipoExameController {
         return null;
     }
 
-    public void handleCancelarExame(ActionEvent event) {
+    public void handleCancelarExame() {
         janela.fecharJanela(btnFechar);
     }
 
-    public Condicao criaCondicao() {
+    public void criaCondicao() {
         String parametro = null;
         if (modalParametro.getChildren().getFirst() instanceof Spinner<?>)
             parametro = ((Spinner<?>) modalParametro.getChildren().getFirst()).getValue().toString();
         if (modalParametro.getChildren().getFirst() instanceof ChoiceBox<?>)
             parametro = ((ChoiceBox<?>) modalParametro.getChildren().getFirst()).getValue().toString();
-        Condicao condicao = null;
+        Condicao condicao;
         condicao = Condicao.CondicaoBuilder.builder()
                 .id(null)
                 .tipoExameId(tipoExame.getId())
@@ -244,11 +231,10 @@ public class TipoExameController {
                 .periodicidade(modalPeriodicidade.getValue().getValor())
                 .build();
         listaDeCondicoes.add(condicao);
-        return condicao;
     }
 
     @FXML
-    public void handleAdicionarCondicoes(ActionEvent event) {
+    public void handleAdicionarCondicoes() {
         if (inputNome == null || inputNome.getText().isEmpty()) {
             Notifications.create()
                     .title("Erro")
@@ -282,7 +268,7 @@ public class TipoExameController {
         }
 
         if (!container.getItems().isEmpty()) {
-            container.setValue(container.getItems().get(0)); // valor padrao
+            container.setValue(container.getItems().getFirst()); // valor padrao
         }
     }
 
@@ -304,7 +290,7 @@ public class TipoExameController {
                 ChoiceBox<Setor> setorChoice = new ChoiceBox<>();
                 setorChoice.setItems(setores);
                 setorChoice.setPrefWidth(120);
-                setorChoice.setValue(setores.get(0));
+                setorChoice.setValue(setores.getFirst());
                 return setorChoice;
 
             case Referencia.ENFERMIDADE:
@@ -332,9 +318,10 @@ public class TipoExameController {
         }
     }
 
-    public void handleSalvarExame(ActionEvent event) {
+    public void handleSalvarExame() {
         cadastrarTipoExame();
         condicaoService.cadastrarListaCondicao(listaDeCondicoes);
+        janela.fecharJanela(btnSalvar);
 
     }
 }

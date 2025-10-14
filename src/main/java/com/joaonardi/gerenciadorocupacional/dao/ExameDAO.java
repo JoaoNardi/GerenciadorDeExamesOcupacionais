@@ -149,10 +149,10 @@ public class ExameDAO {
         Connection connection = DBConexao.getInstance().abrirConexao();
         ObservableList<Exame> listaExames = FXCollections.observableArrayList();
         try {
-            if (inVigentes == true) {
+            if (inVigentes) {
                 preparedStatement = connection.prepareStatement(LISTAR_EXAMES_VIGENTES);
             }
-            if (inVigentes == false) {
+            if (!inVigentes) {
                 preparedStatement = connection.prepareStatement(LISTAR_TODOS_EXAME);
             }
             resultSet = preparedStatement.executeQuery();

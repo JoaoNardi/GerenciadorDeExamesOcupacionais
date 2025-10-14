@@ -1,7 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDate;
 

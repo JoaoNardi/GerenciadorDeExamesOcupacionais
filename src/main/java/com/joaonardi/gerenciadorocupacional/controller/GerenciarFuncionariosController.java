@@ -71,14 +71,14 @@ public class GerenciarFuncionariosController {
         }
     }
 
-    public void handleListarAtivos(ActionEvent event) {
+    public void handleListarAtivos() {
         inputAtivo.setSelected(true);
         inputInativo.setSelected(false);
         listarAtivos = true;
         recarregarListaFuncionarios();
     }
 
-    public void handleListarInativos(ActionEvent event) {
+    public void handleListarInativos() {
         inputInativo.setSelected(true);
         inputAtivo.setSelected(false);
         listarAtivos = false;

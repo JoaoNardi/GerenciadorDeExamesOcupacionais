@@ -1,7 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
 public enum Operador {
     IGUAL("=="),
     MAIOR_OU_IGUAL(">="),
@@ -11,10 +14,6 @@ public enum Operador {
 
     Operador(String operador) {
         this.operador = operador;
-    }
-
-    public String getOperador() {
-        return operador;
     }
 
     public static Operador from(String operador) {
@@ -28,17 +27,11 @@ public enum Operador {
 
     @Override
     public String toString() {
-        switch (this) {
-            case IGUAL:
-                return "Igual";
-            case MAIOR_OU_IGUAL:
-                return "Maior ou igual";
-            case MENOR_OU_IGUAL:
-                return "Menor ou igual";
-            case DIFERENTE:
-                return "Diferente";
-            default:
-                return "Desconhecido";
-        }
+        return switch (this) {
+            case IGUAL -> "Igual";
+            case MAIOR_OU_IGUAL -> "Maior ou igual";
+            case MENOR_OU_IGUAL -> "Menor ou igual";
+            case DIFERENTE -> "Diferente";
+        };
     }
 }

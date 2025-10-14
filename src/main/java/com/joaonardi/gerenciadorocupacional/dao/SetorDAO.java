@@ -7,9 +7,6 @@ import javafx.collections.ObservableList;
 
 import javax.swing.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class SetorDAO {
     private static PreparedStatement preparedStatement = null;

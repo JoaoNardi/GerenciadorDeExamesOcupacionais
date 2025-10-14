@@ -32,7 +32,7 @@ public class FuncionarioService {
     }
 
     public Integer calcularIdade(LocalDate dataNascimento) {
-        Integer idade = null;
+        int idade;
         idade = LocalDate.now().compareTo(dataNascimento);
         return idade;
     }
