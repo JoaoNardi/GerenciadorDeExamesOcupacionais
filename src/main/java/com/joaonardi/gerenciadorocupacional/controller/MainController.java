@@ -88,8 +88,13 @@ public class MainController {
     }
 
     private void setTodos() {
+        exameService.carregarExamesVigentes();
+        certificadoService.carregarCertificadosVigentes();
+        tipoExameService.carregarTipoExames();
+        tipoCertificadoService.carregarTiposCertificado();
         setLabels();
         setTabelaPrincipal();
+        setTabelaSecundaria();
     }
 
     private void setLabels() {
@@ -369,6 +374,7 @@ public class MainController {
         datePicker.setValue(LocalDate.now());
         Button btnConfirmar = new Button("Concluir");
         btnConfirmar.setOnAction(e -> {
+            btnConfirmar.setDisable(true);
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(null)
                     .idTipoExame(exame.getIdTipoExame())
@@ -390,14 +396,16 @@ public class MainController {
                         .build();
                 exameService.editarExame(exame2);
             }
+            setTodos();
         });
-
+    btnConfirmar.setDisable(false);
         VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
         popOver.setDetachable(false);
         popOver.show(anchor);
+
     }
 
     @FXML
@@ -408,6 +416,7 @@ public class MainController {
         datePicker.setValue(LocalDate.now());
         Button btnConfirmar = new Button("Concluir");
         btnConfirmar.setOnAction(e -> {
+            btnConfirmar.setDisable(true);
             Certificado certificado1 = Certificado.CertificadoBuilder.builder()
                     .id(null)
                     .idTipoCertificado(certificado.getIdTipoCertificado())
@@ -429,8 +438,9 @@ public class MainController {
                         .build();
                 certificadoService.editarCertificado(certificado2);
             }
+            setTodos();
         });
-
+        btnConfirmar.setDisable(false);
         VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
@@ -466,6 +476,7 @@ public class MainController {
                     throw new RuntimeException(e);
                 }
             });
+            setTodos();
         }
         HBox layout = new HBox(10, btnEditarExame, btnDeletarExame);
         layout.setAlignment(Pos.CENTER);
