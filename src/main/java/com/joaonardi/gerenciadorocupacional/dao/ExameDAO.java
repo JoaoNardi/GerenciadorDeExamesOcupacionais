@@ -23,9 +23,8 @@ public class ExameDAO {
 
     private static final String ALTERAR_EXAME = "UPDATE EXAMES SET tipo_exame_id = ?, data_emissao = ?, data_validade = ?, atualizado_por = ? WHERE" +
             " id = ?";
-
+    private static final String LIMPAR_ATUALIZADO_POR = "UPDATE EXAMES SET atualizado_por = NULL WHERE atualizado_por = ? ";
     private static final String DELETAR_EXAME = "DELETE FROM EXAMES WHERE id = ?";
-
     private static final String LISTAR_EXAMES_VIGENTES = "SELECT * FROM EXAMES WHERE atualizado_por is NULL";
     private static final String LISTAR_TODOS_EXAME = "SELECT * FROM EXAMES";
 
@@ -130,11 +129,17 @@ public class ExameDAO {
 
     public void deletarExame(int id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
+
+
         try {
+            preparedStatement = connection.prepareStatement(LIMPAR_ATUALIZADO_POR);
+            preparedStatement.setInt(1,id);
+            preparedStatement.executeUpdate();
+
             preparedStatement = connection.prepareStatement(DELETAR_EXAME);
             preparedStatement.setInt(1, id);
 
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
             connection.commit();
 
             JOptionPane.showMessageDialog(null, "Exame deletado com sucesso");

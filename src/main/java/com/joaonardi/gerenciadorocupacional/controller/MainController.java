@@ -476,7 +476,6 @@ public class MainController {
                     throw new RuntimeException(e);
                 }
             });
-            setTodos();
         }
         HBox layout = new HBox(10, btnEditarExame, btnDeletarExame);
         layout.setAlignment(Pos.CENTER);

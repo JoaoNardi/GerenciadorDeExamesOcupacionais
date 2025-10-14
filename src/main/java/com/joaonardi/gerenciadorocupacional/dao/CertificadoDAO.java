@@ -23,6 +23,7 @@ public class CertificadoDAO {
             "data_validade = ?," +
             "atualizado_por = ?" +
             "WHERE id = ?";
+    private static final String LIMPAR_ATUALIZADO_POR = "UPDATE CERTIFICADOS SET atualizado_por = NULL WHERE atualizado_por = ? ";
     private static final String DELETAR_CERTIFICADO = "DELETE FROM CERTIFICADOS WHERE id = ?";
     private static final String LISTAR_CERTIFICADOS_VIGENTENS = "SELECT * FROM CERTIFICADOS WHERE atualizado_por is NULL";
     private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS";
@@ -128,17 +129,15 @@ public class CertificadoDAO {
     public void deletarCertificado(int id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
+            preparedStatement = connection.prepareStatement(LIMPAR_ATUALIZADO_POR);
+            preparedStatement.setInt(1,id);
+            preparedStatement.executeUpdate();
+
             preparedStatement = connection.prepareStatement(DELETAR_CERTIFICADO);
             preparedStatement.setInt(1, id);
 
-            int linhasAfetadas = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
-
-            if (linhasAfetadas > 0) {
-                JOptionPane.showMessageDialog(null, "Certificado excluído com sucesso");
-            } else {
-                JOptionPane.showMessageDialog(null, "Certificado não encontrado para exclusão");
-            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
