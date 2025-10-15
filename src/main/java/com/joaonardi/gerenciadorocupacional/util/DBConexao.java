@@ -1,6 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+import com.joaonardi.gerenciadorocupacional.exception.DbException;
 
 import java.sql.*;
 
@@ -14,7 +14,7 @@ public class DBConexao {
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            throw new DataAccessException("Erro ao criar conexão com banco de dados", e);
+            throw new DbException("Erro ao criar conexão com banco de dados", e);
         }
     }
 
@@ -32,7 +32,7 @@ public class DBConexao {
                 conexao.setAutoCommit(false);
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erro ao acessar banco de dados", e);
+            throw new DbException("Erro ao acessar banco de dados", e);
         }
         return conexao;
     }
@@ -46,7 +46,7 @@ public class DBConexao {
                 conexao.close();
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erro ao fechar conexão com o banco de dados", e);
+            throw new DbException("Erro ao fechar conexão com o banco de dados", e);
         } finally {
             conexao = null;
         }

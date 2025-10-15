@@ -1,6 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -40,9 +40,9 @@ public class SetorDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao cadastrar setor", e);
+            throw new DbException("Erro ao cadastrar setor", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -66,9 +66,9 @@ public class SetorDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao consultar setor", e);
+            throw new DbException("Erro ao consultar setor", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -91,9 +91,9 @@ public class SetorDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao alterar setor", e);
+            throw new DbException("Erro ao alterar setor", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -113,9 +113,9 @@ public class SetorDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao deletar setor", e);
+            throw new DbException("Erro ao deletar setor", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -141,9 +141,9 @@ public class SetorDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao carregar setores", e);
+            throw new DbException("Erro ao carregar setores", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

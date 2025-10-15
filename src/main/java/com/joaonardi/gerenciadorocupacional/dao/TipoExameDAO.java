@@ -1,6 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -43,9 +43,9 @@ public class TipoExameDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao cadastrar tipo exame", e);
+            throw new DbException("Erro ao cadastrar tipo exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -72,9 +72,9 @@ public class TipoExameDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao consultar tipo exame", e);
+            throw new DbException("Erro ao consultar tipo exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -98,9 +98,9 @@ public class TipoExameDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao alterar tipo exame", e);
+            throw new DbException("Erro ao alterar tipo exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -119,9 +119,9 @@ public class TipoExameDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao deletar tipo exame", e);
+            throw new DbException("Erro ao deletar tipo exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -146,9 +146,9 @@ public class TipoExameDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao carregar tipos exames", e);
+            throw new DbException("Erro ao carregar tipos exames", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

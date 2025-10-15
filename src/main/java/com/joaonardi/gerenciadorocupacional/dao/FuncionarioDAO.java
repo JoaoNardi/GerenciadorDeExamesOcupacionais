@@ -1,6 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -53,9 +53,9 @@ public class FuncionarioDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao cadastrar funcionario", e);
+            throw new DbException("Erro ao cadastrar funcionario", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -77,9 +77,9 @@ public class FuncionarioDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao deletar funcionario", e);
+            throw new DbException("Erro ao deletar funcionario", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -112,9 +112,9 @@ public class FuncionarioDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao consultar funcionario", e);
+            throw new DbException("Erro ao consultar funcionario", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -142,9 +142,9 @@ public class FuncionarioDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao alterar cadastro de funcionario", e);
+            throw new DbException("Erro ao alterar cadastro de funcionario", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -175,9 +175,9 @@ public class FuncionarioDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao carregar funcionarios por status", e);
+            throw new DbException("Erro ao carregar funcionarios por status", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -209,9 +209,9 @@ public class FuncionarioDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao carregar funcionarios por status", e);
+            throw new DbException("Erro ao carregar funcionarios por status", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

@@ -1,12 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -60,9 +59,9 @@ public class CertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao cadastrar certificado", e);
+            throw new DbException("Erro ao cadastrar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -90,9 +89,9 @@ public class CertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao consultar certificado", e);
+            throw new DbException("Erro ao consultar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -122,9 +121,9 @@ public class CertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao alterar certificado", e);
+            throw new DbException("Erro ao alterar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -147,9 +146,9 @@ public class CertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao deletar certificado", e);
+            throw new DbException("Erro ao deletar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -185,9 +184,9 @@ public class CertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao carregar certificados", e);
+            throw new DbException("Erro ao carregar certificados", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

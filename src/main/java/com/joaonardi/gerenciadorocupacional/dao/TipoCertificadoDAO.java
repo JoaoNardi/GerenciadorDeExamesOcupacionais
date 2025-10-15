@@ -1,6 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -39,9 +39,9 @@ public class TipoCertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao cadastrar tipo certificado", e);
+            throw new DbException("Erro ao cadastrar tipo certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -67,9 +67,9 @@ public class TipoCertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao consultar tipo certificado", e);
+            throw new DbException("Erro ao consultar tipo certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -93,9 +93,9 @@ public class TipoCertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao alterar tipo certificado", e);
+            throw new DbException("Erro ao alterar tipo certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -114,9 +114,9 @@ public class TipoCertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao deletar tipo certificado", e);
+            throw new DbException("Erro ao deletar tipo certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -141,9 +141,9 @@ public class TipoCertificadoDAO {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+                throw new DbException("Erro ao realizar rollback após falha", ex);
             }
-            throw new DataAccessException("Erro ao carregar tipos certificados", e);
+            throw new DbException("Erro ao carregar tipos certificados", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

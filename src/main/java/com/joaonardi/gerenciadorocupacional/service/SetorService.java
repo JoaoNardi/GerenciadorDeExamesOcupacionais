@@ -22,7 +22,6 @@ public class SetorService {
         } else {
             dao.alterarSetor(setor.getId(), setor);
         }
-
     }
 
     public void carregarSetores(){
