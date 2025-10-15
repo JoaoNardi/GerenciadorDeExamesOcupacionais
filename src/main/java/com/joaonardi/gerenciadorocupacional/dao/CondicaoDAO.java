@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
 import com.joaonardi.gerenciadorocupacional.model.Condicao;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -10,31 +11,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 
 public class CondicaoDAO {
-    DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static PreparedStatement preparedStatement = null;
     private static ResultSet resultSet = null;
 
-    private static final String DRIVER = "org.sqlite.JDBC";
-    private static final String BD = "jdbc:sqlite:resources/_db/db_gerenciador.db";
-
     private static final String CADASTRAR_CONDICAO = "INSERT INTO condicoes (id, tipo_exame_id, referencia, operador, parametro, periodicidade) " +
             "VALUES (NULL, ?, ?, ?, ?, ?)";
-
     private static final String CONSULTAR_CONDICAO = "SELECT * FROM condicoes WHERE ID = ?";
-
     private static final String ALTERAR_CONDICAO = "UPDATE condicoes SET tipo_exame_id = ?, referencia = ?, operador - ?, parametro = ?, " +
             "periodicidade = ? WHERE id = ? ";
-
     private static final String DELETAR_CONDICAO = "DELETE FROM condicoes WHERE id = ?";
     private static final String LISTAR_TODAS_CONDICOES = "SELECT * FROM condicoes";
     private static final String LISTAR_CONDICOES_POR_TIPO_EXAME_ID = "SELECT * FROM condicoes WHERE tipo_exame_id = ?";
 
     public CondicaoDAO() {
     }
-
     public void cadastrarCondicao(Condicao condicao) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
@@ -51,10 +43,14 @@ public class CondicaoDAO {
             JOptionPane.showMessageDialog(null, "Condicao cadastrada com sucesso");
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao cadastrar condição", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
-
         }
     }
 
@@ -72,7 +68,12 @@ public class CondicaoDAO {
             preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao alterar condição", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -86,7 +87,12 @@ public class CondicaoDAO {
             preparedStatement.execute();
             connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao deletar condição", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -109,17 +115,21 @@ public class CondicaoDAO {
             preparedStatement.executeBatch();
             connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao cadastrar lista de condiçoes", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
-
         }
     }
 
 
     public ObservableList<Condicao> listarTodasCondicoes() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        Condicao condicao = null;
+        Condicao condicao;
         ObservableList<Condicao> listarCondicoesPorTipoExameId = FXCollections.observableArrayList();
         try {
             preparedStatement = connection.prepareStatement(LISTAR_TODAS_CONDICOES);
@@ -137,7 +147,12 @@ public class CondicaoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao carregar condiçoes", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -146,7 +161,7 @@ public class CondicaoDAO {
 
     public ObservableList<Condicao> listarCondicoesPorTipoExameId(int idTipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        Condicao condicao = null;
+        Condicao condicao;
         ObservableList<Condicao> listaCondicoesPorTipoExameId = FXCollections.observableArrayList();
         try {
             preparedStatement = connection.prepareStatement(LISTAR_CONDICOES_POR_TIPO_EXAME_ID);
@@ -165,7 +180,12 @@ public class CondicaoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao carregar condiçoes por id", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

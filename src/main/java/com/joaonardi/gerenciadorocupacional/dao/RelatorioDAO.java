@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
@@ -30,8 +31,8 @@ public class RelatorioDAO {
             boolean exame,
             boolean certificado) {
         ObservableList<RelatorioItem> lista = FXCollections.observableArrayList();
+        Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            Connection connection = DBConexao.getInstance().abrirConexao();
             String sql = """
                         WITH filtros(funcionarioId, inputData, dataInicial, dataFinal, tipoDeId, exame, certificado) AS (
                             VALUES(?, ?, ?, ?, ?, ?, ?)
@@ -82,12 +83,15 @@ public class RelatorioDAO {
                         .build();
                 lista.add(item);
             }
-
             connection.commit();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao listar por período: " + e.getMessage());
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao gerar relatorio", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

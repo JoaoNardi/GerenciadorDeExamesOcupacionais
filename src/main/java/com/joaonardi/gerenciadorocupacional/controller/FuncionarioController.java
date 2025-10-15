@@ -35,7 +35,7 @@ public class FuncionarioController {
         inputSetor.getItems().addAll(setores);
     }
 
-    public void setFuncionario(Funcionario funcionario) throws Exception {
+    public void setFuncionario(Funcionario funcionario) {
         Setor setor = setorService.consultarSetorPorId(funcionario.getIdSetor());
         this.funcionario = funcionario;
         if (funcionario !=null){

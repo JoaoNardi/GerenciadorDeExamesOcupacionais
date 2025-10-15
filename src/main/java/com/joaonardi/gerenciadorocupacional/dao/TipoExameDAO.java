@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -18,12 +19,13 @@ public class TipoExameDAO {
     private static final String DELETAR = "DELETE FROM tipos_exame WHERE id = ?";
     private static final String LISTAR = "SELECT * FROM tipos_exame";
 
-    public TipoExameDAO() {}
+    public TipoExameDAO() {
+    }
 
     public TipoExame cadastrarTipoExame(TipoExame tipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            preparedStatement = connection.prepareStatement(CADASTRAR,Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(CADASTRAR, Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             preparedStatement.setString(i++, tipoExame.getNome());
             preparedStatement.setInt(i++, tipoExame.getPeriodicidade());
@@ -38,9 +40,14 @@ public class TipoExameDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao cadastrar tipo exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
         return tipoExame;
     }
@@ -62,21 +69,25 @@ public class TipoExameDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao consultar tipo exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
-
         return tipoExame;
     }
 
-    public void alterarTipoExame(int id,TipoExame tipoExame) {
+    public void alterarTipoExame(int id, TipoExame tipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(ALTERAR);
             int i = 1;
             preparedStatement.setString(i++, tipoExame.getNome());
-            preparedStatement.setInt(i++,tipoExame.getPeriodicidade());
+            preparedStatement.setInt(i++, tipoExame.getPeriodicidade());
             preparedStatement.setInt(i++, id);
 
             preparedStatement.executeUpdate();
@@ -84,9 +95,14 @@ public class TipoExameDAO {
 
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao alterar tipo exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -96,19 +112,18 @@ public class TipoExameDAO {
             preparedStatement = connection.prepareStatement(DELETAR);
             preparedStatement.setInt(1, id);
 
-            int linhasAfetadas = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
 
-            if (linhasAfetadas > 0) {
-                JOptionPane.showMessageDialog(null, "Tipo de exame excluído com sucesso.");
-            } else {
-                JOptionPane.showMessageDialog(null, "Tipo de exame não encontrado para exclusão.");
-            }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao deletar tipo exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -119,7 +134,6 @@ public class TipoExameDAO {
         try {
             preparedStatement = connection.prepareStatement(LISTAR);
             resultSet = preparedStatement.executeQuery();
-
             while (resultSet.next()) {
                 TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()
                         .id(resultSet.getInt("id"))
@@ -128,15 +142,16 @@ public class TipoExameDAO {
                         .build();
                 lista.add(tipoExame);
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao carregar tipos exames", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
-
         return lista;
     }
-
-
 }

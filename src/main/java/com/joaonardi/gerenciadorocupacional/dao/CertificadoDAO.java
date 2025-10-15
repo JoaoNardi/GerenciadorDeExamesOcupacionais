@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -55,10 +56,13 @@ public class CertificadoDAO {
                 }
             }
             connection.commit();
-
-            JOptionPane.showMessageDialog(null, "Certificado cadastrado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao cadastrar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -81,12 +85,14 @@ public class CertificadoDAO {
                         .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
                         .dataValidade(resultSet.getDate("data_validade").toLocalDate())
                         .build();
-            } else {
-                JOptionPane.showMessageDialog(null, "Certificado não encontrado");
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao consultar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -110,17 +116,15 @@ public class CertificadoDAO {
             }
             preparedStatement.setInt(i++, certificado.getId());
 
-            int linhasAfetadas = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
-
-            if (linhasAfetadas > 0) {
-                JOptionPane.showMessageDialog(null, "Certificado atualizado com sucesso");
-            } else {
-                JOptionPane.showMessageDialog(null, "Certificado não encontrado para atualizar");
-            }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao alterar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -130,7 +134,7 @@ public class CertificadoDAO {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(LIMPAR_ATUALIZADO_POR);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
 
             preparedStatement = connection.prepareStatement(DELETAR_CERTIFICADO);
@@ -140,7 +144,12 @@ public class CertificadoDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao deletar certificado", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -173,12 +182,15 @@ public class CertificadoDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao carregar certificados", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
-
         return listaCertificados;
     }
-
 }

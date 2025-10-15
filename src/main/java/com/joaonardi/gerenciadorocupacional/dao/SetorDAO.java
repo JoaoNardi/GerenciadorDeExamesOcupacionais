@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -35,15 +36,19 @@ public class SetorDAO {
             preparedStatement.execute();
             connection.commit();
 
-            JOptionPane.showMessageDialog(null, "Setor cadastrado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao cadastrar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
-    public Setor consultarSetor(int id) throws Exception {
+    public Setor consultarSetor(int id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Setor setor = null;
         try {
@@ -58,15 +63,14 @@ public class SetorDAO {
                         .build();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao consultar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
-        }
-
-        if (setor == null) {
-            JOptionPane.showMessageDialog(null, "Não foi possível localizar o setor selecionado",
-                    "", JOptionPane.WARNING_MESSAGE);
-            throw new Exception("Não foi possível localizar o setor selecionado");
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
 
         return setor;
@@ -83,11 +87,15 @@ public class SetorDAO {
             preparedStatement.executeUpdate();
             connection.commit();
 
-            JOptionPane.showMessageDialog(null, "Setor alterado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao alterar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -102,15 +110,20 @@ public class SetorDAO {
 
             JOptionPane.showMessageDialog(null, "Setor deletado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao deletar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
     public ObservableList<Setor> listarSetores() {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        ObservableList<Setor> listaSetores =  FXCollections.observableArrayList();
+        ObservableList<Setor> listaSetores = FXCollections.observableArrayList();
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR_SETORES);
@@ -125,11 +138,15 @@ public class SetorDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao carregar setores", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet,preparedStatement);
+            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
-
         return listaSetores;
     }
 

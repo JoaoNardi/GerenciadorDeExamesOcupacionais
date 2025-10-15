@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -56,17 +57,20 @@ public class ExameDAO {
                 }
             }
             connection.commit();
-
             JOptionPane.showMessageDialog(null, "Exame cadastrado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao cadastrar exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
         return exame;
     }
 
-    //daqui pra baixo
     public Exame consultarExame(int id) throws Exception {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Exame exame = null;
@@ -86,17 +90,15 @@ public class ExameDAO {
                         .build();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao consultar exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
-
-        if (exame == null) {
-            JOptionPane.showMessageDialog(null, "Não foi possível localizar o exame selecionado",
-                    "", JOptionPane.WARNING_MESSAGE);
-            throw new Exception("Não foi possível localizar o exame selecionado");
-        }
-
         return exame;
     }
 
@@ -121,7 +123,12 @@ public class ExameDAO {
 
             JOptionPane.showMessageDialog(null, "Exame alterado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao alterar exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -129,11 +136,9 @@ public class ExameDAO {
 
     public void deletarExame(int id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
-
-
         try {
             preparedStatement = connection.prepareStatement(LIMPAR_ATUALIZADO_POR);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
 
             preparedStatement = connection.prepareStatement(DELETAR_EXAME);
@@ -144,7 +149,12 @@ public class ExameDAO {
 
             JOptionPane.showMessageDialog(null, "Exame deletado com sucesso");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao deletar exame", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -175,7 +185,12 @@ public class ExameDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DataAccessException("Erro ao realizar rollback após falha", ex);
+            }
+            throw new DataAccessException("Erro ao carregar exames", e);
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }

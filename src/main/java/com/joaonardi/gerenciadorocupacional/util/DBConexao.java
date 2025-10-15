@@ -1,5 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataAccessException;
+
 import java.sql.*;
 
 public class DBConexao {
@@ -12,7 +14,7 @@ public class DBConexao {
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            System.out.println("Driver JDBC não encontrado: " + e.getMessage());
+            throw new DataAccessException("Erro ao criar conexão com banco de dados", e);
         }
     }
 
@@ -30,30 +32,23 @@ public class DBConexao {
                 conexao.setAutoCommit(false);
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao conectar com banco de dados: " + e.getMessage());
+            throw new DataAccessException("Erro ao acessar banco de dados", e);
         }
         return conexao;
     }
 
     public void fechaConexao(ResultSet resultSet, PreparedStatement preparedStatement) {
         try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            try {
-                if (conexao != null && !conexao.isClosed()) {
-                    conexao.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Erro ao fechar conexão com banco de dados: " + e.getMessage());
-            } finally {
-                conexao = null;
+            if (resultSet != null) resultSet.close();
+            if (preparedStatement != null) preparedStatement.close();
+
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Erro ao fechar conexão com o banco de dados", e);
+        } finally {
+            conexao = null;
         }
     }
 }

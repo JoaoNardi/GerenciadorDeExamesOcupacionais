@@ -39,7 +39,7 @@ public class SetorService {
         return setoresMap.getOrDefault(id,"Sem Setor") ;
     }
 
-    public Setor consultarSetorPorId(Integer id) throws Exception {
+    public Setor consultarSetorPorId(Integer id) {
         return dao.consultarSetor(id);
     }
 }
