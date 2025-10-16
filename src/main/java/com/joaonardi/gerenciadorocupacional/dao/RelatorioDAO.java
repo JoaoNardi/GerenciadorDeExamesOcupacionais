@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
@@ -15,11 +16,10 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class RelatorioDAO {
+public class RelatorioDAO extends BaseDAO {
     final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
-
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     public ObservableList<RelatorioItem> montarRelatorio(
             Funcionario funcionario,
@@ -83,18 +83,15 @@ public class RelatorioDAO {
                 lista.add(item);
             }
             connection.commit();
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao gerar relatorio", e);
-        } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+        if (lista.isEmpty()){
+            throw new DataNotFoundException("Relatório vazio - dados não encontrados");
         }
-
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao gerar relatório", e);
+        } finally {
+            close(resultSet, preparedStatement);
+        }
         return lista;
     }
 }

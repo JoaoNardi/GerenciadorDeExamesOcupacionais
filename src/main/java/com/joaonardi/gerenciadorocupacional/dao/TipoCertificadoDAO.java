@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -12,9 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TipoCertificadoDAO {
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+public class TipoCertificadoDAO extends BaseDAO {
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     private static final String CADASTRAR = "INSERT INTO tipos_certificado (id, nome, periodicidade) VALUES (NULL, ?, ?)";
     private static final String CONSULTAR = "SELECT * FROM tipos_certificado WHERE id = ?";
@@ -34,16 +35,11 @@ public class TipoCertificadoDAO {
             preparedStatement.setInt(i++, tipoCertificado.getPeriodicidade());
             preparedStatement.execute();
             connection.commit();
-            JOptionPane.showMessageDialog(null, "Tipo de certificado cadastrado com sucesso.");
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao cadastrar tipo certificado", e);
+            rollback(connection);
+            throw new DbException("Erro ao cadastrar Tipo Certificado", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -59,8 +55,6 @@ public class TipoCertificadoDAO {
                 tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
                         .nome(resultSet.getString("nome"))
                         .build();
-            } else {
-                JOptionPane.showMessageDialog(null, "Tipo de certificado não encontrado.");
             }
 
         } catch (SQLException e) {
@@ -90,14 +84,10 @@ public class TipoCertificadoDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao alterar tipo certificado", e);
+            rollback(connection);
+            throw new DbException("Erro ao alterar Tipo Certificado", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -111,14 +101,10 @@ public class TipoCertificadoDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao deletar tipo certificado", e);
+            rollback(connection);
+            throw new DbException("Erro ao deletar Tipo Certificado", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -137,15 +123,14 @@ public class TipoCertificadoDAO {
                         .build();
                 lista.add(tipoCertificado);
             }
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (lista.isEmpty()){
+                throw new DataNotFoundException("Tipos Certificados não encontrados");
             }
-            throw new DbException("Erro ao carregar tipos certificados", e);
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao carregar Tipo Certificados", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
         return lista;
     }

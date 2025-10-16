@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -11,10 +12,10 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class ExameDAO {
+public class ExameDAO extends BaseDAO {
     final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     private static final String CADASTRAR_EXAME = "INSERT INTO EXAMES (id, tipo_exame_id, funcionario_id, data_emissao, data_validade, " +
             "atualizado_por)"
@@ -47,8 +48,6 @@ public class ExameDAO {
                 preparedStatement.setInt(i++,
                         exame.getAtualizadoPor());
             }
-
-
             preparedStatement.execute();
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -56,17 +55,12 @@ public class ExameDAO {
                     exame.setId(idGerado);
                 }
             }
-            connection.commit();
-            JOptionPane.showMessageDialog(null, "Exame cadastrado com sucesso");
+            commit(connection);
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao cadastrar exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return exame;
     }
@@ -118,19 +112,18 @@ public class ExameDAO {
             }
             preparedStatement.setInt(i++, id);
 
-            preparedStatement.executeUpdate();
-            connection.commit();
+            int linhasAfetadas = preparedStatement.executeUpdate();
+            commit(connection);
 
-            JOptionPane.showMessageDialog(null, "Exame alterado com sucesso");
-        } catch (SQLException e) {
-            try {
+            if (linhasAfetadas == 0) {
                 connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+                throw new DataNotFoundException("Exame não encontrado id: " + id);
             }
+        } catch (SQLException e) {
+            rollback(connection);
             throw new DbException("Erro ao alterar exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -140,23 +133,24 @@ public class ExameDAO {
             preparedStatement = connection.prepareStatement(LIMPAR_ATUALIZADO_POR);
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
+            preparedStatement.close();
+            preparedStatement = null;
 
             preparedStatement = connection.prepareStatement(DELETAR_EXAME);
             preparedStatement.setInt(1, id);
 
-            preparedStatement.executeUpdate();
-            connection.commit();
+            int linhasAfetadas = preparedStatement.executeUpdate();
 
-
-        } catch (SQLException e) {
-            try {
+            if (linhasAfetadas == 0) {
                 connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+                throw new DataNotFoundException("Exame não encontrado id: " + id);
             }
+            commit(connection);
+        } catch (SQLException e) {
+            rollback(connection);
             throw new DbException("Erro ao deletar exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -179,22 +173,19 @@ public class ExameDAO {
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
                         .dataValidade(resultSet.getString("data_validade") != null ?
                                 LocalDate.parse(resultSet.getString("data_validade")) : null)
-                        .atualizadoPor(resultSet.getInt("atualizado_por"))
+                        .atualizadoPor(resultSet.wasNull() ? null : resultSet.getInt("atualizado_por"))
                         .build();
                 listaExames.add(exame);
             }
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (listaExames.isEmpty()) {
+                throw new DataNotFoundException("Nenhum exame encontrado.");
             }
+        } catch (SQLException e) {
+            rollback(connection);
             throw new DbException("Erro ao carregar exames", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
-
         return listaExames;
     }
 }

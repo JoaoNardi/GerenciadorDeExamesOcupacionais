@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -9,18 +10,14 @@ import javafx.collections.ObservableList;
 import javax.swing.*;
 import java.sql.*;
 
-public class SetorDAO {
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+public class SetorDAO extends BaseDAO {
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     private static final String CADASTRAR_SETOR = "INSERT INTO SETORES (id, area) VALUES (NULL, ?)";
-
     private static final String CONSULTAR_SETOR = "SELECT * FROM SETORES WHERE id = ?";
-
     private static final String ALTERAR_SETOR = "UPDATE SETORES SET area = ? WHERE id = ?";
-
     private static final String DELETAR_SETOR = "DELETE FROM SETORES WHERE id = ?";
-
     private static final String LISTAR_SETORES = "SELECT * FROM SETORES";
 
     public SetorDAO() {
@@ -37,14 +34,10 @@ public class SetorDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao cadastrar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -63,16 +56,11 @@ public class SetorDAO {
                         .build();
             }
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao consultar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
-
         return setor;
     }
 
@@ -88,14 +76,10 @@ public class SetorDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao alterar setor", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -104,11 +88,8 @@ public class SetorDAO {
         try {
             preparedStatement = connection.prepareStatement(DELETAR_SETOR);
             preparedStatement.setInt(1, id);
-
             preparedStatement.execute();
             connection.commit();
-
-            JOptionPane.showMessageDialog(null, "Setor deletado com sucesso");
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -136,19 +117,15 @@ public class SetorDAO {
                         .build();
                 listaSetores.add(setor);
             }
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (listaSetores.isEmpty()){
+                throw new DataNotFoundException("Setores não encontrados");
             }
+        } catch (SQLException e) {
+            rollback(connection);
             throw new DbException("Erro ao carregar setores", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
         return listaSetores;
     }
-
-
 }

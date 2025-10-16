@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -11,10 +12,10 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class FuncionarioDAO {
+public class FuncionarioDAO extends BaseDAO {
     final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
     private static final String CADASTRAR_FUNCIONARIO = " INSERT INTO FUNCIONARIOS "
             + "(id, nome ,cpf, data_nascimento, data_admissao, setor_id, ativo)"
             + "VALUES (NULL, ?, ?, ?, ?, ?, ?) ";
@@ -47,17 +48,11 @@ public class FuncionarioDAO {
 
             preparedStatement.execute();
             connection.commit();
-
-            JOptionPane.showMessageDialog(null, "Funcionario cadastrado com sucesso");
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao cadastrar funcionario", e);
+            rollback(connection);
+            throw new DbException("Erro ao cadastrar funcionário", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -71,17 +66,11 @@ public class FuncionarioDAO {
 
             preparedStatement.execute();
             connection.commit();
-
-            JOptionPane.showMessageDialog(null, "Funcionario deletado com sucesso");
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao deletar funcionario", e);
+            rollback(connection);
+            throw new DbException("Erro ao deletar funcionário", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -139,14 +128,10 @@ public class FuncionarioDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao alterar cadastro de funcionario", e);
+            rollback(connection);
+            throw new DbException("Erro ao alterar funcionário", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -171,15 +156,14 @@ public class FuncionarioDAO {
                         .build();
                 listaFuncionariosAtivos.add(funcionario);
             }
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (listaFuncionariosAtivos.isEmpty()){
+                throw new DataNotFoundException("Funcionarios nao encontrados");
             }
-            throw new DbException("Erro ao carregar funcionarios por status", e);
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao carregar funcionários", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return listaFuncionariosAtivos;
     }
@@ -204,20 +188,16 @@ public class FuncionarioDAO {
                         .build();
                 listaFuncionariosAtivos.add(funcionario);
             }
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (listaFuncionariosAtivos.isEmpty()){
+                throw new DataNotFoundException("Funcionarios nao encontrados");
             }
-            throw new DbException("Erro ao carregar funcionarios por status", e);
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao carregar funcionários (Sem status)", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
-
         return listaFuncionariosAtivos;
     }
-
 }
 

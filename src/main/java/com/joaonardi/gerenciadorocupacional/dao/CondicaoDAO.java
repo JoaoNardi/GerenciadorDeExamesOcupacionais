@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Condicao;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -12,9 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CondicaoDAO {
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+public class CondicaoDAO extends BaseDAO {
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     private static final String CADASTRAR_CONDICAO = "INSERT INTO condicoes (id, tipo_exame_id, referencia, operador, parametro, periodicidade) " +
             "VALUES (NULL, ?, ?, ?, ?, ?)";
@@ -27,6 +28,7 @@ public class CondicaoDAO {
 
     public CondicaoDAO() {
     }
+
     public void cadastrarCondicao(Condicao condicao) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
@@ -38,19 +40,12 @@ public class CondicaoDAO {
             preparedStatement.setString(i++, condicao.getParametro());
             preparedStatement.setInt(i++, condicao.getPeriodicidade());
             preparedStatement.execute();
-            connection.commit();
-
-            JOptionPane.showMessageDialog(null, "Condicao cadastrada com sucesso");
-
+            commit(connection);
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao cadastrar condição", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -85,16 +80,12 @@ public class CondicaoDAO {
             preparedStatement = connection.prepareStatement(DELETAR_CONDICAO);
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
-            connection.commit();
+            commit(connection);
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao deletar condição", e);
+            rollback(connection);
+            throw new DbException("Erro ao deletar condicao", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -113,16 +104,12 @@ public class CondicaoDAO {
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
-            connection.commit();
+            commit(connection);
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao cadastrar lista de condiçoes", e);
+            rollback(connection);
+            throw new DbException("Erro ao cadastrar lista de condições", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -145,16 +132,14 @@ public class CondicaoDAO {
                         .build();
                 listarCondicoesPorTipoExameId.add(condicao);
             }
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (listarCondicoesPorTipoExameId.isEmpty()) {
+                throw new DataNotFoundException("Nenhum exame encontrado.");
             }
-            throw new DbException("Erro ao carregar condiçoes", e);
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao carregar condições", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return listarCondicoesPorTipoExameId;
     }
@@ -178,18 +163,15 @@ public class CondicaoDAO {
                         .build();
                 listaCondicoesPorTipoExameId.add(condicao);
             }
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (listaCondicoesPorTipoExameId.isEmpty()) {
+                throw new DataNotFoundException("Nenhuma condição encontrado.");
             }
-            throw new DbException("Erro ao carregar condiçoes por id", e);
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao carregar condições por id", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return listaCondicoesPorTipoExameId;
     }
-
 }

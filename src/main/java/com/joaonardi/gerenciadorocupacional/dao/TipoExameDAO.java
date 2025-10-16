@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -9,9 +10,9 @@ import javafx.collections.ObservableList;
 import javax.swing.*;
 import java.sql.*;
 
-public class TipoExameDAO {
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+public class TipoExameDAO extends BaseDAO {
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     private static final String CADASTRAR = "INSERT INTO tipos_exame (id, nome, periodicidade) VALUES (NULL, ?, ?)";
     private static final String CONSULTAR = "SELECT * FROM tipos_exame WHERE id = ?";
@@ -40,14 +41,10 @@ public class TipoExameDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao cadastrar tipo exame", e);
+            rollback(connection);
+            throw new DbException("Erro ao cadastrar Tipo Exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
         return tipoExame;
     }
@@ -64,8 +61,6 @@ public class TipoExameDAO {
                 tipoExame = TipoExame.TipoExameBuilder.builder()
                         .nome(resultSet.getString("nome"))
                         .build();
-            } else {
-                JOptionPane.showMessageDialog(null, "Tipo de exame não encontrado.");
             }
 
         } catch (SQLException e) {
@@ -95,14 +90,10 @@ public class TipoExameDAO {
 
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao alterar tipo exame", e);
+            rollback(connection);
+            throw new DbException("Erro ao alterar Tipo Exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -116,14 +107,10 @@ public class TipoExameDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao deletar tipo exame", e);
+            rollback(connection);
+            throw new DbException("Erro ao deletar Tipo Exame", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
     }
 
@@ -142,15 +129,14 @@ public class TipoExameDAO {
                         .build();
                 lista.add(tipoExame);
             }
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+            if (lista.isEmpty()){
+                throw new DataNotFoundException("Tipos Exames não encontrados");
             }
-            throw new DbException("Erro ao carregar tipos exames", e);
+        } catch (SQLException e) {
+            rollback(connection);
+            throw new DbException("Erro ao carregar Tipo Exames", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet,preparedStatement);
         }
         return lista;
     }

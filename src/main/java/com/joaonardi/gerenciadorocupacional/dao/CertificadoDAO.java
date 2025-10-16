@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -10,10 +11,10 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class CertificadoDAO {
+public class CertificadoDAO extends BaseDAO {
     final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static PreparedStatement preparedStatement = null;
-    private static ResultSet resultSet = null;
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
 
     private static final String CADASTRAR_CERTIFICADO = "INSERT INTO CERTIFICADOS (id, tipo_certificado_id, funcionario_id, data_emissao, " +
             "data_validade, atualizado_por)" +
@@ -46,7 +47,6 @@ public class CertificadoDAO {
                 preparedStatement.setInt(i++,
                         certificado.getAtualizadoPor());
             }
-
             preparedStatement.execute();
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -56,14 +56,10 @@ public class CertificadoDAO {
             }
             connection.commit();
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao cadastrar certificado", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return certificado;
     }
@@ -116,16 +112,18 @@ public class CertificadoDAO {
             preparedStatement.setInt(i++, certificado.getId());
 
             preparedStatement.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            try {
+            int linhasAfetadas = preparedStatement.executeUpdate();
+            commit(connection);
+
+            if (linhasAfetadas == 0) {
                 connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
+                throw new DataNotFoundException("Certificado não encontrado id: " + certificado.getId());
             }
+        } catch (SQLException e) {
+            rollback(connection);
             throw new DbException("Erro ao alterar certificado", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -143,14 +141,10 @@ public class CertificadoDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao deletar certificado", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -181,14 +175,10 @@ public class CertificadoDAO {
             }
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
+            rollback(connection);
             throw new DbException("Erro ao carregar certificados", e);
         } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return listaCertificados;
     }
