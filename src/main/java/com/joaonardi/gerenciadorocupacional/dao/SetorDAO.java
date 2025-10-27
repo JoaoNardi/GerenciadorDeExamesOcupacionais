@@ -35,6 +35,7 @@ public class SetorDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
+            verificaDadoDuplicado(e);
             throw new DbException("Erro ao cadastrar setor", e);
         } finally {
             close(resultSet,preparedStatement);
@@ -76,6 +77,7 @@ public class SetorDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
+            verificaDadoDuplicado(e);
             rollback(connection);
             throw new DbException("Erro ao alterar setor", e);
         } finally {

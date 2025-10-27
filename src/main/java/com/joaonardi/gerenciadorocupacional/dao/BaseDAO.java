@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
+import com.joaonardi.gerenciadorocupacional.exception.DataDuplicityException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 
@@ -22,6 +23,11 @@ public abstract class BaseDAO {
             conn.rollback();
         } catch (SQLException e) {
             throw new DbException("Erro ao realizar rollback após falha", e);
+        }
+    }
+    protected void verificaDadoDuplicado(SQLException e){
+        if (e.getMessage() != null && e.getMessage().contains("UNIQUE constraint failed")) {
+            throw new DataDuplicityException("Já existe um registro cadastrado com esses dados.", e);
         }
     }
 

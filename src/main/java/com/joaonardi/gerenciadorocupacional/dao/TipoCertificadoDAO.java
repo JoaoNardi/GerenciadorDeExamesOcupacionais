@@ -101,6 +101,7 @@ public class TipoCertificadoDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
+            verificaDadoDuplicado(e);
             rollback(connection);
             throw new DbException("Erro ao deletar Tipo Certificado", e);
         } finally {

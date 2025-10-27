@@ -7,7 +7,6 @@ import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -50,6 +49,7 @@ public class FuncionarioDAO extends BaseDAO {
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
+            verificaDadoDuplicado(e);
             throw new DbException("Erro ao cadastrar funcionário", e);
         } finally {
             close(resultSet, preparedStatement);
@@ -129,6 +129,7 @@ public class FuncionarioDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
+            verificaDadoDuplicado(e);
             throw new DbException("Erro ao alterar funcionário", e);
         } finally {
             close(resultSet, preparedStatement);

@@ -38,7 +38,7 @@ public class FuncionarioController {
     public void setFuncionario(Funcionario funcionario) {
         Setor setor = setorService.consultarSetorPorId(funcionario.getIdSetor());
         this.funcionario = funcionario;
-        if (funcionario !=null){
+        if (funcionario != null) {
             inputNome.setText(funcionario.getNome());
             inputCpf.setText(funcionario.getCpf());
             inputDataNascimento.setValue(funcionario.getDataNascimento());
@@ -49,16 +49,16 @@ public class FuncionarioController {
 
     @FXML
     public void handleSalvarFuncionario(ActionEvent event) {
-        if (this.funcionario == null || this.funcionario.getId() == null){
-        this.funcionario = Funcionario
-                .FuncionarioBuilder.builder()
-                .id(null)
-                .nome(inputNome.getText())
-                .cpf(inputCpf.getText())
-                .dataNascimento(inputDataNascimento.getValue())
-                .dataAdmissao(inputDataAdmissao.getValue())
-                .idSetor(inputSetor.getValue().getId())
-                .ativo(inputAtivo.isSelected()).build();
+        if (this.funcionario == null || this.funcionario.getId() == null) {
+            this.funcionario = Funcionario
+                    .FuncionarioBuilder.builder()
+                    .id(null)
+                    .nome(inputNome.getText())
+                    .cpf(inputCpf.getText())
+                    .dataNascimento(inputDataNascimento.getValue())
+                    .dataAdmissao(inputDataAdmissao.getValue())
+                    .idSetor(inputSetor.getValue().getId())
+                    .ativo(inputAtivo.isSelected()).build();
         } else {
             this.funcionario = Funcionario
                     .FuncionarioBuilder.builder()
@@ -75,6 +75,7 @@ public class FuncionarioController {
             JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,e.getMessage());
+            return;
         }
         janela.fecharJanela(btnSalvar);
     }
@@ -83,8 +84,4 @@ public class FuncionarioController {
         janela.fecharJanela(btnCancelar);
 
     }
-
-
-
-
 }

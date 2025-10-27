@@ -41,6 +41,7 @@ public class TipoExameDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
+            verificaDadoDuplicado(e);
             rollback(connection);
             throw new DbException("Erro ao cadastrar Tipo Exame", e);
         } finally {
