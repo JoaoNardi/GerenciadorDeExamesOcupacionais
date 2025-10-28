@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class GerenciarCertificadosController {
     public TableView<TipoCertificado> tabelaCertificados;
@@ -18,7 +19,6 @@ public class GerenciarCertificadosController {
     public TableColumn<TipoCertificado, Integer> colunaPerioicidade;
 
     ObservableList<TipoCertificado> tiposCertificado;
-    final Janela janela = new Janela();
     TipoCertificadoController tipoCertificadoController = new TipoCertificadoController();
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
@@ -29,13 +29,13 @@ public class GerenciarCertificadosController {
 
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colunaPerioicidade.setCellValueFactory(new PropertyValueFactory<>("periodicidade"));
-        colunaPerioicidade.setCellFactory(c -> new TableCell<>(){
+        colunaPerioicidade.setCellFactory(c -> new TableCell<>() {
                     @Override
                     protected void updateItem(Integer periodicidade, boolean empty) {
                         super.updateItem(periodicidade, empty);
-                        if (empty || periodicidade == null){
+                        if (empty || periodicidade == null) {
                             setText(" ");
-                        }else {
+                        } else {
                             Periodicidade periodo = Periodicidade.fromValor(periodicidade);
                             setText(String.valueOf(periodo));
 
@@ -47,13 +47,16 @@ public class GerenciarCertificadosController {
     }
 
     public void handleTableDoubleClick(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2){
+        if (mouseEvent.getClickCount() == 2) {
             TipoCertificado tipoCertificadoSelecionado = tabelaCertificados.getSelectionModel().getSelectedItem();
-
-            janela.abrirJanela("/view/TipoCertificadoView.fxml","Editar Certificado",null);
-            tipoCertificadoController = janela.loader.getController();
+            Janela janelaEditarCertificado = new Janela();
+            janelaEditarCertificado.abrirJanela("/view/TipoCertificadoView.fxml", "Editar Certificado", (Stage) tabelaCertificados.getScene().getWindow(),
+                    null);
+            tipoCertificadoController = janelaEditarCertificado.loader.getController();
             tipoCertificadoController.setTipoCertificado(tipoCertificadoSelecionado);
-            janela.stage.setOnHidden(e -> {tiposCertificado.clear(); tiposCertificado.addAll(tipoCertificadoService.listarTiposCertificados());
+            janelaEditarCertificado.stage.setOnHidden(e -> {
+                tiposCertificado.clear();
+                tiposCertificado.addAll(tipoCertificadoService.listarTiposCertificados());
                 tabelaCertificados.setItems(tiposCertificado);
             });
         }

@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
+import com.joaonardi.gerenciadorocupacional.MainApp;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
@@ -358,9 +359,9 @@ public class MainController {
     }
 
     @FXML
-    public void editarFuncionario(Funcionario funcionario) throws Exception {
+    public void editarFuncionario(Funcionario funcionario) {
         if (funcionario != null) {
-            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", null);
+            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", MainApp.STAGE_PRINCIPAL, null);
             funcionarioController = janela.loader.getController();
             funcionarioController.setFuncionario(funcionario);
         }
@@ -398,7 +399,7 @@ public class MainController {
             }
             setTodos();
         });
-    btnConfirmar.setDisable(false);
+        btnConfirmar.setDisable(false);
         VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
@@ -499,7 +500,7 @@ public class MainController {
     @FXML
     public void handleEditarExame(Exame exame) {
         if (exame != null) {
-            janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", this::setTodos);
+            janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
             examesController = janela.loader.getController();
             examesController.setExame(exame);
         }
@@ -508,7 +509,7 @@ public class MainController {
     @FXML
     public void handleEditarCertificado(Certificado certificado) {
         if (certificado != null) {
-            janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", this::setTodos);
+            janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
             certificadoController = janela.loader.getController();
             certificadoController.setCertificado(certificado);
         }
@@ -517,40 +518,40 @@ public class MainController {
 
     @FXML
     private void handleAbrirFuncionario(ActionEvent event) {
-        janela.abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários", this::setTodos);
+        janela.abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
     public void handleAbrirGerenciarFuncionario() {
-        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml", "Gerenciar Funcionarios", this::setTodos);
+        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml", "Gerenciar Funcionarios", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
     public void handleAbrirSetor() {
-        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", this::setTodos);
+        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
     public void handleAbrirGerenciarSetor() {
-        janela.abrirJanela("/view/GerenciarSetoresView.fxml", "Gerenciar Setores", this::setTodos);
+        janela.abrirJanela("/view/GerenciarSetoresView.fxml", "Gerenciar Setores", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
     public void handleAbrirExame() {
-        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro de Exame", this::setTodos);
+        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro de Exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
     public void handleAbrirGerenciarExame() {
-        janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", this::setTodos);
+        janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     public void handleTipoCertificado() {
-        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", this::setTodos);
+        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     public void handleGerenciarTiposCertificado() {
-        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Tipos Certificados", this::setTodos);
+        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Tipos Certificados", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     public void handleLancarCertificado() {
@@ -565,7 +566,7 @@ public class MainController {
                         .showError();
                 return;
             }
-            janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", this::setTodos);
+            janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", MainApp.STAGE_PRINCIPAL, this::setTodos);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -583,14 +584,14 @@ public class MainController {
                         .showError();
                 return;
             }
-            janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", this::setTodos);
+            janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", MainApp.STAGE_PRINCIPAL, this::setTodos);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public void handleAbrirRelatorioFuncionario() {
-        janela.abrirJanela("/view/RelatoriosPorFuncionariosView.fxml", "Relatórios por Funcionários", this::setTodos);
+        janela.abrirJanela("/view/RelatoriosPorFuncionariosView.fxml", "Relatórios por Funcionários", MainApp.STAGE_PRINCIPAL, this::setTodos);
 
     }
 

@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApp extends Application {
-
+    public static Stage STAGE_PRINCIPAL;
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -19,6 +19,7 @@ public class MainApp extends Application {
             Scene scene = new Scene(root);
             primaryStage.setTitle("Gerenciador");
             primaryStage.setScene(scene);
+            STAGE_PRINCIPAL = primaryStage;
             primaryStage.show();
 
         } catch (IOException e) {

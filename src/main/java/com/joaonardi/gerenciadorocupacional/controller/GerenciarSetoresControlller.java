@@ -10,13 +10,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class GerenciarSetoresControlller {
     public TableView<Setor> tabelaSetores;
     public TableColumn<Setor, String> colunaArea;
 
     ObservableList<Setor> setores = FXCollections.observableArrayList();
-    final Janela janela = new Janela();
     SetorController setorController = new SetorController();
     final SetorService setorService = new SetorService();
 
@@ -29,13 +29,16 @@ public class GerenciarSetoresControlller {
     }
 
     public void handleTableDoubleClick(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2){
+        if (mouseEvent.getClickCount() == 2) {
             Setor setorSelecionado = tabelaSetores.getSelectionModel().getSelectedItem();
-        janela.abrirJanela("/view/SetorView.fxml","Editar Setor", null);
-        setorController = janela.loader.getController();
-        setorController.setSetor(setorSelecionado);
-            janela.stage.setOnHidden(e -> {setores.clear(); setores.addAll(setorService.listarSetores());
-            tabelaSetores.setItems(setores);
+            Janela janelaEditarSetor = new Janela();
+            janelaEditarSetor.abrirJanela("/view/SetorView.fxml", "Editar Setor", (Stage) tabelaSetores.getScene().getWindow(), null);
+            setorController = janelaEditarSetor.loader.getController();
+            setorController.setSetor(setorSelecionado);
+            janelaEditarSetor.stage.setOnHidden(e -> {
+                setores.clear();
+                setores.addAll(setorService.listarSetores());
+                tabelaSetores.setItems(setores);
             });
         }
     }

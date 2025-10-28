@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class GerenciarExamesController {
     public TableView<TipoExame> tabelaExames;
@@ -18,7 +19,6 @@ public class GerenciarExamesController {
     public TableColumn<TipoExame, Integer> colunaPerioicidade;
 
     ObservableList<TipoExame> tiposExame;
-    final Janela janela = new Janela();
     TipoExameController tipoExameController = new TipoExameController();
     final TipoExameService tipoExameService = new TipoExameService();
 
@@ -49,11 +49,11 @@ public class GerenciarExamesController {
     public void handleTableDoubleClick(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2){
             TipoExame tipoExameSelecionado = tabelaExames.getSelectionModel().getSelectedItem();
-
-            janela.abrirJanela("/view/TipoExameView.fxml","Editar Exame", null);
-            tipoExameController = janela.loader.getController();
+            Janela janelaEditarExame = new Janela();
+            janelaEditarExame.abrirJanela("/view/TipoExameView.fxml","Editar Exame", (Stage) tabelaExames.getScene().getWindow() ,null);
+            tipoExameController = janelaEditarExame.loader.getController();
             tipoExameController.setTipoExame(tipoExameSelecionado);
-            janela.stage.setOnHidden(e -> {tiposExame.clear(); tiposExame.addAll(tipoExameService.listarTiposExame());
+            janelaEditarExame.stage.setOnHidden(e -> {tiposExame.clear(); tiposExame.addAll(tipoExameService.listarTiposExame());
                 tabelaExames.setItems(tiposExame);
             });
         }

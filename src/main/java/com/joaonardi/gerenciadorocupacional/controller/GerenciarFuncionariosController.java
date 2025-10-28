@@ -5,10 +5,10 @@ import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
@@ -27,7 +27,6 @@ public class GerenciarFuncionariosController {
 
     boolean listarAtivos = true;
     FuncionarioController funcionarioController = new FuncionarioController();
-    final Janela janela = new Janela();
     final FuncionarioService funcionarioService = new FuncionarioService();
     final SetorService setorService = new SetorService();
 
@@ -55,17 +54,18 @@ public class GerenciarFuncionariosController {
     }
 
     @FXML
-    public void handleEditar() throws Exception {
+    public void handleEditar() {
         Funcionario funcionarioSelecionado = tabelaFuncionarios.getSelectionModel().getSelectedItem();
         if (funcionarioSelecionado != null) {
-            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", null);
-            funcionarioController = janela.loader.getController();
+            Janela janelaEditarFuncionario = new Janela();
+            janelaEditarFuncionario.abrirJanela("/view/FuncionarioView.fxml", "Editar Funcionario", (Stage) tabelaFuncionarios.getScene().getWindow(), null);
+            funcionarioController = janelaEditarFuncionario.loader.getController();
             funcionarioController.setFuncionario(funcionarioSelecionado);
         }
     }
 
     @FXML
-    private void handleTableDoubleClick(javafx.scene.input.MouseEvent mouseEvent) throws Exception {
+    private void handleTableDoubleClick(javafx.scene.input.MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             handleEditar();
         }

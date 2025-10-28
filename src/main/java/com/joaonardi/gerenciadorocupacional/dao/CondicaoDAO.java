@@ -163,9 +163,7 @@ public class CondicaoDAO extends BaseDAO {
                         .build();
                 listaCondicoesPorTipoExameId.add(condicao);
             }
-            if (listaCondicoesPorTipoExameId.isEmpty()) {
-                throw new DataNotFoundException("Nenhuma condição encontrado.");
-            }
+
         } catch (SQLException e) {
             rollback(connection);
             throw new DbException("Erro ao carregar condições por id", e);
