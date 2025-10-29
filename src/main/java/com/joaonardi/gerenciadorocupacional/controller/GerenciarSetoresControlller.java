@@ -37,6 +37,7 @@ public class GerenciarSetoresControlller {
             setorController.setSetor(setorSelecionado);
             janelaEditarSetor.stage.setOnHidden(e -> {
                 setores.clear();
+                setorService.carregarSetores();
                 setores.addAll(setorService.listarSetores());
                 tabelaSetores.setItems(setores);
             });

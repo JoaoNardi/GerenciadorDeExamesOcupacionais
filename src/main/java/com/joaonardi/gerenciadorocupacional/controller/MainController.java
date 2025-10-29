@@ -79,10 +79,6 @@ public class MainController {
 
     @FXML
     private void initialize() {
-        exameService.carregarExamesVigentes();
-        certificadoService.carregarCertificadosVigentes();
-        tipoExameService.carregarTipoExames();
-        tipoCertificadoService.carregarTiposCertificado();
         tabelaVencimentos.setVisible(false);
         MainService.loadInicial();
         setTodos();
@@ -93,6 +89,7 @@ public class MainController {
         certificadoService.carregarCertificadosVigentes();
         tipoExameService.carregarTipoExames();
         tipoCertificadoService.carregarTiposCertificado();
+        setorService.carregarSetores();
         setLabels();
         setTabelaPrincipal();
         setTabelaSecundaria();
