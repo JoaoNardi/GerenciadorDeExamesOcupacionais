@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
@@ -83,9 +82,6 @@ public class RelatorioDAO extends BaseDAO {
                 lista.add(item);
             }
             connection.commit();
-        if (lista.isEmpty()){
-            throw new DataNotFoundException("Relatório vazio - dados não encontrados");
-        }
         } catch (SQLException e) {
             rollback(connection);
             throw new DbException("Erro ao gerar relatório", e);

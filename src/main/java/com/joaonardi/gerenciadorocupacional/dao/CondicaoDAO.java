@@ -1,13 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Condicao;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -131,9 +129,6 @@ public class CondicaoDAO extends BaseDAO {
                         .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
                 listarCondicoesPorTipoExameId.add(condicao);
-            }
-            if (listarCondicoesPorTipoExameId.isEmpty()) {
-                throw new DataNotFoundException("Nenhum exame encontrado.");
             }
         } catch (SQLException e) {
             rollback(connection);

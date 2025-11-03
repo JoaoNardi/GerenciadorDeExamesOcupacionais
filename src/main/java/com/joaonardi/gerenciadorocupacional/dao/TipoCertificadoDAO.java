@@ -1,13 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -123,9 +121,6 @@ public class TipoCertificadoDAO extends BaseDAO {
                         .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
                 lista.add(tipoCertificado);
-            }
-            if (lista.isEmpty()){
-                throw new DataNotFoundException("Tipos Certificados não encontrados");
             }
         } catch (SQLException e) {
             rollback(connection);

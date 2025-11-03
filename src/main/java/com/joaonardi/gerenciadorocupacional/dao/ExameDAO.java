@@ -1,13 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -117,7 +115,6 @@ public class ExameDAO extends BaseDAO {
 
             if (linhasAfetadas == 0) {
                 connection.rollback();
-                throw new DataNotFoundException("Exame não encontrado id: " + id);
             }
         } catch (SQLException e) {
             rollback(connection);
@@ -143,7 +140,6 @@ public class ExameDAO extends BaseDAO {
 
             if (linhasAfetadas == 0) {
                 connection.rollback();
-                throw new DataNotFoundException("Exame não encontrado id: " + id);
             }
             commit(connection);
         } catch (SQLException e) {
@@ -176,9 +172,6 @@ public class ExameDAO extends BaseDAO {
                         .atualizadoPor(resultSet.wasNull() ? null : resultSet.getInt("atualizado_por"))
                         .build();
                 listaExames.add(exame);
-            }
-            if (listaExames.isEmpty()) {
-                throw new DataNotFoundException("Nenhum exame encontrado.");
             }
         } catch (SQLException e) {
             rollback(connection);

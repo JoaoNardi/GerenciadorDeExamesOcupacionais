@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -157,9 +156,6 @@ public class FuncionarioDAO extends BaseDAO {
                         .build();
                 listaFuncionariosAtivos.add(funcionario);
             }
-            if (listaFuncionariosAtivos.isEmpty()){
-                throw new DataNotFoundException("Funcionarios nao encontrados");
-            }
         } catch (SQLException e) {
             rollback(connection);
             throw new DbException("Erro ao carregar funcionários", e);
@@ -188,9 +184,6 @@ public class FuncionarioDAO extends BaseDAO {
                         .ativo(resultSet.getBoolean("ativo"))
                         .build();
                 listaFuncionariosAtivos.add(funcionario);
-            }
-            if (listaFuncionariosAtivos.isEmpty()){
-                throw new DataNotFoundException("Funcionarios nao encontrados");
             }
         } catch (SQLException e) {
             rollback(connection);

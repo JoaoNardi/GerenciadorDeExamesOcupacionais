@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
@@ -117,7 +116,6 @@ public class CertificadoDAO extends BaseDAO {
 
             if (linhasAfetadas == 0) {
                 connection.rollback();
-                throw new DataNotFoundException("Certificado não encontrado id: " + certificado.getId());
             }
         } catch (SQLException e) {
             rollback(connection);
@@ -157,6 +155,7 @@ public class CertificadoDAO extends BaseDAO {
                 preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS_VIGENTENS);
             }
             if (!inVigentes) {
+                preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
                 preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
             }
             resultSet = preparedStatement.executeQuery();

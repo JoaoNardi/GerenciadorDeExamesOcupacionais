@@ -1,13 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.*;
 
 public class SetorDAO extends BaseDAO {
@@ -118,9 +116,6 @@ public class SetorDAO extends BaseDAO {
                         .area(resultSet.getString("area"))
                         .build();
                 listaSetores.add(setor);
-            }
-            if (listaSetores.isEmpty()){
-                throw new DataNotFoundException("Setores não encontrados");
             }
         } catch (SQLException e) {
             rollback(connection);

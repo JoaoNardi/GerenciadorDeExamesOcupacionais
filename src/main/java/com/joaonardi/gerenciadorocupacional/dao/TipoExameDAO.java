@@ -1,13 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DataNotFoundException;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.swing.*;
 import java.sql.*;
 
 public class TipoExameDAO extends BaseDAO {
@@ -129,9 +127,6 @@ public class TipoExameDAO extends BaseDAO {
                         .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
                 lista.add(tipoExame);
-            }
-            if (lista.isEmpty()){
-                throw new DataNotFoundException("Tipos Exames não encontrados");
             }
         } catch (SQLException e) {
             rollback(connection);
