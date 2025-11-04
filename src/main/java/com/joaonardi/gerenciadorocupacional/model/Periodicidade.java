@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum Periodicidade {
     SEM_PERIODICIDADE(0),
+    BIMESTRAL(2),
+    TRIMESTRAL(3),
     SEMESTRAL(6),
     ANUAL(12),
     BIENAL(24),
@@ -28,6 +30,8 @@ public enum Periodicidade {
     public String toString() {
         return switch (this) {
             case SEM_PERIODICIDADE -> "Sem Periodicidade";
+            case BIMESTRAL -> "Bimestral";
+            case TRIMESTRAL -> "Trimestral";
             case SEMESTRAL -> "Semestral";
             case ANUAL -> "Anual";
             case BIENAL -> "Bienal";
