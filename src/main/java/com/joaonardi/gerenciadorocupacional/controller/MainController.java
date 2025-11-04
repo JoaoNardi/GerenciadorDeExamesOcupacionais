@@ -535,7 +535,7 @@ public class MainController {
 
     @FXML
     public void handleAbrirExame() {
-        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro de Exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro Tipo Exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML

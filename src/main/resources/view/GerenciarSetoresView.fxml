@@ -16,5 +16,7 @@
                 <TableColumn fx:id="colunaArea" prefWidth="548.00" text="Area" />
             </columns>
         </TableView>
+        <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false" text="Editar" />
+        <Button fx:id="inputNovo" onAction="#handleNovo" layoutX="430.0" layoutY="368.0" mnemonicParsing="false" text="Adicionar" />
     </children>
 </AnchorPane>
