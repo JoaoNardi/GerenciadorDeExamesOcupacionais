@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional;
 
+import com.joaonardi.gerenciadorocupacional.util.DBBackup;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,8 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         try {
             // Carrega o arquivo FXML
+            DBBackup.verificarOuRestaurarBanco(); // garante banco válido ou restaura/cria
+            DBBackup.criarBackupDiario();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainView.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
