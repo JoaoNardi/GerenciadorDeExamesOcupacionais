@@ -7,20 +7,25 @@
 <?import javafx.scene.text.Font?>
 
 <?import javafx.scene.control.Button?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarExamesController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarExamesController">
     <children>
         <Label layoutX="21.0" layoutY="4.0" text="Tipos Exames">
             <font>
-                <Font size="14.0" />
+                <Font size="14.0"/>
             </font>
         </Label>
-        <TableView fx:id="tabelaExames" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0" prefHeight="321.0" prefWidth="548.0">
+        <TableView fx:id="tabelaExames" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0"
+                   prefHeight="321.0" prefWidth="548.0">
             <columns>
-                <TableColumn fx:id="colunaNome" prefWidth="150.0" text="Nome" />
-            <TableColumn fx:id="colunaPerioicidade" prefWidth="150.0" text="Periodicidade Padrão" />
+                <TableColumn fx:id="colunaNome" prefWidth="150.0" text="Nome"/>
+                <TableColumn fx:id="colunaPerioicidade" prefWidth="150.0" text="Periodicidade Padrão"/>
             </columns>
         </TableView>
-        <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false" text="Editar" />
-        <Button fx:id="inputNovo" onAction="#handleNovo" layoutX="430.0" layoutY="368.0" mnemonicParsing="false" text="Adicionar" />
+        <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false"
+                text="Editar"/>
+        <Button fx:id="inputNovo" onAction="#handleNovo" layoutX="430.0" layoutY="368.0" mnemonicParsing="false"
+                text="Adicionar"/>
     </children>
 </AnchorPane>

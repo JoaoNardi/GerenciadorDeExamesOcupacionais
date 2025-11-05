@@ -4,10 +4,13 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
+
+import com.joaonardi.gerenciadorocupacional.util.DatePickerMascara;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+
 
 import javax.swing.*;
 import java.util.List;
@@ -16,14 +19,15 @@ import java.util.List;
 public class FuncionarioController {
     public TextField inputNome;
     public TextField inputCpf;
-    public DatePicker inputDataNascimento;
-    public DatePicker inputDataAdmissao;
+    public DatePickerMascara inputDataNascimento;
+    public DatePickerMascara inputDataAdmissao;
     public ChoiceBox<Setor> inputSetor;
     public Button btnSalvar;
     public Button btnCancelar;
     public CheckBox inputAtivo;
     final FuncionarioService funcionarioService = new FuncionarioService();
     final SetorService setorService = new SetorService();
+
     private Funcionario funcionario;
 
     final Janela janela = new Janela();

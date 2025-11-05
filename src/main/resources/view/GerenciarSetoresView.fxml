@@ -4,19 +4,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarSetoresControlller">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarSetoresControlller">
     <children>
         <Label layoutX="21.0" layoutY="4.0" text="Setores">
             <font>
-                <Font size="14.0" />
+                <Font size="14.0"/>
             </font>
         </Label>
-        <TableView fx:id="tabelaSetores" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0" prefHeight="321.0" prefWidth="548.0">
+        <TableView fx:id="tabelaSetores" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0"
+                   prefHeight="321.0" prefWidth="548.0">
             <columns>
-                <TableColumn fx:id="colunaArea" prefWidth="548.00" text="Area" />
+                <TableColumn fx:id="colunaArea" prefWidth="548.00" text="Area"/>
             </columns>
         </TableView>
-        <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false" text="Editar" />
-        <Button fx:id="inputNovo" onAction="#handleNovo" layoutX="430.0" layoutY="368.0" mnemonicParsing="false" text="Adicionar" />
+        <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false"
+                text="Editar"/>
+        <Button fx:id="inputNovo" onAction="#handleNovo" layoutX="430.0" layoutY="368.0" mnemonicParsing="false"
+                text="Adicionar"/>
     </children>
 </AnchorPane>

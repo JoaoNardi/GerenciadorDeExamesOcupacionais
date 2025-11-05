@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.*?>
+<?import com.joaonardi.gerenciadorocupacional.util.DatePickerMascara?>
 <AnchorPane prefHeight="769.0" prefWidth="1004.0" xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.joaonardi.gerenciadorocupacional.controller.RelatoriosPorFuncionariosControlller">
@@ -29,8 +30,8 @@
                 <Font size="14.0"/>
             </font>
         </Button>
-        <DatePicker fx:id="inputDataInicial" layoutX="284.0" layoutY="46.0"/>
-        <DatePicker fx:id="inputDataFinal" layoutX="474.0" layoutY="46.0"/>
+        <DatePickerMascara fx:id="inputDataInicial" layoutX="284.0" layoutY="46.0"/>
+        <DatePickerMascara fx:id="inputDataFinal" layoutX="474.0" layoutY="46.0"/>
         <Label layoutX="520.0" layoutY="21.0" prefHeight="25.0" prefWidth="104.0" text="Data Final">
             <font>
                 <Font size="16.0"/>
