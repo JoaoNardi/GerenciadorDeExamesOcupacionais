@@ -16,8 +16,8 @@
         </Label>
         <TableView fx:id="tabelaExames" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0" prefHeight="321.0" prefWidth="548.0">
             <columns>
-                <TableColumn fx:id="colunaNome" prefWidth="110.0" text="Nome" />
-            <TableColumn fx:id="colunaPerioicidade" prefWidth="110.0" text="Periodicidade Padrão" />
+                <TableColumn fx:id="colunaNome" prefWidth="150.0" text="Nome" />
+            <TableColumn fx:id="colunaPerioicidade" prefWidth="150.0" text="Periodicidade Padrão" />
             </columns>
         </TableView>
         <Button fx:id="inputEditar" onAction="#handleEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false" text="Editar" />
