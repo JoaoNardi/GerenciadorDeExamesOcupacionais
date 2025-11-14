@@ -13,7 +13,15 @@ public class DatePickerMascara extends DatePicker {
 
     public DatePickerMascara() {
         super();
-        configurarMascara();
+        if (!isSceneBuilder()) {
+            configurarMascara();
+        }
+    }
+
+    private boolean isSceneBuilder() {
+        String className = getClass().getName();
+        return className.contains("com.oracle.javafx.scenebuilder")
+                || System.getProperty("java.class.path", "").contains("scenebuilder");
     }
 
     private void configurarMascara() {
