@@ -38,7 +38,7 @@ public class ExameService {
     }
 
     public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
-        ObservableList<Condicao> listaCondicao = condicaoDAO.listarCondicoesPorTipoExameId(tipoExame.getId());
+        ObservableList<Condicao> listaCondicao = condicaoDAO.listarCondicoesPorConjuntoId(tipoExame.getId());
 
         Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, listaCondicao);
 
@@ -56,9 +56,9 @@ public class ExameService {
     public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Condicao> listaCondicao) {
         int periodicidade = tipoExame.getPeriodicidade(); // periodicidade padrao
         for (Condicao condicao : listaCondicao) {
-            if (verificaCondicao(funcionario, condicao)) {
-                periodicidade = Math.min(periodicidade, condicao.getPeriodicidade()); // pegar a menor periodicidade em caso de conflito
-            }
+//            if (verificaCondicao(funcionario, condicao)) {
+//                periodicidade = Math.min(periodicidade, condicao.getPeriodicidade()); // pegar a menor periodicidade em caso de conflito
+//            }
         }
         if (periodicidade == 0) {
             return null;

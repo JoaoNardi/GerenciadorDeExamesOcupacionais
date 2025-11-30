@@ -27,13 +27,20 @@ public class DBGerarBanco {
                 );
                 CREATE TABLE IF NOT EXISTS "condicoes" (
                     "id" INTEGER NOT NULL UNIQUE,
-                    "tipo_exame_id" INTEGER NOT NULL,
+                    "conjunto_id" INTEGER NOT NULL,
                     "referencia" VARCHAR(32) NOT NULL,
                     "operador" VARCHAR(4) NOT NULL,
                     "parametro" VARCHAR(32) NOT NULL,
-                    "periodicidade" INTEGER NOT NULL,
                     PRIMARY KEY("id" AUTOINCREMENT),
-                    FOREIGN KEY("tipo_exame_id") REFERENCES "tipos_exame"("id")
+                    FOREIGN KEY("conjunto_id") REFERENCES "conjuntos"("id") ON DELETE RESTRICT
+                
+                );
+                CREATE TABLE IF NOT EXISTS "conjuntos" (
+                    "id" INTEGER NOT NULL UNIQUE,
+                    "tipo_exame_id" INTEGER NOT NULL,
+                    "periodicidade" INTEGER NOT NULL,
+                    FOREIGN KEY("tipo_exame_id") REFERENCES "tipos_exame"("id"),
+                    PRIMARY KEY("id" AUTOINCREMENT) 
                 );
                 CREATE TABLE IF NOT EXISTS "exames" (
                     "id" INTEGER,
@@ -72,7 +79,6 @@ public class DBGerarBanco {
                 CREATE TABLE IF NOT EXISTS "tipos_exame" (
                     "id" INTEGER,
                     "nome" TEXT NOT NULL UNIQUE,
-                    "periodicidade" INTEGER,
                     PRIMARY KEY("id" AUTOINCREMENT)
                 );
                 COMMIT;

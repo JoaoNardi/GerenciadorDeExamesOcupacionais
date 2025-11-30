@@ -83,38 +83,38 @@ public class MainService {
             }
         }
         String setorFuncionario = setorService.getSetorMapeado(funcionario.getIdSetor());
-        for (Condicao condicao : listaCondicoes) {
-            if (condicao == null) continue;
-
-            TipoExame tipoExameCond = null;
-            if (condicao.getTipoExameId() != null) {
-                TipoExame tipoExame = tipoExameService.getTipoExameMapeadoPorId(condicao.getTipoExameId());
-                if (tipoExame != null) {
-                    tipoExameCond = tipoExame;
-                }
-            }
-            if (tipoExameCond == null) continue;
-
-            boolean precisaFazerExame = false;
-            if (condicao.getParametro() != null && condicao.getParametro().equalsIgnoreCase(setorFuncionario)) {
-                precisaFazerExame = true;
-            } else {
-                try {
-                    int idadeCond = Integer.parseInt(condicao.getParametro());
-                    int idadeFuncionario = funcionarioService.calcularIdade(funcionario.getDataNascimento());
-                    if (compara(idadeFuncionario, condicao.getOperador(), idadeCond)) {
-                        precisaFazerExame = true;
-                    }
-                } catch (NumberFormatException ignored) {
-                }
-            }
-
-            if (precisaFazerExame && !funcionarioJaTemExame(funcionario, tipoExameCond)) {
-                if (!pendecias.contains(tipoExameCond)) {
-                    pendecias.add(tipoExameCond);
-                }
-            }
-        }
+//        for (Condicao condicao : listaCondicoes) {
+//            if (condicao == null) continue;
+//
+//            TipoExame tipoExameCond = null;
+//            if (condicao.getTipoExameId() != null) {
+//                TipoExame tipoExame = tipoExameService.getTipoExameMapeadoPorId(condicao.getTipoExameId());
+//                if (tipoExame != null) {
+//                    tipoExameCond = tipoExame;
+//                }
+//            }
+//            if (tipoExameCond == null) continue;
+//
+//            boolean precisaFazerExame = false;
+//            if (condicao.getParametro() != null && condicao.getParametro().equalsIgnoreCase(setorFuncionario)) {
+//                precisaFazerExame = true;
+//            } else {
+//                try {
+//                    int idadeCond = Integer.parseInt(condicao.getParametro());
+//                    int idadeFuncionario = funcionarioService.calcularIdade(funcionario.getDataNascimento());
+//                    if (compara(idadeFuncionario, condicao.getOperador(), idadeCond)) {
+//                        precisaFazerExame = true;
+//                    }
+//                } catch (NumberFormatException ignored) {
+//                }
+//            }
+//
+//            if (precisaFazerExame && !funcionarioJaTemExame(funcionario, tipoExameCond)) {
+//                if (!pendecias.contains(tipoExameCond)) {
+//                    pendecias.add(tipoExameCond);
+//                }
+//            }
+//        }
         if (pendecias.isEmpty()) {
             return null;
         }

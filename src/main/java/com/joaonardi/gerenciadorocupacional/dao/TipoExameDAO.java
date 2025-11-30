@@ -12,9 +12,9 @@ public class TipoExameDAO extends BaseDAO {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
-    private static final String CADASTRAR = "INSERT INTO tipos_exame (id, nome, periodicidade) VALUES (NULL, ?, ?)";
+    private static final String CADASTRAR = "INSERT INTO tipos_exame (id, nome) VALUES (NULL, ?)";
     private static final String CONSULTAR = "SELECT * FROM tipos_exame WHERE id = ?";
-    private static final String ALTERAR = "UPDATE tipos_exame SET nome = ? , periodicidade = ? WHERE id = ?";
+    private static final String ALTERAR = "UPDATE tipos_exame SET nome = ? WHERE id = ?";
     private static final String DELETAR = "DELETE FROM tipos_exame WHERE id = ?";
     private static final String LISTAR = "SELECT * FROM tipos_exame";
 
@@ -25,9 +25,7 @@ public class TipoExameDAO extends BaseDAO {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR, Statement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            preparedStatement.setString(i++, tipoExame.getNome());
-            preparedStatement.setInt(i++, tipoExame.getPeriodicidade());
+            preparedStatement.setString(1, tipoExame.getNome());
             preparedStatement.execute();
 
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
@@ -39,6 +37,7 @@ public class TipoExameDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             verificaDadoDuplicado(e);
             rollback(connection);
             throw new DbException("Erro ao cadastrar Tipo Exame", e);
@@ -81,7 +80,7 @@ public class TipoExameDAO extends BaseDAO {
             preparedStatement = connection.prepareStatement(ALTERAR);
             int i = 1;
             preparedStatement.setString(i++, tipoExame.getNome());
-            preparedStatement.setInt(i++, tipoExame.getPeriodicidade());
+            preparedStatement.setObject(i++, null);
             preparedStatement.setInt(i++, id);
 
             preparedStatement.executeUpdate();
@@ -124,7 +123,6 @@ public class TipoExameDAO extends BaseDAO {
                 TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .nome(resultSet.getString("nome"))
-                        .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
                 lista.add(tipoExame);
             }
