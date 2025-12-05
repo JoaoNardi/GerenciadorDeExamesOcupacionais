@@ -56,14 +56,14 @@ public class ExameDAO extends BaseDAO {
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao cadastrar exame", e);
+            trataSqlExceptions(e, "Erro ao cadastrar exame");
         } finally {
             close(resultSet, preparedStatement);
         }
         return exame;
     }
 
-    public Exame consultarExame(int id) throws Exception {
+    public Exame consultarExame(int id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Exame exame = null;
         try {
@@ -82,12 +82,8 @@ public class ExameDAO extends BaseDAO {
                         .build();
             }
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao consultar exame", e);
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao consultar exame");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -118,7 +114,7 @@ public class ExameDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao alterar exame", e);
+            trataSqlExceptions(e, "Erro ao alterar exame");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -144,7 +140,7 @@ public class ExameDAO extends BaseDAO {
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao deletar exame", e);
+            trataSqlExceptions(e, "Erro ao deletar exame");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -175,7 +171,7 @@ public class ExameDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar exames", e);
+            trataSqlExceptions(e, "Erro ao carregar exames");
         } finally {
             close(resultSet, preparedStatement);
         }

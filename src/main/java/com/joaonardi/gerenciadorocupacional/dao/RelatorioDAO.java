@@ -84,7 +84,7 @@ public class RelatorioDAO extends BaseDAO {
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao gerar relatório", e);
+            trataSqlExceptions(e, "Erro ao gerar relatório");
         } finally {
             close(resultSet, preparedStatement);
         }

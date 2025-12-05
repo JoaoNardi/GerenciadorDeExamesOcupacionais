@@ -25,10 +25,15 @@ public abstract class BaseDAO {
             throw new DbException("Erro ao realizar rollback após falha", e);
         }
     }
-    protected void verificaDadoDuplicado(SQLException e){
-        if (e.getMessage() != null && e.getMessage().contains("UNIQUE constraint failed")) {
-            throw new DataDuplicityException("Já existe um registro cadastrado com esses dados.", e);
+    protected void trataSqlExceptions(SQLException e, String contexto){
+        String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+        if (msg.contains("unique constraint failed")) {
+            throw new DataDuplicityException("Já existe um registro cadastrado com esses dados: " + contexto, e);
         }
+        if (msg.contains("foreign key constraint failed")) {
+            throw new DbException("Não é possível excluir: existem registros vinculados: " + contexto, e);
+        }
+        throw new DbException(contexto + ". Erro de banco de dados: " + msg, e);
     }
 
     protected void close(ResultSet rs, PreparedStatement ps) {

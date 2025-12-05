@@ -27,6 +27,8 @@ import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.swing.*;
+
 public class TipoExameController {
     public TextField inputNome;
     public Button btnFechar;
@@ -339,16 +341,20 @@ public class TipoExameController {
     }
 
     public void acaoRemmoverColuna(int index, ObservableList<?> lista, TableRow<?> tableRow) {
-        lista.remove(index);
-        if (tableRow.getItem() instanceof Condicao) {
-            if (tableRow.getItem() != null && ((Condicao) tableRow.getItem()).getId() != null) {
-                condicaoService.deletarCondicao((Condicao) tableRow.getItem());
+        try {
+            if (tableRow.getItem() instanceof Condicao) {
+                if (tableRow.getItem() != null && ((Condicao) tableRow.getItem()).getId() != null) {
+                    condicaoService.deletarCondicao((Condicao) tableRow.getItem());
+                }
             }
-        }
-        if (tableRow.getItem() instanceof Conjunto) {
-            if (tableRow.getItem() != null && ((Conjunto) tableRow.getItem()).getId() != null) {
-                conjuntoService.deletarConjunto((Conjunto) tableRow.getItem());
+            if (tableRow.getItem() instanceof Conjunto) {
+                if (tableRow.getItem() != null && ((Conjunto) tableRow.getItem()).getId() != null) {
+                    conjuntoService.deletarConjunto((Conjunto) tableRow.getItem());
+                }
             }
+            lista.remove(index);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
 
     }

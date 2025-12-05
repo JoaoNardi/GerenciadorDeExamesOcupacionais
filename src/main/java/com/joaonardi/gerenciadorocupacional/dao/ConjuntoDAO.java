@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Conjunto;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -38,7 +37,7 @@ public class ConjuntoDAO extends BaseDAO{
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao cadastrar condição", e);
+            trataSqlExceptions(e,"Erro ao cadastrar conjunto de condicoes");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -54,7 +53,7 @@ public class ConjuntoDAO extends BaseDAO{
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao deletar conjunto de condicoes", e);
+            trataSqlExceptions(e,"Erro ao deletar conjunto de condicoes");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -104,7 +103,7 @@ public class ConjuntoDAO extends BaseDAO{
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar conjuntos por tipoexame", e);
+            trataSqlExceptions(e, "Erro ao carregar conjunto de condicoes");
         } finally {
             close(resultSet, preparedStatement);
         }

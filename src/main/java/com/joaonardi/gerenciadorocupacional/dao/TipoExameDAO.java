@@ -37,12 +37,10 @@ public class TipoExameDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            verificaDadoDuplicado(e);
             rollback(connection);
-            throw new DbException("Erro ao cadastrar Tipo Exame", e);
+            trataSqlExceptions(e, "Erro ao cadastrar Tipo Exame");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return tipoExame;
     }
@@ -62,12 +60,8 @@ public class TipoExameDAO extends BaseDAO {
             }
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao consultar tipo exame", e);
+            rollback(connection);
+            trataSqlExceptions(e,"Erro ao consultar Tipo Exame");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -89,9 +83,9 @@ public class TipoExameDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao alterar Tipo Exame", e);
+            trataSqlExceptions(e,"Erro ao alterar Tipo Exame");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -100,15 +94,14 @@ public class TipoExameDAO extends BaseDAO {
         try {
             preparedStatement = connection.prepareStatement(DELETAR);
             preparedStatement.setInt(1, id);
-
             preparedStatement.executeUpdate();
             connection.commit();
 
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao deletar Tipo Exame", e);
+            trataSqlExceptions(e,"Erro ao deletar Tipo Exame");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -128,9 +121,9 @@ public class TipoExameDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar Tipo Exames", e);
+            trataSqlExceptions(e, "Erro ao carregar Tipo Exames");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return lista;
     }

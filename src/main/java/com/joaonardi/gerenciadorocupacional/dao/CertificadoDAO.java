@@ -56,7 +56,7 @@ public class CertificadoDAO extends BaseDAO {
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao cadastrar certificado", e);
+            trataSqlExceptions(e,"Erro ao cadastrar certificado");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -81,12 +81,8 @@ public class CertificadoDAO extends BaseDAO {
                         .build();
             }
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao consultar certificado", e);
+           rollback(connection);
+           trataSqlExceptions(e,"Erro ao consultar certificado");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -119,7 +115,7 @@ public class CertificadoDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao alterar certificado", e);
+            trataSqlExceptions(e, "Erro ao alterar certificado");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -140,7 +136,7 @@ public class CertificadoDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao deletar certificado", e);
+            trataSqlExceptions(e, "Erro ao deletar certificado");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -175,7 +171,7 @@ public class CertificadoDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar certificados", e);
+            trataSqlExceptions(e, "Erro ao carregar certificados");
         } finally {
             close(resultSet, preparedStatement);
         }

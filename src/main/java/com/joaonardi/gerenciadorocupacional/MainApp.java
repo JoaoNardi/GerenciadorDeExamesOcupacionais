@@ -29,8 +29,6 @@ public class MainApp extends Application {
             e.printStackTrace();
             System.err.println("Erro ao carregar o arquivo FXML: " + e.getMessage());
         }
-
-
     }
 
     public static void main(String[] args) {

@@ -7,7 +7,8 @@ import java.sql.*;
 public class DBConexao {
     private static DBConexao instance;
     private static final String DRIVER = "org.sqlite.JDBC";
-    private static final String BD = "jdbc:sqlite:src/main/resources/_db/db_gerenciador.db";
+    private static final String BD = "jdbc:sqlite:src/main/resources/_db/db_gerenciador.db?foreign_keys=on";
+
     private Connection conexao;
 
     private DBConexao() {
@@ -31,6 +32,10 @@ public class DBConexao {
                 conexao = DriverManager.getConnection(BD);
                 conexao.setAutoCommit(false);
             }
+            try (Statement st = conexao.createStatement()) {
+                st.execute("PRAGMA foreign_keys = ON;");
+            }
+
         } catch (SQLException e) {
             throw new DbException("Erro ao acessar banco de dados", e);
         }

@@ -33,10 +33,9 @@ public class SetorDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            verificaDadoDuplicado(e);
-            throw new DbException("Erro ao cadastrar setor", e);
+            trataSqlExceptions(e, "Erro ao cadastrar setor");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -56,9 +55,9 @@ public class SetorDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao consultar setor", e);
+            trataSqlExceptions(e, "Erro ao consultar setor");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return setor;
     }
@@ -75,11 +74,10 @@ public class SetorDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            verificaDadoDuplicado(e);
             rollback(connection);
-            throw new DbException("Erro ao alterar setor", e);
+            trataSqlExceptions(e, "Erro ao alterar setor");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -91,12 +89,8 @@ public class SetorDAO extends BaseDAO {
             preparedStatement.execute();
             connection.commit();
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao deletar setor", e);
+            rollback(connection);
+            trataSqlExceptions(e,"Erro ao deletar setor");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -119,9 +113,9 @@ public class SetorDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar setores", e);
+            trataSqlExceptions(e,"Erro ao carregar setores");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return listaSetores;
     }

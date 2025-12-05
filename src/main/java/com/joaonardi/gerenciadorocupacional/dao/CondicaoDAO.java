@@ -39,33 +39,9 @@ public class CondicaoDAO extends BaseDAO {
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao cadastrar condição", e);
+            trataSqlExceptions(e, "Erro ao cadastrar condicao");
         } finally {
             close(resultSet, preparedStatement);
-        }
-    }
-
-    public void alterarCondicao(int id, Condicao condicao) {
-        Connection connection = DBConexao.getInstance().abrirConexao();
-        try {
-            preparedStatement = connection.prepareStatement(ALTERAR_CONDICAO);
-            int i = 1;
-            preparedStatement.setInt(i++, condicao.getConjuntoId());
-            preparedStatement.setString(i++, condicao.getReferencia());
-            preparedStatement.setString(i++, condicao.getOperador());
-            preparedStatement.setString(i++, condicao.getParametro());
-            preparedStatement.setInt(i++, id);
-            preparedStatement.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao alterar condição", e);
-        } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
     }
 
@@ -78,7 +54,7 @@ public class CondicaoDAO extends BaseDAO {
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao deletar condicao", e);
+            trataSqlExceptions(e, "Erro ao deletar condicao");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -101,7 +77,7 @@ public class CondicaoDAO extends BaseDAO {
             commit(connection);
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao cadastrar lista de condições", e);
+            trataSqlExceptions(e, "Erro ao cadastrar lista de condicoes");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -127,7 +103,7 @@ public class CondicaoDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar condições", e);
+            trataSqlExceptions(e, "Erro ao carregar condicao");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -155,7 +131,7 @@ public class CondicaoDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar condições por id", e);
+            trataSqlExceptions(e, "Erro ao carregar condicoes por conjuntoID");
         } finally {
             close(resultSet, preparedStatement);
         }

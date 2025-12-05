@@ -48,13 +48,11 @@ public class FuncionarioDAO extends BaseDAO {
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
-            verificaDadoDuplicado(e);
-            throw new DbException("Erro ao cadastrar funcionário", e);
+            trataSqlExceptions(e,"Erro ao cadastrar funcionário");
         } finally {
             close(resultSet, preparedStatement);
         }
     }
-
 
     public void deletarFuncionario(String id) {
         Connection connection = DBConexao.getInstance().abrirConexao();
@@ -67,7 +65,7 @@ public class FuncionarioDAO extends BaseDAO {
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao deletar funcionário", e);
+            trataSqlExceptions(e, "Erro ao deletar funcionario");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -97,12 +95,8 @@ public class FuncionarioDAO extends BaseDAO {
             }
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao consultar funcionario", e);
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao consultar funcionario");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -122,14 +116,12 @@ public class FuncionarioDAO extends BaseDAO {
             preparedStatement.setBoolean(i++, funcionario.getAtivo());
             preparedStatement.setInt(i++, id);
 
-
             preparedStatement.executeUpdate();
             connection.commit();
 
         } catch (SQLException e) {
             rollback(connection);
-            verificaDadoDuplicado(e);
-            throw new DbException("Erro ao alterar funcionário", e);
+            trataSqlExceptions(e, "Erro ao alterar funcionario");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -158,7 +150,7 @@ public class FuncionarioDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar funcionários", e);
+            trataSqlExceptions(e, "Erro ao carregar funcionario");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -187,7 +179,7 @@ public class FuncionarioDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar funcionários (Sem status)", e);
+            trataSqlExceptions(e, "Erro ao carregar funcionários (Sem status)");
         } finally {
             close(resultSet, preparedStatement);
         }

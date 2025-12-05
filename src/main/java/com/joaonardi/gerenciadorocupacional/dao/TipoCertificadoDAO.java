@@ -37,7 +37,7 @@ public class TipoCertificadoDAO extends BaseDAO {
             rollback(connection);
             throw new DbException("Erro ao cadastrar Tipo Certificado", e);
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -56,16 +56,11 @@ public class TipoCertificadoDAO extends BaseDAO {
             }
 
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                throw new DbException("Erro ao realizar rollback após falha", ex);
-            }
-            throw new DbException("Erro ao consultar tipo certificado", e);
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao consultar tipo certificado");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
-
         return tipoCertificado;
     }
 
@@ -83,9 +78,9 @@ public class TipoCertificadoDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao alterar Tipo Certificado", e);
+            trataSqlExceptions(e,"Erro ao alterar tipo certificado");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -99,11 +94,10 @@ public class TipoCertificadoDAO extends BaseDAO {
             connection.commit();
 
         } catch (SQLException e) {
-            verificaDadoDuplicado(e);
             rollback(connection);
-            throw new DbException("Erro ao deletar Tipo Certificado", e);
+            trataSqlExceptions(e,"Erro ao deletar tipo certificado");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
     }
 
@@ -124,9 +118,9 @@ public class TipoCertificadoDAO extends BaseDAO {
             }
         } catch (SQLException e) {
             rollback(connection);
-            throw new DbException("Erro ao carregar Tipo Certificados", e);
+            trataSqlExceptions(e,"Erro ao carregar tipos certificados");
         } finally {
-            close(resultSet,preparedStatement);
+            close(resultSet, preparedStatement);
         }
         return lista;
     }
