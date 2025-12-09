@@ -9,18 +9,11 @@ public class CondicaoService {
     private static ObservableList<Condicao> listaCondicoes = FXCollections.observableArrayList();
     private final CondicaoDAO condicaoDAO = new CondicaoDAO();
 
-    public void cadastrarCondicao(Condicao condicao) {
-        condicaoDAO.cadastrarCondicao(condicao);
-    }
-
-    public void carregarTodasCondicoes() {
-        listaCondicoes = condicaoDAO.listarTodasCondicoes();
-    }
-
 //    public void carregarCondicoesPorTipoExameId(int id) {
 //        listaCondicoes.clear();
 //        listaCondicoes.setAll(condicaoDAO.listarCondicoesPorTipoExameId(id));
 //    }
+
     public void carregarCondicoesPorConjuntoId(int id){
         listaCondicoes.clear();
         listaCondicoes.setAll(condicaoDAO.listarCondicoesPorConjuntoId(id));

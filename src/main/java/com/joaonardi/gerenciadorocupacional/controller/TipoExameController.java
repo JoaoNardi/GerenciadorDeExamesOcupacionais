@@ -180,13 +180,11 @@ public class TipoExameController {
             tipoExame = TipoExame.TipoExameBuilder.builder()
                     .id(null)
                     .nome(inputNome.getText())
-                    .periodicidade(null)
                     .build();
         } else {
             tipoExame = TipoExame.TipoExameBuilder.builder()
                     .id(this.tipoExame.getId())
                     .nome(inputNome.getText())
-                    .periodicidade(null)
                     .build();
         }
         try {

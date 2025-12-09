@@ -28,6 +28,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class MainController {
     ExamesController examesController = new ExamesController();
@@ -75,12 +76,14 @@ public class MainController {
     final SetorService setorService = new SetorService();
     final TipoExameService tipoExameService = new TipoExameService();
     final CertificadoService certificadoService = new CertificadoService();
+    final PendenciaService pendenciaService = new PendenciaService();
     int diasVencimento = 0;
 
     @FXML
     private void initialize() {
         tabelaVencimentos.setVisible(false);
-        MainService.loadInicial();
+        pendenciaService.varreduraPendencias();
+        mainService.loadInicial();
         setTodos();
     }
 
@@ -141,15 +144,7 @@ public class MainController {
                             setText(null);
                         } else {
                             Funcionario f = getTableView().getItems().get(getIndex());
-                            if (mainService.verificaStatusFuncionario(f) != null) {
-                                setText(
-                                        "Pendencias: " +
-                                                mainService.verificaStatusFuncionario(f).stream()
-                                                        .map(TipoDe::getNome).toList().toString()
-                                                        .replace("[", "").replace("]", ""));
-                            } else {
-                                setText("Ok");
-                            }
+                                setText(pendenciaService.listaPendenciasPorFuncionario(f));
                         }
                     }
                 });
@@ -170,7 +165,7 @@ public class MainController {
                             setGraphic(null);
                         } else {
                             try {
-                                MainService.loadInicial();
+                                mainService.loadInicial();
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
@@ -184,9 +179,10 @@ public class MainController {
                                     throw new RuntimeException(ex);
                                 }
                             });
-                            if (mainService.verificaStatusFuncionario(getTableRow().getItem()) != null) {
-                                if (mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst().getClass().equals(TipoExame.class)) {
-                                    TipoExame tipoExame = (TipoExame) mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
+                            Funcionario f = getTableView().getItems().get(getIndex());
+                            if (!pendenciaService.listaPendenciasPorFuncionario(f).isEmpty()){
+                                if (pendenciaService.getPendenciaFuncionario(f).tipoDe().getClass().equals(TipoExame.class)) {
+                                    TipoExame tipoExame = (TipoExame) pendenciaService.getPendenciaFuncionario(f).tipoDe();
                                     btnLancarPendencia.setOnAction(e -> {
                                         Exame exame = mainService.getExameVencido(getTableRow().getItem());
                                         if (exame != null) {
@@ -204,7 +200,7 @@ public class MainController {
                                         }
                                     });
                                 } else {
-                                    TipoCertificado tipoCertificado = (TipoCertificado) mainService.verificaStatusFuncionario(getTableRow().getItem()).getFirst();
+                                    TipoCertificado tipoCertificado = (TipoCertificado) pendenciaService.getPendenciaFuncionario(f).tipoDe();
                                     btnLancarPendencia.setOnAction(e -> {
                                         Certificado certificado = mainService.getCetificadoVencido(getTableRow().getItem());
                                         if (certificado != null) {
@@ -637,12 +633,13 @@ public class MainController {
     }
 
     public void handleBtnGeral() {
-        MainService.loadInicial();
+        mainService.loadInicial();
         initialize();
         setTabelaPrincipal();
         setLabels();
         tabelaPrincipal.setVisible(true);
         tabelaVencimentos.setVisible(false);
         tabelaPrincipal.refresh();
+        pendenciaService.varreduraPendencias();
     }
 }

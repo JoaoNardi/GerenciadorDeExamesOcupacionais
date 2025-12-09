@@ -10,7 +10,6 @@ public class TipoExame extends TipoDe{
     public static final class TipoExameBuilder {
         private Integer id;
         private String nome;
-        private Integer periodicidade;
 
         private TipoExameBuilder() {
         }
@@ -29,15 +28,9 @@ public class TipoExame extends TipoDe{
             return this;
         }
 
-        public TipoExameBuilder periodicidade(Integer periodicidade) {
-            this.periodicidade = periodicidade;
-            return this;
-        }
-
         public TipoExame build() {
             TipoExame tipoExame = new TipoExame();
             tipoExame.setId(id);
-            tipoExame.periodicidade = this.periodicidade;
             tipoExame.nome = this.nome;
             return tipoExame;
         }

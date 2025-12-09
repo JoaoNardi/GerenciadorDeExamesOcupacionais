@@ -15,16 +15,16 @@ public class FuncionarioService {
     private static Map<Integer, Funcionario> funcionariosMap;
     public static ObservableList<Funcionario> funcionariosList;
 
-    public void carregarFuncionariosPorStatus(boolean ativos){
-     funcionariosList = dao.listaFuncionariosPorStatus(ativos);
-     funcionariosMap = funcionariosList.stream()
-             .collect(Collectors.toMap(Funcionario::getId, f->f));
+    public void carregarFuncionariosPorStatus(boolean ativos) {
+        funcionariosList = dao.listaFuncionariosPorStatus(ativos);
+        funcionariosMap = funcionariosList.stream()
+                .collect(Collectors.toMap(Funcionario::getId, f -> f));
     }
 
-    public void carregarTodosFuncionarios(){
+    public void carregarTodosFuncionarios() {
         funcionariosList = dao.listaFuncionariosPorStatus();
         funcionariosMap = funcionariosList.stream()
-                .collect(Collectors.toMap(Funcionario::getId, f->f));
+                .collect(Collectors.toMap(Funcionario::getId, f -> f));
     }
 
     public void validarCpf(String cpf) throws Exception {
@@ -53,5 +53,9 @@ public class FuncionarioService {
 
     public ObservableList<Funcionario> listarFuncionarios() {
         return funcionariosList;
+    }
+
+    public void verificaPendencia(Funcionario funcionario) {
+
     }
 }

@@ -13,23 +13,23 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="466.0" prefWidth="677.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.TipoExameController">
+<AnchorPane prefHeight="466.0" prefWidth="636.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.TipoExameController">
     <children>
-        <Button fx:id="btnSalvar" layoutX="317.0" layoutY="418.0" mnemonicParsing="false" onAction="#handleSalvarExame" text="Salvar" />
-        <Button fx:id="btnFechar" layoutX="484.0" layoutY="418.0" mnemonicParsing="false" onAction="#handleCancelarExame" text="Fechar" />
-        <Label layoutX="174.0" layoutY="18.0" text="Tipo Exame">
+        <Button fx:id="btnSalvar" layoutX="271.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleSalvarExame" text="Salvar" />
+        <Button fx:id="btnFechar" layoutX="438.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleCancelarExame" text="Fechar" />
+        <Label layoutX="14.0" layoutY="14.0" text="Tipo Exame">
             <font>
                 <Font size="18.0" />
             </font>
         </Label>
-        <Label layoutX="306.0" layoutY="75.0" text="Complete os dados">
+        <Label layoutX="271.0" layoutY="68.0" text="Complete os dados">
             <font>
                 <Font size="14.0" />
             </font>
         </Label>
-        <Label layoutX="246.0" layoutY="108.0" text="Nome:" />
-        <TextField fx:id="inputNome" layoutX="297.0" layoutY="102.0" prefHeight="25.0" prefWidth="165.0" promptText="Tipo de Exame" />
-        <TableView fx:id="tabelaCondicoes" layoutX="250.0" layoutY="260.0" prefHeight="152.0" prefWidth="352.0">
+        <Label layoutX="211.0" layoutY="101.0" text="Nome:" />
+        <TextField fx:id="inputNome" layoutX="262.0" layoutY="95.0" prefHeight="25.0" prefWidth="165.0" promptText="Tipo de Exame" />
+        <TableView fx:id="tabelaCondicoes" layoutX="204.0" layoutY="259.0" prefHeight="152.0" prefWidth="352.0">
             <columns>
                 <TableColumn fx:id="colunaReferencia" prefWidth="84.0" text="Referência" />
                 <TableColumn fx:id="colunaOperador" prefWidth="90.0" text="Operador" />
@@ -37,12 +37,12 @@
                 <TableColumn fx:id="colunaAcoes" prefWidth="66.0" text="Ações" />
             </columns>
         </TableView>
-        <HBox fx:id="modalAddCondicao" opacity="0" layoutX="185.0" layoutY="223.0" prefHeight="27.0" prefWidth="483.0" spacing="10.0" style="-fx-background-color: silver;">
+        <HBox fx:id="modalAddCondicao" layoutX="185.0" layoutY="223.0" opacity="0" prefHeight="27.0" prefWidth="429.0" spacing="10.0" style="-fx-background-color: silver;">
             <children>
                 <ChoiceBox fx:id="modalReferencia" prefHeight="25.0" prefWidth="139.0" />
                 <ChoiceBox fx:id="modalOperador" prefHeight="25.0" prefWidth="159.0" />
                 <HBox fx:id="modalParametro" prefHeight="27.0" prefWidth="125.0" />
-                <HBox prefHeight="27.0" prefWidth="110.0">
+                <HBox prefHeight="27.0" prefWidth="61.0">
                     <children>
                         <Button fx:id="btnAddCondicao" mnemonicParsing="false" />
                         <Button fx:id="btnCancelarCondicao" mnemonicParsing="false" />
@@ -50,14 +50,7 @@
                 </HBox>
             </children>
         </HBox>
-        <Button fx:id="btnAtivaModalCondicao" opacity="0" layoutX="220.0" layoutY="211.0" mnemonicParsing="false" onAction="#handleAdicionarCondicoes" text="Adicionar Condições" />
-        <Text fill="#ff3535" layoutX="167.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OBS: Em caso de conflito, será aplicada a condição com menor periodicidade">
-            <font>
-                <Font size="11.0" />
-            </font>
-        </Text>
-        <Button fx:id="btnInfo" layoutX="552.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="24.0">
-        </Button>
+        <Button fx:id="btnAtivaModalCondicao" layoutX="220.0" layoutY="211.0" mnemonicParsing="false" onAction="#handleAdicionarCondicoes" opacity="0" text="Adicionar Condições" />
       <Pane layoutX="14.0" layoutY="223.0" prefHeight="227.0" prefWidth="156.0" style="-fx-background-color: silver;">
          <children>
             <Label layoutX="61.0" layoutY="6.0" prefHeight="17.0" prefWidth="36.0" text="Regras" />
@@ -74,5 +67,16 @@
       </Pane>
       <Button fx:id="btnAddRegra" layoutX="42.0" layoutY="186.0" mnemonicParsing="false" onAction="#handleAdicionarRegra" text="Adicionar Regra" />
       <ChoiceBox fx:id="inputPeridicidade" disable="true" layoutX="42.0" layoutY="186.0" onAction="#handleAddPeriodicidade" opacity="0.0" prefHeight="25.0" prefWidth="102.0" />
+      <HBox layoutX="185.0" layoutY="161.0" prefHeight="25.0" prefWidth="362.0" spacing="20.0" style="-fx-alignment: center;">
+         <children>
+              <Text fill="#ff3535" strokeType="OUTSIDE" strokeWidth="0.0" text="OBS: Em caso de conflito, será aplicada a menor periodicidade">
+                  <font>
+                      <Font size="11.0" />
+                  </font>
+              </Text>
+              <Button fx:id="btnInfo" mnemonicParsing="false" prefHeight="25.0" prefWidth="24.0">
+        </Button>
+         </children>
+      </HBox>
     </children>
 </AnchorPane>

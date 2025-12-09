@@ -8,5 +8,4 @@ public class TipoDe {
     @Setter
     protected Integer id;
     protected String nome;
-    protected Integer periodicidade;
 }

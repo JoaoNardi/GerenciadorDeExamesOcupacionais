@@ -15,12 +15,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+import java.sql.SQLException;
+
 public class GerenciarExamesController {
     public TableView<TipoExame> tabelaExames;
     public TableColumn<TipoExame, String> colunaNome;
     public TableColumn<TipoExame, Integer> colunaPerioicidade;
     public Button inputEditar;
     public Button inputNovo;
+    public Button inputDeletar;
 
     ObservableList<TipoExame> tiposExame;
     TipoExameController tipoExameController = new TipoExameController();
@@ -32,25 +36,14 @@ public class GerenciarExamesController {
         tabelaExames.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
             inputEditar.setDisable(novo == null);
         });
+        inputDeletar.setDisable(true);
+        tabelaExames.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
+            inputDeletar.setDisable(novo == null);
+        });
 
         tiposExame = tipoExameService.listarTiposExame();
 
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        colunaPerioicidade.setCellValueFactory(new PropertyValueFactory<>("periodicidade"));
-        colunaPerioicidade.setCellFactory(c -> new TableCell<>() {
-                    @Override
-                    protected void updateItem(Integer periodicidade, boolean empty) {
-                        super.updateItem(periodicidade, empty);
-                        if (empty || periodicidade == null) {
-                            setText(null);
-                        } else {
-                            Periodicidade periodo = Periodicidade.fromValor(periodicidade);
-                            setText(periodo.toString());
-
-                        }
-                    }
-                }
-        );
         tabelaExames.setItems(tiposExame);
     }
 
@@ -61,8 +54,7 @@ public class GerenciarExamesController {
     }
 
     public void handleEditar() {
-        TipoExame tipoExameSelecionado = tabelaExames.getSelectionModel().getSelectedItem();
-        gerarJanela(tipoExameSelecionado);
+        gerarJanela(tabelaExames.getSelectionModel().getSelectedItem());
     }
 
     public void gerarJanela(TipoExame selecionado) {
@@ -74,12 +66,22 @@ public class GerenciarExamesController {
         }
         janelaEditarExame.stage.setOnHidden(e -> {
             tiposExame.clear();
-            tiposExame.addAll(tipoExameService.listarTiposExame());
+            tiposExame.setAll(tipoExameService.listarTiposExame());
             tabelaExames.setItems(tiposExame);
         });
     }
 
     public void handleNovo() {
         gerarJanela(null);
+    }
+
+    public void handleDeletar() {
+        try {
+            tipoExameService.deletarTipoExame(tabelaExames.getSelectionModel().getSelectedItem().getId());
+            tiposExame.remove((tabelaExames.getSelectionModel().getSelectedItem()));
+            tabelaExames.refresh();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
 }

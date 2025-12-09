@@ -58,13 +58,13 @@ public class ExamesController {
         inputTipoExame.setConverter(new StringConverter<>() {
             @Override
             public String toString(TipoExame tipoExame) {
-                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame.getPeriodicidade() + " Meses" : "";
+                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame + " Meses" : "";
             }
 
             @Override
             public TipoExame fromString(String s) {
                 for (TipoExame t : inputTipoExame.getItems()) {
-                    String tipoExameString = t.getNome() + " - " + t.getPeriodicidade() + " Meses";
+                    String tipoExameString = t.getNome() + " - " + t + " Meses";
                     if (tipoExameString.equalsIgnoreCase(s)) {
                         return t;
                     }

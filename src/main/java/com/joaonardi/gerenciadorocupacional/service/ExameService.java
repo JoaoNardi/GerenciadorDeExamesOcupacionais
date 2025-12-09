@@ -15,8 +15,10 @@ public class ExameService {
     private final ExameDAO exameDAO = new ExameDAO();
     private final CondicaoDAO condicaoDAO = new CondicaoDAO();
     private final FuncionarioService funcionarioService = new FuncionarioService();
+    private final ConjuntoService conjuntoService = new ConjuntoService();
+    private final CondicaoService condicaoService = new CondicaoService();
     final SetorService setorService = new SetorService();
-    ObservableList<Exame> examesList = FXCollections.observableArrayList();
+    private static ObservableList<Exame> examesList = FXCollections.observableArrayList();
 
     public void carregarExamesVigentes() {
         examesList = exameDAO.listarExamesVigentes(true);
@@ -38,33 +40,45 @@ public class ExameService {
     }
 
     public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
-        ObservableList<Condicao> listaCondicao = condicaoDAO.listarCondicoesPorConjuntoId(tipoExame.getId());
+        conjuntoService.carregarConjuntoTipoExameId(tipoExame.getId());
+        ObservableList<Conjunto> conjuntos = conjuntoService.listarConjuntos();
 
-        Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, listaCondicao);
+        Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, conjuntos);
 
         if (periodicidade == null) {
             return null;
         }
         LocalDate dataValidade;
-        if (tipoExame.getPeriodicidade().equals(0) && listaCondicao.isEmpty()) {
-            return null;
-        }
+
         dataValidade = emissaoExame.plusMonths(periodicidade);
         return dataValidade;
     }
 
-    public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Condicao> listaCondicao) {
-        int periodicidade = tipoExame.getPeriodicidade(); // periodicidade padrao
-        for (Condicao condicao : listaCondicao) {
-//            if (verificaCondicao(funcionario, condicao)) {
-//                periodicidade = Math.min(periodicidade, condicao.getPeriodicidade()); // pegar a menor periodicidade em caso de conflito
-//            }
-        }
-        if (periodicidade == 0) {
-            return null;
-        }
-        return periodicidade;
+    public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Conjunto> conjuntos) {
+
+        Conjunto melhor = conjuntos.stream()
+                .filter(conjunto -> {
+                    condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
+                    return condicaoService.listarCondicoes().stream()
+                            .allMatch(cond -> verificaCondicao(funcionario, cond));
+                })
+                .sorted((a, b) -> {
+                    // Carrega condições A
+                    condicaoService.carregarCondicoesPorConjuntoId(a.getId());
+                    int sizeA = condicaoService.listarCondicoes().size();
+
+                    // Carrega condições B
+                    condicaoService.carregarCondicoesPorConjuntoId(b.getId());
+                    int sizeB = condicaoService.listarCondicoes().size();
+                    int result = Integer.compare(sizeB, sizeA);
+                    if (result != 0) return result;
+                    return Integer.compare(a.getPeriodicidade(), b.getPeriodicidade());
+                })
+                .findFirst()
+                .orElse(null);
+        return melhor != null ? melhor.getPeriodicidade() : null;
     }
+
 
     private boolean verificaCondicao(Funcionario funcionario, Condicao condicao) {
         String referencia = condicao.getReferencia();
