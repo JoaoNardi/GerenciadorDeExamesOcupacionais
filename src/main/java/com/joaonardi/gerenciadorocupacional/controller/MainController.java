@@ -82,9 +82,9 @@ public class MainController {
     @FXML
     private void initialize() {
         tabelaVencimentos.setVisible(false);
-        pendenciaService.varreduraPendencias();
         mainService.loadInicial();
         setTodos();
+        pendenciaService.varreduraPendencias();
     }
 
     private void setTodos() {
@@ -144,7 +144,11 @@ public class MainController {
                             setText(null);
                         } else {
                             Funcionario f = getTableView().getItems().get(getIndex());
-                                setText(pendenciaService.listaPendenciasPorFuncionario(f));
+                            if (pendenciaService.listaPendenciasPorFuncionario(f).isEmpty()) {
+                                setText("OK");
+                            } else {
+                                setText("Pendências: " + pendenciaService.listaPendenciasPorFuncionario(f));
+                            }
                         }
                     }
                 });
@@ -180,7 +184,7 @@ public class MainController {
                                 }
                             });
                             Funcionario f = getTableView().getItems().get(getIndex());
-                            if (!pendenciaService.listaPendenciasPorFuncionario(f).isEmpty()){
+                            if (!pendenciaService.listaPendenciasPorFuncionario(f).isEmpty()) {
                                 if (pendenciaService.getPendenciaFuncionario(f).tipoDe().getClass().equals(TipoExame.class)) {
                                     TipoExame tipoExame = (TipoExame) pendenciaService.getPendenciaFuncionario(f).tipoDe();
                                     btnLancarPendencia.setOnAction(e -> {

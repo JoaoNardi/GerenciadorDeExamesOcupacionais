@@ -121,6 +121,6 @@ public class PendenciaService {
                 .filter(p -> p.funcionario().getId().equals(f.getId()))
                 .map(p -> p.tipoDe().getNome())
                 .toList();
-        return nomes.isEmpty() ? "ok" : String.join(", ", nomes);
+        return nomes.isEmpty() ? "" : String.join(", ", nomes);
     }
 }
