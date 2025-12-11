@@ -79,6 +79,25 @@ public class DBGerarBanco {
                     FOREIGN KEY("funcionario_id") REFERENCES "funcionarios"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
                     FOREIGN KEY("tipo_exame_id") REFERENCES "tipos_exame"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
                 );
+                
+                CREATE TABLE IF NOT EXISTS "particularidades" (
+                    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                    "nome" TEXT UNIQUE NOT NULL,
+                    "descricao" TEXT UNIQUE,
+                    "tipo_exame_id" INTEGER NOT NULL,
+                    "periodicidade" INTEGER NOT NULL,
+                    FOREIGN KEY("tipo_exame_id") REFERENCES "tipos_exame"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
+                );
+                
+                CREATE TABLE IF NOT EXISTS "vinculos_particularidades" (
+                    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                    "funcionario_id" INTEGER NOT NULL,
+                    "particularidade_id INTEGER NOT NULL,
+                    FOREIGN KEY("funcionario_id") REFERENCES "funcionarios"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
+                    FOREIGN KEY("particularidade_id") REFERENCES "particularidades"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
+                );
+                
+                
                 """;
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + DB_ORIGINAL);
