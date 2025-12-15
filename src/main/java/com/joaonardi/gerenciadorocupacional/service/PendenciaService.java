@@ -43,7 +43,7 @@ public class PendenciaService {
                 }
             }
 
-            String setorFuncionario = setorService.getSetorMapeado(funcionario.getIdSetor());
+            String setorFuncionario = funcionario.getSetor().getArea();
             for (TipoExame tipoExameL : tipoExameService.listarTiposExame()) {
                 conjuntoService.carregarConjuntoTipoExameId(tipoExameL.getId());
                 for (Conjunto conjunto : conjuntoService.listarConjuntos()) {

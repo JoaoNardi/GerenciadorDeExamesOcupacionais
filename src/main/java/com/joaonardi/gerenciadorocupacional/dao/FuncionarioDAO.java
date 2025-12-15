@@ -2,6 +2,7 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,16 +18,16 @@ public class FuncionarioDAO extends BaseDAO {
     private static final String CADASTRAR_FUNCIONARIO = " INSERT INTO FUNCIONARIOS "
             + "(id, nome ,cpf, data_nascimento, data_admissao, setor_id, ativo)"
             + "VALUES (NULL, ?, ?, ?, ?, ?, ?) ";
-    private static final String CONSULTAR_FUNCIONARIO = " SELECT * FROM FUNCIONARIOS "
-            + "WHERE ID = ?";
     private static final String DELETAR_FUNCIONARIO = "DELETE FROM FUNCIONARIOS "
             + "WHERE id = ? and ativo = false ";
     private static final String ALTERAR_FUNCIONARIO = "UPDATE FUNCIONARIOS SET "
             + "nome = ?,  cpf = ?, data_nascimento = ?, data_admissao = ?, setor_id = ?, ativo = ?"
             + "WHERE id = ?";
-    private static final String LISTAR_FUNCIONARIOS_POR_STATUS = "SELECT * FROM FUNCIONARIOS "
-            + "WHERE 1=1 AND ativo = ? ";
-    private static final String LISTAR_TODOS_FUNCIONARIOS = "SELECT * FROM FUNCIONARIOS ";
+    private static final String LISTAR_FUNCIONARIOS_POR_STATUS = "SELECT f.*, s.id as s_id, s.area as s_area FROM FUNCIONARIOS f " +
+            "JOIN setores s on s.id = f.setor_id " +
+            "WHERE 1=1 AND ativo = ? ";
+    private static final String LISTAR_TODOS_FUNCIONARIOS = "SELECT f.*, s.id as s_id, s.area as s_area FROM FUNCIONARIOS f " +
+            "JOIN setores s on s.id = f.setor_id";
 
     public FuncionarioDAO() {
     }
@@ -41,7 +42,7 @@ public class FuncionarioDAO extends BaseDAO {
             preparedStatement.setString(i++, funcionario.getCpf());
             preparedStatement.setString(i++, funcionario.getDataNascimento().format(formato));
             preparedStatement.setString(i++, funcionario.getDataAdmissao().format(formato));
-            preparedStatement.setInt(i++, funcionario.getIdSetor());
+            preparedStatement.setInt(i++, funcionario.getSetor().getId());
             preparedStatement.setBoolean(i++, funcionario.getAtivo());
 
             preparedStatement.execute();
@@ -71,38 +72,6 @@ public class FuncionarioDAO extends BaseDAO {
         }
     }
 
-    public Funcionario consultarFuncionario(String id) throws Exception {
-        Connection connection = DBConexao.getInstance().abrirConexao();
-        Funcionario funcionario = null;
-
-        try {
-            preparedStatement = connection.prepareStatement(CONSULTAR_FUNCIONARIO);
-            int i = 1;
-            preparedStatement.setString(i++, id);
-
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                funcionario = Funcionario.FuncionarioBuilder.builder()
-                        .id(resultSet.getInt("id"))
-                        .nome(resultSet.getString("nome"))
-                        .cpf(resultSet.getString("cpf"))
-                        .dataNascimento(LocalDate.parse(resultSet.getString("data_nascimento")))
-                        .dataAdmissao(LocalDate.parse(resultSet.getString("data_admissao")))
-                        .idSetor(resultSet.getInt("setor_id"))
-                        .ativo(resultSet.getBoolean("ativo"))
-                        .build();
-            }
-
-        } catch (SQLException e) {
-            rollback(connection);
-            trataSqlExceptions(e, "Erro ao consultar funcionario");
-        } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
-        }
-        return funcionario;
-    }
-
     public void alterarFuncionario(int id, Funcionario funcionario) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
@@ -112,7 +81,7 @@ public class FuncionarioDAO extends BaseDAO {
             preparedStatement.setString(i++, funcionario.getCpf());
             preparedStatement.setString(i++, funcionario.getDataNascimento().format(formato));
             preparedStatement.setString(i++, funcionario.getDataAdmissao().format(formato));
-            preparedStatement.setObject(i++, funcionario.getIdSetor());
+            preparedStatement.setObject(i++, funcionario.getSetor().getId());
             preparedStatement.setBoolean(i++, funcionario.getAtivo());
             preparedStatement.setInt(i++, id);
 
@@ -129,7 +98,6 @@ public class FuncionarioDAO extends BaseDAO {
 
     public ObservableList<Funcionario> listaFuncionariosPorStatus(Boolean ativo) {
         Connection connection = DBConexao.getInstance().abrirConexao();
-        Funcionario funcionario = null;
         ObservableList<Funcionario> listaFuncionariosAtivos = FXCollections.observableArrayList();
         try {
             preparedStatement = connection.prepareStatement(LISTAR_FUNCIONARIOS_POR_STATUS);
@@ -137,13 +105,18 @@ public class FuncionarioDAO extends BaseDAO {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                funcionario = Funcionario.FuncionarioBuilder.builder()
+                Setor setor = Setor.SetorBuilder.builder()
+                        .id(resultSet.getInt("s_id"))
+                        .area(resultSet.getString("s_area"))
+                        .build();
+
+                Funcionario funcionario = Funcionario.FuncionarioBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .nome(resultSet.getString("nome"))
                         .cpf(resultSet.getString("cpf"))
                         .dataNascimento(LocalDate.parse(resultSet.getString("data_nascimento")))
                         .dataAdmissao(LocalDate.parse(resultSet.getString("data_admissao")))
-                        .idSetor(resultSet.getInt("setor_id"))
+                        .setor(setor)
                         .ativo(resultSet.getBoolean("ativo"))
                         .build();
                 listaFuncionariosAtivos.add(funcionario);
@@ -166,13 +139,18 @@ public class FuncionarioDAO extends BaseDAO {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
+                Setor setor = Setor.SetorBuilder.builder()
+                        .id(resultSet.getInt("s_id"))
+                        .area(resultSet.getString("s_area"))
+                        .build();
+
                 funcionario = Funcionario.FuncionarioBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .nome(resultSet.getString("nome"))
                         .cpf(resultSet.getString("cpf"))
                         .dataNascimento(LocalDate.parse(resultSet.getString("data_nascimento")))
                         .dataAdmissao(LocalDate.parse(resultSet.getString("data_admissao")))
-                        .idSetor(resultSet.getInt("setor_id"))
+                        .setor(setor)
                         .ativo(resultSet.getBoolean("ativo"))
                         .build();
                 listaFuncionariosAtivos.add(funcionario);

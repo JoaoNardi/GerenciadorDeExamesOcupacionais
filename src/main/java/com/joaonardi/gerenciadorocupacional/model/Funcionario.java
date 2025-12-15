@@ -1,9 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
 import lombok.Getter;
+import lombok.ToString;
+
 import java.time.LocalDate;
 
-
+@ToString
 @Getter
 public class Funcionario {
     private Integer id;
@@ -11,21 +13,20 @@ public class Funcionario {
     private String cpf;
     private LocalDate dataNascimento;
     private LocalDate dataAdmissao;
-    private Integer idSetor;
+    private Setor setor;
     private Boolean ativo;
 
 
     public Funcionario() {
     }
 
-    //builder
     public static final class FuncionarioBuilder {
         private Integer id;
         private String nome;
         private String cpf;
         private LocalDate dataNascimento;
         private LocalDate dataAdmissao;
-        private Integer idSetor;
+        private Setor setor;
         private Boolean ativo;
 
         private FuncionarioBuilder() {
@@ -60,8 +61,8 @@ public class Funcionario {
             return this;
         }
 
-        public FuncionarioBuilder idSetor(Integer idSetor) {
-            this.idSetor = idSetor;
+        public FuncionarioBuilder setor(Setor setor) {
+            this.setor = setor;
             return this;
         }
 
@@ -72,27 +73,14 @@ public class Funcionario {
 
         public Funcionario build() {
             Funcionario funcionario = new Funcionario();
-            funcionario.dataAdmissao = this.dataAdmissao;
-            funcionario.nome = this.nome;
-            funcionario.idSetor = this.idSetor;
-            funcionario.cpf = this.cpf;
-            funcionario.dataNascimento = this.dataNascimento;
             funcionario.id = this.id;
+            funcionario.cpf = this.cpf;
+            funcionario.nome = this.nome;
+            funcionario.dataAdmissao = this.dataAdmissao;
+            funcionario.setor = this.setor;
             funcionario.ativo = this.ativo;
+            funcionario.dataNascimento = this.dataNascimento;
             return funcionario;
         }
-    }
-
-
-    @Override
-    public String toString() {
-        return "FuncionarioBuilder{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", cpf='" + cpf + '\'' +
-                ", dataNascimento=" + dataNascimento +
-                ", dataAdmissao=" + dataAdmissao +
-                ", idSetor=" + idSetor +
-                '}';
     }
 }

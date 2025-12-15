@@ -126,8 +126,7 @@ public class MainController {
                     return new ReadOnlyObjectWrapper<>(idade).asString();
                 });
                 colunaSetorGeral.setCellValueFactory(f -> {
-                    String areaSetor = setorService.getSetorMapeado(f.getValue().getIdSetor());
-                    return new SimpleStringProperty(areaSetor);
+                    return new SimpleStringProperty(f.getValue().getSetor().getArea());
                 });
                 colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
@@ -249,7 +248,7 @@ public class MainController {
                 return new SimpleStringProperty(idadeFuncionario);
             });
             colunaSetorVencimentos.setCellValueFactory(f -> {
-                int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getIdSetor();
+                int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getSetor().getId();
                 String setorNome = String.valueOf(setorService.getSetorMapeado(setorId));
                 return new SimpleStringProperty(setorNome);
             });

@@ -69,7 +69,7 @@ public class RelatorioService {
             titulo.add(new Chunk(new VerticalPositionMark()));
             titulo.add("Data de geração: " + LocalDate.now().format(formatoData));
             document.add(titulo);
-            document.add(new Paragraph("Funcionario: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
+            document.add(new Paragraph("Funcionario: " + funcionario.getNome() + " - " + "Setor: " + funcionario.getSetor().getArea()));
             document.add(new Paragraph(" "));
             Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
             if (tipoDe == null) {
@@ -176,7 +176,7 @@ public class RelatorioService {
             titulo.add(new Chunk(new VerticalPositionMark()));
             titulo.add("Data de geração: " + LocalDate.now().format(formatoData));
             document.add(titulo);
-            document.add(new Paragraph("Funcionario: " + funcionario.getNome() + " - " + "Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor())));
+            document.add(new Paragraph("Funcionario: " + funcionario.getNome() + " - " + "Setor: " + funcionario.getSetor().getArea()));
             document.add(new Paragraph(" "));
             Paragraph filtros = new Paragraph("Periodo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - ");
             if (tipoDe == null) {
@@ -253,7 +253,7 @@ public class RelatorioService {
             Row informacoes = planilha.createRow(0);
             informacoes.createCell(0).setCellValue("RELATORIO POR FUNCIONARIO  - " + "Data de Geração: " + LocalDate.now().format(formatoData) + " " +
                     " " +
-                    "Funcionario: " + funcionario.getNome() +" - Setor: " + setorService.getSetorMapeado(funcionario.getIdSetor()) + "  " +
+                    "Funcionario: " + funcionario.getNome() +" - Setor: " + funcionario.getSetor().getArea() + "  " +
                     "Periódo: " + dataInicial.format(formatoData) + " á " + dataFinal.format(formatoData) + " - " + (inputCertificado && inputExame?
                     "Todos" : tipoDe.getNome()));
             planilha.addMergedRegion(new CellRangeAddress(0,0,0,20));

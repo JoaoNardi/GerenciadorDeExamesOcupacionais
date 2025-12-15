@@ -92,7 +92,7 @@ public class ExameService {
                 return compara(idade, operador, valor);
 
             case "setor":
-                return comparaString(setorService.getSetorMapeado(funcionario.getIdSetor()), operador, parametro);
+                return comparaString(setorService.getSetorMapeado(funcionario.getSetor().getId()), operador, parametro);
 
 //            case "enfermidade":
 //                return

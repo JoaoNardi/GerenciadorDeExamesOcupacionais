@@ -2,6 +2,7 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Particularidade;
+import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -35,8 +36,9 @@ public class ParticularidadeDAO extends BaseDAO {
             "particularidade_id, motivo) VALUES (NULL, ?, ?, ?)";
     private static final String ALTERAR_MOTIVO_VINCULO = "UPDATE particularidades SET motivo = ? WHERE particularidade_id = ? AND" +
             "WHERE funcionario_id = ?";
-    private static final String LISTAR_FUNCIONARIOS_VINCULADOS_PARTICULARIDADE = "SELECT f.*" +
+    private static final String LISTAR_FUNCIONARIOS_VINCULADOS_PARTICULARIDADE = "SELECT f.*, s.id as s_id, s.area as s_area " +
             "FROM vinculos_particularidades vp" +
+            "JOIN setores s on s.id = f.setor_id" +
             "JOIN funcionarios f ON f.id = vp.funcionario_id" +
             "WHERE vp.particularidade_id = ?;";
     private static final String LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO = "SELECT p.* , t.id AS t_id, t.nome AS t_nome" +
@@ -202,13 +204,18 @@ public class ParticularidadeDAO extends BaseDAO {
             preparedStatement.setInt(1, particularidade.getId());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
+                Setor setor = Setor.SetorBuilder.builder()
+                        .id(resultSet.getInt("s_id"))
+                        .area(resultSet.getString("s_area"))
+                        .build();
+
                 funcionario = Funcionario.FuncionarioBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .nome(resultSet.getString("nome"))
                         .cpf(resultSet.getString("cpf"))
                         .dataNascimento(LocalDate.parse(resultSet.getString("data_nascimento")))
                         .dataAdmissao(LocalDate.parse(resultSet.getString("data_admissao")))
-                        .idSetor(resultSet.getInt("setor_id"))
+                        .setor(setor)
                         .ativo(resultSet.getBoolean("ativo"))
                         .build();
                 funcionariosList.add(funcionario);

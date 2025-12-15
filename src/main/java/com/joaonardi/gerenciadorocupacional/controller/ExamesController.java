@@ -40,13 +40,13 @@ public class ExamesController {
         inputFuncionario.setConverter(new StringConverter<>() {
             @Override
             public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + setorService.getSetorMapeado(funcionario.getIdSetor()) : "";
+                return funcionario != null ? funcionario.getNome() + " - " + funcionario.getSetor().getArea() : "";
             }
 
             @Override
             public Funcionario fromString(String s) {
                 for (Funcionario f : inputFuncionario.getItems()) {
-                    String funcionario = f.getNome() + " - " + setorService.getSetorMapeado(f.getIdSetor());
+                    String funcionario = f.getNome();
                     if (funcionario.equals(s)) {
                         return f;
                     }

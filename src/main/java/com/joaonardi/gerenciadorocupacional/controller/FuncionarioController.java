@@ -39,14 +39,13 @@ public class FuncionarioController {
     }
 
     public void setFuncionario(Funcionario funcionario) {
-        Setor setor = setorService.consultarSetorPorId(funcionario.getIdSetor());
         this.funcionario = funcionario;
         if (funcionario != null) {
             inputNome.setText(funcionario.getNome());
             inputCpf.setText(funcionario.getCpf());
             inputDataNascimento.setValue(funcionario.getDataNascimento());
             inputDataAdmissao.setValue(funcionario.getDataAdmissao());
-            inputSetor.setValue(setor);
+            inputSetor.setValue(funcionario.getSetor());
         }
     }
 
@@ -60,7 +59,7 @@ public class FuncionarioController {
                     .cpf(inputCpf.getText())
                     .dataNascimento(inputDataNascimento.getValue())
                     .dataAdmissao(inputDataAdmissao.getValue())
-                    .idSetor(inputSetor.getValue().getId())
+                    .setor(inputSetor.getValue())
                     .ativo(inputAtivo.isSelected()).build();
         } else {
             this.funcionario = Funcionario
@@ -70,7 +69,7 @@ public class FuncionarioController {
                     .cpf(inputCpf.getText())
                     .dataNascimento(inputDataNascimento.getValue())
                     .dataAdmissao(inputDataAdmissao.getValue())
-                    .idSetor(inputSetor.getValue().getId())
+                    .setor(inputSetor.getValue())
                     .ativo(inputAtivo.isSelected()).build();
         }
         try {

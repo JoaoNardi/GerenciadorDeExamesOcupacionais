@@ -43,7 +43,7 @@ public class CertificadoController {
         inputFuncionario.setConverter(new StringConverter<>() {
             @Override
             public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + setorService.getSetorMapeado(funcionario.getIdSetor()) : "";
+                return funcionario != null ? funcionario.getNome() + " - " + funcionario.getSetor().getArea() : "";
             }
 
             @Override
