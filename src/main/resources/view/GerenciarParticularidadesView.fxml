@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.scene.control.Button?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarParticularidadesController">
+    <children>
+        <Label layoutX="14.0" layoutY="14.0" text="Particularidades">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <TableView fx:id="tabelaParticularidades" onMouseClicked="#handleTableDoubleClick" layoutX="26.0" layoutY="40.0"
+                   prefHeight="321.0" prefWidth="548.0">
+            <columns>
+                <TableColumn fx:id="colunaNome" prefWidth="148.0" text="Nome"/>
+                <TableColumn fx:id="colunaTipoExame" prefWidth="246.0" text="Tipo Exame"/>
+                <TableColumn fx:id="colunaPeriodicidade" prefWidth="153.0" text="Periodicidade"/>
+            </columns>
+        </TableView>
+        <Button fx:id="inputEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false" onAction="#handleEditar"
+                text="Editar"/>
+        <Button fx:id="inputNovo" layoutX="430.0" layoutY="368.0" mnemonicParsing="false" onAction="#handleNovo"
+                text="Adicionar"/>
+    </children>
+</AnchorPane>

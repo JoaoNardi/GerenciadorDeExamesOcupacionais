@@ -11,7 +11,6 @@ import javafx.scene.control.TextField;
 
 public class SetorController {
 
-
     public TextField inputArea;
     public Button btnCancelar;
     public Button btnSalvar;

@@ -11,14 +11,14 @@ public class Particularidade {
     private Integer id;
     private String nome;
     private String descricao;
-    private Integer tipoExameId;
+    private TipoExame tipoExame;
     private Integer periodicidade;
 
     public static final class ParticularidadeBuilder {
         private Integer id;
         private String nome;
         private String descricao;
-        private Integer tipoExameId;
+        private TipoExame tipoExame;
         private Integer periodicidade;
 
         private ParticularidadeBuilder() {
@@ -43,8 +43,8 @@ public class Particularidade {
             return this;
         }
 
-        public ParticularidadeBuilder tipoExameID(Integer tipoExameID) {
-            this.tipoExameId = tipoExameID;
+        public ParticularidadeBuilder tipoExame(TipoExame tipoExame) {
+            this.tipoExame = tipoExame;
             return this;
         }
 
@@ -55,12 +55,13 @@ public class Particularidade {
 
         public Particularidade build() {
             Particularidade particularidade = new Particularidade();
-            particularidade.id = this.id;
-            particularidade.tipoExameId = this.tipoExameId;
+            particularidade.setId(id);
             particularidade.nome = this.nome;
             particularidade.descricao = this.descricao;
+            particularidade.tipoExame = this.tipoExame;
             particularidade.periodicidade = this.periodicidade;
             return particularidade;
         }
+
     }
 }

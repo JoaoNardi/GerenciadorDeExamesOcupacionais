@@ -49,8 +49,7 @@ public class CertificadoController {
             @Override
             public Funcionario fromString(String s) {
                 for (Funcionario f : inputFuncionario.getItems()) {
-                    String funcionario = f.getNome() + " - " + setorService.getSetorMapeado(f.getIdSetor());
-                    if (funcionario.equals(s)) {
+                    if (f.getNome().equals(s)) {
                         return f;
                     }
                 }

@@ -92,11 +92,11 @@ public class DBGerarBanco {
                 CREATE TABLE IF NOT EXISTS "vinculos_particularidades" (
                     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
                     "funcionario_id" INTEGER NOT NULL,
-                    "particularidade_id INTEGER NOT NULL,
+                    "particularidade_id" INTEGER NOT NULL,
+                    "motivo" TEXT,
                     FOREIGN KEY("funcionario_id") REFERENCES "funcionarios"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
-                    FOREIGN KEY("particularidade_id") REFERENCES "particularidades"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
+                    FOREIGN KEY("particularidade_id") REFERENCES "particularidades"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
                 );
-                
                 
                 """;
 
@@ -113,7 +113,7 @@ public class DBGerarBanco {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(
                     null,
-                    "Erro ao criar banco de dados:\n" + e.getMessage(),
+                    "Erro ao criar banco de dados:" + e.getMessage(),
                     "Erro de Banco",
                     JOptionPane.ERROR_MESSAGE
             );

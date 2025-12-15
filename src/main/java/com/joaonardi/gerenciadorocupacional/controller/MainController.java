@@ -28,7 +28,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+
 
 public class MainController {
     ExamesController examesController = new ExamesController();
@@ -512,6 +512,17 @@ public class MainController {
         }
     }
 
+    public void handleAbrirParticularidades(ActionEvent event) {
+        janela.abrirJanela("/view/ParticularidadeView.fxml", "Cadastro de Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    }
+
+    public void handleAbrirVincularParticularidades(ActionEvent event) {
+        janela.abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    }
+
+    public void handleAbrirGerenciarParticularidades(ActionEvent event) {
+        janela.abrirJanela("/view/GerenciarParticularidadesView.fxml", "Gerenciar Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    }
 
     @FXML
     private void handleAbrirFuncionario(ActionEvent event) {
@@ -646,4 +657,6 @@ public class MainController {
         tabelaPrincipal.refresh();
         pendenciaService.varreduraPendencias();
     }
+
+
 }

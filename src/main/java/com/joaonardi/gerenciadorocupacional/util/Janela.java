@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 
 public class Janela {
@@ -34,8 +35,22 @@ public class Janela {
         }
     }
 
+
+    public void salvar(String contexto,Node node, ActionSalvar actionSalvar ) {
+        try {
+            actionSalvar.executar();
+            fecharJanela(node);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao " + contexto +": " + e.getMessage());
+        }
+    }
+
     public void fecharJanela(Node node) {
-        Stage stage = (Stage) node.getScene().getWindow();
-        stage.close();
+        try {
+            Stage stage = (Stage) node.getScene().getWindow();
+            stage.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao Fechar Janela");
+        }
     }
 }
