@@ -17,12 +17,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * ComboBox customizado com funcionalidade de busca e filtro automático.
- * Permite selecionar itens digitando parte do texto e navegando com as setas.
- *
- * @param <T> Tipo do objeto armazenado no ComboBox
- */
+
 public class ComboBoxCustom<T> extends ComboBox<T> {
 
     private List<Function<T, String>> displayFunctions = List.of();
@@ -35,12 +30,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         setupEventHandlers();
     }
 
-    /**
-     * Configura os itens e as funções de exibição do ComboBox.
-     *
-     * @param items Lista observável de itens
-     * @param functions Funções para extrair os campos de exibição do objeto
-     */
     public void setItemsAndDisplay(ObservableList<T> items, List<Function<T, String>> functions) {
         this.displayFunctions = functions != null ? functions : List.of();
         this.filteredItems = new FilteredList<>(items != null ? items : FXCollections.observableArrayList());
@@ -49,19 +38,10 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
     }
 
     private void setupEventHandlers() {
-        // Handler para digitação
         getEditor().addEventFilter(KeyEvent.KEY_TYPED, this::handleKeyTyped);
-
-        // Handler para teclas especiais
         getEditor().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPressed);
-
-        // Handler para quando o popup é exibido
         setOnShowing(e -> handlePopupShowing());
-
-        // Handler para quando o popup é escondido
         setOnHidden(e -> handlePopupHidden());
-
-        // Handler para perda de foco
         focusedProperty().addListener((obs, oldVal, isFocused) -> {
             if (!isFocused && !isCommitting) {
                 handleFocusLost();
@@ -73,12 +53,9 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         if (filteredItems == null || isCommitting || isNavigating) {
             return;
         }
-
-        // Ignora caracteres de controle
         if (evt.getCharacter().chars().allMatch(Character::isISOControl)) {
             return;
         }
-
         Platform.runLater(() -> {
             String currentText = getEditor().getText();
             applyFilter(currentText);
@@ -112,7 +89,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
 
             case BACK_SPACE:
             case DELETE:
-                // Permite edição normal
                 break;
         }
     }
@@ -123,7 +99,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         if (isShowing()) {
             commitSelection();
         } else {
-            // Se não está mostrando, tenta selecionar baseado no texto
             T matchingItem = findMatchingItem(getEditor().getText());
             if (matchingItem != null) {
                 selectItem(matchingItem);
@@ -142,7 +117,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
             hide();
             evt.consume();
         }
-        // Restaura o valor anterior
         if (getValue() != null) {
             getEditor().setText(buildDisplayText(getValue()));
         } else {
@@ -162,7 +136,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
     }
 
     private void handlePopupShowing() {
-        // Restaura todos os itens quando abre o popup
         if (filteredItems != null) {
             filteredItems.setPredicate(item -> true);
         }
@@ -180,7 +153,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
             setValue(null);
             getEditor().clear();
         } else if (getValue() == null) {
-            // Tenta encontrar um item correspondente
             T matchingItem = findMatchingItem(editorText);
             if (matchingItem != null) {
                 selectItem(matchingItem);
@@ -194,23 +166,17 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         if (!(getSkin() instanceof ComboBoxListViewSkin<?> skin)) {
             return;
         }
-
         ListView<?> listView = (ListView<?>) skin.getPopupContent();
         if (listView == null) {
             return;
         }
-
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
-        // Remove listeners antigos para evitar duplicação
         listView.setOnMouseReleased(null);
         listView.setOnMouseClicked(e -> {
             if (e.getClickCount() == 1) {
                 commitSelection();
             }
         });
-
-        // Sincroniza seleção do ComboBox com o ListView
 
         if (getValue() != null) {
             listView.getSelectionModel().select((Integer) getValue());
@@ -258,16 +224,11 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         isCommitting = true;
 
         try {
-            // Restaura o predicado para mostrar todos os itens
             if (filteredItems != null) {
                 filteredItems.setPredicate(t -> true);
             }
-
-            // Seleciona o item
             getSelectionModel().select(item);
             setValue(item);
-
-            // Atualiza o texto do editor
             String displayText = buildDisplayText(item);
             getEditor().setText(displayText);
             getEditor().positionCaret(displayText.length());
@@ -290,12 +251,9 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
 
             @Override
             public T fromString(String text) {
-                // Durante commit, mantém o valor atual
                 if (isCommitting) {
                     return getValue();
                 }
-
-                // Tenta encontrar um item correspondente
                 return findMatchingItem(text);
             }
         });
@@ -305,14 +263,11 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         if (filteredItems == null) {
             return;
         }
-
         String searchText = text == null ? "" : text.trim().toLowerCase();
-
         filteredItems.setPredicate(item -> {
             if (searchText.isEmpty()) {
                 return true;
             }
-
             String itemText = buildDisplayText(item).toLowerCase();
             return itemText.contains(searchText);
         });
@@ -322,10 +277,7 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         if (filteredItems == null || text == null) {
             return null;
         }
-
         String searchText = text.trim();
-
-        // Busca exata (ignora case)
         return filteredItems.stream()
                 .filter(item -> buildDisplayText(item).equalsIgnoreCase(searchText))
                 .findFirst()
@@ -345,9 +297,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
                 .collect(Collectors.joining(" - "));
     }
 
-    /**
-     * Limpa a seleção e o texto do editor.
-     */
     public void clear() {
         setValue(null);
         getEditor().clear();
@@ -356,9 +305,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         }
     }
 
-    /**
-     * Define o foco no editor do ComboBox.
-     */
     public void requestEditorFocus() {
         Platform.runLater(() -> {
             getEditor().requestFocus();
