@@ -14,7 +14,7 @@ public class RelatorioItem extends Tipo{
         private String origem;
         private int tipoId;
         private Integer id;
-        private Integer idFuncionario;
+        private Funcionario funcionario;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
         private Integer atualizadoPor;
@@ -41,8 +41,8 @@ public class RelatorioItem extends Tipo{
             return this;
         }
 
-        public RelatorioItemBuilder idFuncionario(Integer idFuncionario) {
-            this.idFuncionario = idFuncionario;
+        public RelatorioItemBuilder funcionario(Funcionario funcionario) {
+            this.funcionario = funcionario;
             return this;
         }
 
@@ -64,12 +64,12 @@ public class RelatorioItem extends Tipo{
         public RelatorioItem build() {
             RelatorioItem relatorioItem = new RelatorioItem();
             relatorioItem.setId(id);
-            relatorioItem.idFuncionario = this.idFuncionario;
-            relatorioItem.origem = this.origem;
-            relatorioItem.atualizadoPor = this.atualizadoPor;
-            relatorioItem.tipoId = this.tipoId;
-            relatorioItem.dataEmissao = this.dataEmissao;
             relatorioItem.dataValidade = this.dataValidade;
+            relatorioItem.origem = this.origem;
+            relatorioItem.tipoId = this.tipoId;
+            relatorioItem.atualizadoPor = this.atualizadoPor;
+            relatorioItem.dataEmissao = this.dataEmissao;
+            relatorioItem.funcionario = this.funcionario;
             return relatorioItem;
         }
     }

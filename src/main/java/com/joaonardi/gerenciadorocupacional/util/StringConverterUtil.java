@@ -32,6 +32,15 @@ public class StringConverterUtil {
 
             @Override
             public T fromString(String s) {
+                if (s == null || s.isBlank()) {
+                    return null;
+                }
+                for (T t : items) {
+                    String texto = toString(t);
+                    if (texto.equalsIgnoreCase(s)) {
+                        return t;
+                    }
+                }
                 return null;
             }
         };

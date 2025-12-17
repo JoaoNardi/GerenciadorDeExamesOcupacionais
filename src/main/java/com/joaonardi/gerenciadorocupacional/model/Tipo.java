@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class Tipo {
     @Setter
     protected Integer id;
-    protected Integer idFuncionario;
+    protected Funcionario funcionario;
     protected LocalDate dataEmissao;
     protected LocalDate dataValidade;
     protected Integer atualizadoPor;
@@ -18,7 +18,7 @@ public class Tipo {
     public String toString() {
         return "Tipo{" +
                 "id=" + id +
-                ", idFuncionario=" + idFuncionario +
+                ", funcionario=" + funcionario+
                 ", dataEmissao=" + dataEmissao +
                 ", dataValidade=" + dataValidade +
                 ", atualizadoPor=" + atualizadoPor +

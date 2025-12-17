@@ -193,8 +193,8 @@ public class MainController {
                                         } else if (exame == null) {
                                             exame = Exame.ExameBuilder.builder()
                                                     .id(null)
-                                                    .idTipoExame(tipoExame.getId())
-                                                    .idFuncionario(getTableRow().getItem().getId())
+                                                    .tipoExame(tipoExame)
+                                                    .funcionario(getTableRow().getItem())
                                                     .dataEmissao(null)
                                                     .dataValidade(null)
                                                     .atualizadoPor(null)
@@ -211,8 +211,8 @@ public class MainController {
                                         } else if (certificado == null) {
                                             certificado = Certificado.CertificadoBuilder.builder()
                                                     .id(null)
-                                                    .idTipoCertificado(tipoCertificado.getId())
-                                                    .idFuncionario(getTableRow().getItem().getId())
+                                                    .tipoCertificado(tipoCertificado)
+                                                    .funcionario(getTableRow().getItem())
                                                     .dataEmissao(null)
                                                     .dataValidade(null)
                                                     .atualizadoPor(null)
@@ -239,18 +239,15 @@ public class MainController {
     private void setTabelaSecundaria() {
         try {
             colunaFuncionarioVencimentos.setCellValueFactory(f -> {
-                String nomeFuncionario = String.valueOf(funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getNome());
-                return new SimpleStringProperty(nomeFuncionario);
+                return new SimpleStringProperty(f.getValue().getFuncionario().getNome());
             });
             colunaIdadeVencimentos.setCellValueFactory(f -> {
                 String idadeFuncionario =
-                        String.valueOf(funcionarioService.calcularIdade(funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getDataNascimento()));
+                        String.valueOf(funcionarioService.calcularIdade(f.getValue().getFuncionario().getDataNascimento()));
                 return new SimpleStringProperty(idadeFuncionario);
             });
             colunaSetorVencimentos.setCellValueFactory(f -> {
-                int setorId = funcionarioService.getFuncionarioMapeadoPorId(f.getValue().getIdFuncionario()).getSetor().getId();
-                String setorNome = String.valueOf(setorService.getSetorMapeado(setorId));
-                return new SimpleStringProperty(setorNome);
+                return new SimpleStringProperty(f.getValue().getFuncionario().getSetor().getArea());
             });
             colunaTipoVencimentos.setCellValueFactory(f -> {
                 String tipo = f.getValue().getClass().getSimpleName();
@@ -365,7 +362,7 @@ public class MainController {
 
     @FXML
     private void handleLancarPendecia(Exame exame, Node anchor) {
-        Label label = new Label("Regularizar: " + tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()).getNome());
+        Label label = new Label("Regularizar: " + exame.getTipoExame().getNome());
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
@@ -374,19 +371,19 @@ public class MainController {
             btnConfirmar.setDisable(true);
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(null)
-                    .idTipoExame(exame.getIdTipoExame())
-                    .idFuncionario(exame.getIdFuncionario())
+                    .tipoExame(exame.getTipoExame())
+                    .funcionario(exame.getFuncionario())
                     .dataEmissao(datePicker.getValue())
-                    .dataValidade(exameService.calcularValidadeExame(funcionarioService.getFuncionarioMapeadoPorId(exame.getIdFuncionario()), datePicker.getValue(),
-                            tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame())))
+                    .dataValidade(exameService.calcularValidadeExame(exame.getFuncionario(), datePicker.getValue(),
+                                    exame.getTipoExame()))
                     .atualizadoPor(null)
                     .build();
             exame1 = exameService.lancarExame(exame1);
             if (exame.getId() != null) {
                 Exame exame2 = Exame.ExameBuilder.builder()
                         .id(exame.getId())
-                        .idTipoExame(exame.getIdTipoExame())
-                        .idFuncionario(exame.getIdFuncionario())
+                        .tipoExame(exame.getTipoExame())
+                        .funcionario(exame.getFuncionario())
                         .dataEmissao(exame.getDataEmissao())
                         .dataValidade(exame.getDataValidade())
                         .atualizadoPor(exame1.getId())
@@ -407,7 +404,7 @@ public class MainController {
 
     @FXML
     private void handleLancarPendecia(Certificado certificado, Node anchor) {
-        Label label = new Label("Regularizar: " + tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()).getNome());
+        Label label = new Label("Regularizar: " + certificado.getTipoCertificado().getNome());
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
@@ -416,19 +413,19 @@ public class MainController {
             btnConfirmar.setDisable(true);
             Certificado certificado1 = Certificado.CertificadoBuilder.builder()
                     .id(null)
-                    .idTipoCertificado(certificado.getIdTipoCertificado())
-                    .idFuncionario(certificado.getIdFuncionario())
+                    .tipoCertificado(certificado.getTipoCertificado())
+                    .funcionario(certificado.getFuncionario())
                     .dataEmissao(datePicker.getValue())
                     .dataValidade(certificadoService.calcularValidade(datePicker.getValue(),
-                            tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado())))
+                            certificado.getTipoCertificado()))
                     .atualizadoPor(null)
                     .build();
             certificado1 = certificadoService.cadastrarCertificado(certificado1);
             if (certificado.getId() != null) {
                 Certificado certificado2 = Certificado.CertificadoBuilder.builder()
                         .id(certificado.getId())
-                        .idTipoCertificado(certificado.getIdTipoCertificado())
-                        .idFuncionario(certificado.getIdFuncionario())
+                        .tipoCertificado(certificado.getTipoCertificado())
+                        .funcionario(certificado.getFuncionario())
                         .dataEmissao(certificado.getDataEmissao())
                         .dataValidade(certificado.getDataValidade())
                         .atualizadoPor(certificado1.getId())

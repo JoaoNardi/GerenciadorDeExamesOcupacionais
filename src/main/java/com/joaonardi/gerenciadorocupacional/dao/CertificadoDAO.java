@@ -1,7 +1,9 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Certificado;
+import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.Setor;
+import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +27,16 @@ public class CertificadoDAO extends BaseDAO {
             "WHERE id = ?";
     private static final String LIMPAR_ATUALIZADO_POR = "UPDATE CERTIFICADOS SET atualizado_por = NULL WHERE atualizado_por = ? ";
     private static final String DELETAR_CERTIFICADO = "DELETE FROM CERTIFICADOS WHERE id = ?";
-    private static final String LISTAR_CERTIFICADOS_VIGENTENS = "SELECT * FROM CERTIFICADOS WHERE atualizado_por is NULL";
+    private static final String LISTAR_CERTIFICADOS_VIGENTENS = "SELECT c.*, " +
+            "tc.id as tc_id, tc.nome as tc_nome, tc.periodicidade as tc_periodicidade, " +
+            "f.id as f_id, f.nome as f_nome, f.cpf as f_cpf, f.data_nascimento as f_data_nascimento, " +
+            "f.data_admissao as f_data_admissao, f.setor_id as f_setor_id, f.ativo as f_ativo, " +
+            "s.id as s_id, s.area as s_area " +
+            "FROM CERTIFICADOS c " +
+            "JOIN funcionarios f on f.id = c.funcionario_id " +
+            "JOIN setores s on s.id = f.setor_id " +
+            "JOIN tipos_certificado tc on tc.id = c.tipo_certificado_id " +
+            "WHERE c.atualizado_por is NULL ";
     private static final String LISTAR_CERTIFICADOS = "SELECT * FROM CERTIFICADOS";
 
     public CertificadoDAO() {
@@ -36,8 +47,8 @@ public class CertificadoDAO extends BaseDAO {
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR_CERTIFICADO, Statement.RETURN_GENERATED_KEYS);
             int i = 1;
-            preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
-            preparedStatement.setInt(i++, certificado.getIdFuncionario());
+            preparedStatement.setInt(i++, certificado.getTipoCertificado().getId());
+            preparedStatement.setInt(i++, certificado.getFuncionario().getId());
             preparedStatement.setString(i++, certificado.getDataEmissao().format(formato));
             preparedStatement.setString(i++, certificado.getDataValidade() == null ? null : certificado.getDataValidade().format(formato));
             if (certificado.getAtualizadoPor() == null) {
@@ -63,40 +74,13 @@ public class CertificadoDAO extends BaseDAO {
         return certificado;
     }
 
-    public Certificado consultarCertificado(int id) {
-        Connection connection = DBConexao.getInstance().abrirConexao();
-        Certificado certificado = null;
-        try {
-            preparedStatement = connection.prepareStatement(CONSULTAR_CERTIFICADO);
-            preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                certificado = Certificado.CertificadoBuilder.builder()
-                        .id(resultSet.getInt("id"))
-                        .idTipoCertificado(resultSet.getInt("tipo_certificado_id"))
-                        .idFuncionario(resultSet.getInt("funcionario_id"))
-                        .dataEmissao(resultSet.getDate("data_emissao").toLocalDate())
-                        .dataValidade(resultSet.getDate("data_validade").toLocalDate())
-                        .build();
-            }
-        } catch (SQLException e) {
-           rollback(connection);
-           trataSqlExceptions(e,"Erro ao consultar certificado");
-        } finally {
-            DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
-        }
-        return certificado;
-    }
-
-
     public void alterarCertificado(Certificado certificado) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(ALTERAR_CERTIFICADO);
             int i = 1;
-            preparedStatement.setInt(i++, certificado.getIdTipoCertificado());
-            preparedStatement.setInt(i++, certificado.getIdFuncionario());
+            preparedStatement.setInt(i++, certificado.getTipoCertificado().getId());
+            preparedStatement.setInt(i++, certificado.getFuncionario().getId());
             preparedStatement.setString(i++, certificado.getDataEmissao().format(formato));
             preparedStatement.setString(i++, (certificado.getDataValidade() == null ? null : certificado.getDataValidade().format(formato)));
             if (certificado.getAtualizadoPor() == null) {
@@ -152,15 +136,34 @@ public class CertificadoDAO extends BaseDAO {
             }
             if (!inVigentes) {
                 preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
-                preparedStatement = connection.prepareStatement(LISTAR_CERTIFICADOS);
             }
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
+                TipoCertificado tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
+                        .id(resultSet.getInt("tc_id"))
+                        .nome(resultSet.getString("tc_nome"))
+                        .periodicidade(resultSet.getInt("tc_periodicidade"))
+                        .build();
+
+                Setor setor = Setor.SetorBuilder.builder()
+                        .id(resultSet.getInt("s_id"))
+                        .area(resultSet.getString("s_area"))
+                        .build();
+
+                Funcionario funcionario = Funcionario.FuncionarioBuilder.builder()
+                        .id(resultSet.getInt("f_id"))
+                        .nome(resultSet.getString("f_nome"))
+                        .cpf(resultSet.getString("f_cpf"))
+                        .dataNascimento(LocalDate.parse(resultSet.getString("f_data_nascimento")))
+                        .dataAdmissao(LocalDate.parse(resultSet.getString("f_data_admissao")))
+                        .setor(setor)
+                        .build();
+
                 Certificado certificado = Certificado.CertificadoBuilder.builder()
                         .id(resultSet.getInt("id"))
-                        .idTipoCertificado(resultSet.getInt("tipo_certificado_id"))
-                        .idFuncionario(resultSet.getInt("funcionario_id"))
+                        .tipoCertificado(tipoCertificado)
+                        .funcionario(funcionario)
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
                         .dataValidade(resultSet.getString("data_validade") != null ?
                                 LocalDate.parse(resultSet.getString("data_validade")) : null)

@@ -15,6 +15,7 @@ import org.apache.poi.ss.formula.functions.T;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class VinculoParticularidadeController extends Janela {
@@ -36,7 +37,6 @@ public class VinculoParticularidadeController extends Janela {
         functionsParticularidade.add(Particularidade::getNome);
         inputParticularidade.setConverter(StringConverterUtil.choice(particularidadeService.listarParticularidades(),
                 functionsParticularidade));
-
         funcionarioService.carregarFuncionariosPorStatus(true);
         List<Function<Funcionario, String>> functionsFuncionario = new ArrayList<>();
         functionsFuncionario.add(Funcionario::getNome);

@@ -82,8 +82,8 @@ public class ExamesController {
         if (this.exame == null) {
             this.exame = Exame.ExameBuilder.builder()
                     .id(null)
-                    .idTipoExame(inputTipoExame.getValue().getId())
-                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .tipoExame(inputTipoExame.getValue())
+                    .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
@@ -93,8 +93,8 @@ public class ExamesController {
         if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null) { // editar exame que nao é nao atualizado ainda
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(this.exame.getId())
-                    .idTipoExame(inputTipoExame.getValue().getId())
-                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .tipoExame(inputTipoExame.getValue())
+                    .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
@@ -118,8 +118,8 @@ public class ExamesController {
 
         this.exame = exameSelecionado;
         if (exame != null) {
-            inputFuncionario.setValue(funcionarioService.getFuncionarioMapeadoPorId(exame.getIdFuncionario()));
-            inputTipoExame.setValue(tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+            inputFuncionario.setValue(exame.getFuncionario());
+            inputTipoExame.setValue(exame.getTipoExame());
             inputDataEmissao.setValue(exameSelecionado.getDataEmissao());
             inputDataValidade.setValue(exameSelecionado.getDataEmissao());
 

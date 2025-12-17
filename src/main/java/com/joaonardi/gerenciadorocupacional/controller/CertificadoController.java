@@ -5,22 +5,20 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.service.CertificadoService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
-import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class CertificadoController {
-    public ComboBox<Funcionario> inputFuncionario;
-    public ComboBox<TipoCertificado> inputTipoCertificado;
+    public ComboBoxCustom<Funcionario> inputFuncionario;
+    public ComboBoxCustom<TipoCertificado> inputTipoCertificado;
     public DatePicker inputDataEmissao;
     public DatePicker inputDataValidade;
     public Button btnSalvar;
@@ -32,52 +30,15 @@ public class CertificadoController {
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     final CertificadoService certificadoService = new CertificadoService();
     final FuncionarioService funcionarioService = new FuncionarioService();
-    final SetorService setorService = new SetorService();
 
     @FXML
     private void initialize() {
         inputDataValidade.setEditable(false);
-        ObservableList<TipoCertificado> certificados = tipoCertificadoService.listarTiposCertificados();
         funcionarioService.carregarFuncionariosPorStatus(true);
-        inputFuncionario.setItems(funcionarioService.listarFuncionarios());
-        inputFuncionario.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + funcionario.getSetor().getArea() : "";
-            }
-
-            @Override
-            public Funcionario fromString(String s) {
-                for (Funcionario f : inputFuncionario.getItems()) {
-                    if (f.getNome().equals(s)) {
-                        return f;
-                    }
-                }
-                return null;
-            }
-        });
-        inputTipoCertificado.setItems(certificados);
-        inputTipoCertificado.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(TipoCertificado tipoCertificado) {
-                return tipoCertificado != null ? tipoCertificado.getNome() + " - " + tipoCertificado.getPeriodicidade() + " Meses" : "";
-            }
-
-            @Override
-            public TipoCertificado fromString(String s) {
-                for (TipoCertificado t : inputTipoCertificado.getItems()) {
-                    String tipoCertificadoString = t.getNome() + " - " + t.getPeriodicidade() + " Meses";
-                    if (tipoCertificadoString.equalsIgnoreCase(s)) {
-                        return t;
-                    }
-                }
-                return null;
-            }
-        });
-        inputTipoCertificado.setValue(certificados.getFirst());
+        tipoCertificadoService.carregarTiposCertificado();
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(),List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
         inputDataEmissao.setValue(LocalDate.now());
-        inputFuncionario.setValue(funcionarioService.listarFuncionarios().getFirst());
-        inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),inputTipoCertificado.getValue()));
     }
 
     public void validadeAlteracao() {
@@ -88,20 +49,21 @@ public class CertificadoController {
 
     public void handleSalvar() {
         if (this.certificado == null) {
-            this.certificado = Certificado.CertificadoBuilder.builder()
-                    .idTipoCertificado(inputTipoCertificado.getValue().getId())
-                    .idFuncionario(inputFuncionario.getValue().getId())
+            Certificado certificado = Certificado.CertificadoBuilder.builder()
+                    .tipoCertificado(inputTipoCertificado.getValue())
+                    .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
             certificadoService.cadastrarCertificado(certificado);
+            this.certificado = certificado;
         }
-        if (this.certificado != null){
-            this.certificado = Certificado.CertificadoBuilder.builder()
+        if (this.certificado.getId() != null){
+            Certificado certificado = Certificado.CertificadoBuilder.builder()
                     .id(this.certificado.getId())
-                    .idTipoCertificado(inputTipoCertificado.getValue().getId())
-                    .idFuncionario(inputFuncionario.getValue().getId())
+                    .tipoCertificado(inputTipoCertificado.getValue())
+                    .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
                     .dataValidade(inputDataValidade.getValue())
                     .atualizadoPor(null)
@@ -116,11 +78,10 @@ public class CertificadoController {
     }
 
     public void setCertificado(Certificado certificadoSelecionado) {
-
         this.certificado = certificadoSelecionado;
         if (certificado != null) {
-            inputFuncionario.setValue(funcionarioService.getFuncionarioMapeadoPorId(certificado.getIdFuncionario()));
-            inputTipoCertificado.setValue(tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
+            inputFuncionario.setValue(certificado.getFuncionario());
+            inputTipoCertificado.setValue(certificado.getTipoCertificado());
             inputDataEmissao.setValue(certificadoSelecionado.getDataEmissao());
             inputDataValidade.setValue(certificadoSelecionado.getDataEmissao());
 

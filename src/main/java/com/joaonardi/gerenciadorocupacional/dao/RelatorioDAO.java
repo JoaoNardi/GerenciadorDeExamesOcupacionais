@@ -3,6 +3,7 @@ package com.joaonardi.gerenciadorocupacional.dao;
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
+import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -35,8 +36,13 @@ public class RelatorioDAO extends BaseDAO {
                         WITH filtros(funcionarioId, inputData, dataInicial, dataFinal, tipoDeId, exame, certificado) AS (
                             VALUES(?, ?, ?, ?, ?, ?, ?)
                         )
-                        SELECT e.id, 'Exame' AS origem, e.funcionario_id, e.tipo_exame_id AS tipo_id, e.data_emissao, e.data_validade, e.atualizado_por
+                        SELECT e.id, 'Exame' AS origem, e.funcionario_id, e.tipo_exame_id AS tipo_id, e.data_emissao, e.data_validade, e.atualizado_por, 
+                        fu.id as fu_id, fu.nome as fu_nome, fu.cpf as fu_cpf, fu.data_nascimento as fu_data_nascimento, 
+                        fu.data_admissao as fu_data_admissao, fu.setor_id as fu_setor_id, fu.ativo as fu_ativo
+                        s.id as s_id, s.area as s_area
                         FROM exames e, filtros f
+                        JOIN funcionarios fu on fu.id = e.funcionario_id 
+                        JOIN setores s on s.id = fu_setor_id 
                         WHERE (f.exame = 1)
                           AND (f.funcionarioId IS NULL OR e.funcionario_id = f.funcionarioId)
                           AND (f.tipoDeId IS NULL OR e.tipo_exame_id = f.tipoDeId)
@@ -46,8 +52,12 @@ public class RelatorioDAO extends BaseDAO {
                               (f.inputData = 'Validade' AND date(e.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
                           )
                         UNION ALL
-                        SELECT c.id, 'Certificado' AS origem, c.funcionario_id, c.tipo_certificado_id AS tipo_id, c.data_emissao, c.data_validade, c.atualizado_por
+                        SELECT c.id, 'Certificado' AS origem, c.funcionario_id, c.tipo_certificado_id AS tipo_id, c.data_emissao, c.data_validade, c.atualizado_por,
+                        fu.data_admissao as fu_data_admissao, fu.setor_id as fu_setor_id, fu.ativo as fu_ativo
+                        s.id as s_id, s.area as s_area
                         FROM certificados c, filtros f
+                        JOIN funcionarios fu on fu.id = e.funcionario_id 
+                        JOIN setores s on s.id = fu_setor_id 
                         WHERE (f.certificado = 1)
                           AND (f.funcionarioId IS NULL OR c.funcionario_id = f.funcionarioId)
                           AND (f.tipoDeId IS NULL OR c.tipo_certificado_id = f.tipoDeId)
@@ -60,7 +70,7 @@ public class RelatorioDAO extends BaseDAO {
                     """;
             preparedStatement = connection.prepareStatement(sql);
             int i = 1;
-            preparedStatement.setInt(i++,funcionario.getId());
+            preparedStatement.setInt(i++, funcionario.getId());
             preparedStatement.setString(i++, inputData);
             preparedStatement.setString(i++, dataInicial.format(formato));
             preparedStatement.setString(i++, dataFinal.format(formato));
@@ -71,13 +81,27 @@ public class RelatorioDAO extends BaseDAO {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
+                Setor setor = Setor.SetorBuilder.builder()
+                        .id(resultSet.getInt("s_id"))
+                        .area(resultSet.getString("s_area"))
+                        .build();
+
+                Funcionario funcionario1 = Funcionario.FuncionarioBuilder.builder()
+                        .id(resultSet.getInt("f_id"))
+                        .nome(resultSet.getString("f_nome"))
+                        .cpf(resultSet.getString("f_cpf"))
+                        .dataNascimento(LocalDate.parse(resultSet.getString("f_data_nascimento")))
+                        .dataAdmissao(LocalDate.parse(resultSet.getString("f_data_admissao")))
+                        .setor(setor)
+                        .build();
+
                 RelatorioItem item = RelatorioItem.RelatorioItemBuilder.builder().id(resultSet.getInt("id"))
-                        .idFuncionario(resultSet.getInt("funcionario_id"))
+                        .funcionario(funcionario1)
                         .origem(resultSet.getString("origem"))
                         .tipoId(resultSet.getInt("tipo_id"))
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao"), formato))
                         .dataValidade(LocalDate.parse(resultSet.getString("data_validade"), formato))
-                        .atualizadoPor(resultSet.getObject("atualizado_por") != null ? resultSet.getInt("atualizado_por") : null )
+                        .atualizadoPor(resultSet.getObject("atualizado_por") != null ? resultSet.getInt("atualizado_por") : null)
                         .build();
                 lista.add(item);
             }

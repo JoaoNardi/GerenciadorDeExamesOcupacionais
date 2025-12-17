@@ -1,11 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.model.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 public class MainService {
 
@@ -29,7 +28,7 @@ public class MainService {
 
     public Exame getExameVencido(Funcionario funcionario) {
         for (Exame exame : exameService.listarExamesVingentes()) {
-            if (funcionario.getId() == exame.getIdFuncionario()) {
+            if (Objects.equals(funcionario.getId(), exame.getFuncionario().getId())) {
                 int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getDataValidade());
                 if (dias <= 1) {
                     return exame;
@@ -43,7 +42,7 @@ public class MainService {
 
     public Certificado getCetificadoVencido(Funcionario funcionario) {
         for (Certificado certificado : certificadoService.listarCertificados()) {
-            if (funcionario.getId() == certificado.getIdFuncionario()) {
+            if (Objects.equals(funcionario.getId(), certificado.getFuncionario().getId())) {
                 int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
                 if (dias <= 1) {
                     return certificado;
@@ -56,15 +55,12 @@ public class MainService {
     }
 
 
-
-
-
     public String descreveTipo(Exame f) {
-        return tipoExameService.getTipoExameMapeadoPorId(f.getIdTipoExame()).getNome();
+        return f.getTipoExame().getNome();
     }
 
     public String descreveTipo(Certificado f) {
-        return tipoCertificadoService.getTipoCertificadoMapeadoPorId(f.getIdTipoCertificado()).getNome();
+        return f.getTipoCertificado().getNome();
     }
 
 }

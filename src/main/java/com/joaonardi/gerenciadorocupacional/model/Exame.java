@@ -5,27 +5,15 @@ import lombok.Getter;
 import java.time.LocalDate;
 @Getter
 public class Exame extends Tipo {
-    private Integer idTipoExame;
+    private TipoExame tipoExame;
 
     public static final class ExameBuilder {
-        private Integer idTipoExame;
+        private TipoExame tipoExame;
         private Integer id;
-        private Integer idFuncionario;
+        private Funcionario funcionario;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
         private Integer atualizadoPor;
-
-        @Override
-        public String toString() {
-            return "ExameBuilder{" +
-                    "idTipoExame=" + idTipoExame +
-                    ", id=" + id +
-                    ", idFuncionario=" + idFuncionario +
-                    ", dataEmissao=" + dataEmissao +
-                    ", dataValidade=" + dataValidade +
-                    ", atualizadoPor=" + atualizadoPor +
-                    '}';
-        }
 
         private ExameBuilder() {
         }
@@ -34,8 +22,8 @@ public class Exame extends Tipo {
             return new ExameBuilder();
         }
 
-        public ExameBuilder idTipoExame(Integer idTipoExame) {
-            this.idTipoExame = idTipoExame;
+        public ExameBuilder tipoExame(TipoExame tipoExame) {
+            this.tipoExame = tipoExame;
             return this;
         }
 
@@ -44,8 +32,8 @@ public class Exame extends Tipo {
             return this;
         }
 
-        public ExameBuilder idFuncionario(Integer idFuncionario) {
-            this.idFuncionario = idFuncionario;
+        public ExameBuilder funcionario(Funcionario funcionario) {
+            this.funcionario = funcionario;
             return this;
         }
 
@@ -68,10 +56,10 @@ public class Exame extends Tipo {
             Exame exame = new Exame();
             exame.setId(id);
             exame.dataEmissao = this.dataEmissao;
-            exame.idTipoExame = this.idTipoExame;
-            exame.dataValidade = this.dataValidade;
+            exame.tipoExame = this.tipoExame;
             exame.atualizadoPor = this.atualizadoPor;
-            exame.idFuncionario = this.idFuncionario;
+            exame.funcionario = this.funcionario;
+            exame.dataValidade = this.dataValidade;
             return exame;
         }
     }

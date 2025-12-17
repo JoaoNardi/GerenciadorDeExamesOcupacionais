@@ -6,13 +6,12 @@ import java.time.LocalDate;
 
 @Getter
 public class Certificado extends Tipo {
-    private Integer idTipoCertificado;
-
+    private TipoCertificado tipoCertificado;
 
     public static final class CertificadoBuilder {
-        private Integer idTipoCertificado;
+        private TipoCertificado tipoCertificado;
         private Integer id;
-        private Integer idFuncionario;
+        private Funcionario funcionario;
         private LocalDate dataEmissao;
         private LocalDate dataValidade;
         private Integer atualizadoPor;
@@ -20,24 +19,12 @@ public class Certificado extends Tipo {
         private CertificadoBuilder() {
         }
 
-        @Override
-        public String toString() {
-            return "CertificadoBuilder{" +
-                    "idTipoCertificado=" + idTipoCertificado +
-                    ", id=" + id +
-                    ", idFuncionario=" + idFuncionario +
-                    ", dataEmissao=" + dataEmissao +
-                    ", dataValidade=" + dataValidade +
-                    ", atualizadoPor=" + atualizadoPor +
-                    '}';
-        }
-
         public static CertificadoBuilder builder() {
             return new CertificadoBuilder();
         }
 
-        public CertificadoBuilder idTipoCertificado(Integer idTipoCertificado) {
-            this.idTipoCertificado = idTipoCertificado;
+        public CertificadoBuilder tipoCertificado(TipoCertificado tipoCertificado) {
+            this.tipoCertificado = tipoCertificado;
             return this;
         }
 
@@ -46,8 +33,8 @@ public class Certificado extends Tipo {
             return this;
         }
 
-        public CertificadoBuilder idFuncionario(Integer idFuncionario) {
-            this.idFuncionario = idFuncionario;
+        public CertificadoBuilder funcionario(Funcionario funcionario) {
+            this.funcionario = funcionario;
             return this;
         }
 
@@ -70,10 +57,10 @@ public class Certificado extends Tipo {
             Certificado certificado = new Certificado();
             certificado.setId(id);
             certificado.dataEmissao = this.dataEmissao;
-            certificado.dataValidade = this.dataValidade;
-            certificado.idTipoCertificado = this.idTipoCertificado;
+            certificado.funcionario = this.funcionario;
             certificado.atualizadoPor = this.atualizadoPor;
-            certificado.idFuncionario = this.idFuncionario;
+            certificado.tipoCertificado = this.tipoCertificado;
+            certificado.dataValidade = this.dataValidade;
             return certificado;
         }
     }

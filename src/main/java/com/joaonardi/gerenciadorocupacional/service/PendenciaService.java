@@ -26,19 +26,19 @@ public class PendenciaService {
 
         for (Funcionario funcionario : funcionarioService.listarFuncionarios()) {
             for (Certificado certificado : certificadoService.listarCertificados()) {
-                if (funcionario.getId().equals(certificado.getIdFuncionario())) {
+                if (funcionario.getId().equals(certificado.getFuncionario().getId())) {
                     int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
                     if (dias <= 1) {
-                        criarPendencia(funcionario, tipoCertificadoService.getTipoCertificadoMapeadoPorId(certificado.getIdTipoCertificado()));
+                        criarPendencia(funcionario, certificado.getTipoCertificado());
                     }
                 }
             }
 
             for (Exame exame : exameService.listarExamesVingentes()) {
-                if (funcionario.getId().equals(exame.getIdFuncionario())) {
+                if (funcionario.getId().equals(exame.getFuncionario().getId())) {
                     int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), exame.getDataValidade());
                     if (dias <= 1) {
-                        criarPendencia(funcionario, tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame()));
+                        criarPendencia(funcionario, exame.getTipoExame());
                     }
                 }
             }
@@ -82,10 +82,10 @@ public class PendenciaService {
 
     private boolean funcionarioJaTemExame(Funcionario funcionario, TipoExame tipoExameCond) {
         for (Exame exame : exameService.listarExamesVingentes()) {
-            TipoExame tipoExame = tipoExameService.getTipoExameMapeadoPorId(exame.getIdTipoExame());
+            TipoExame tipoExame = exame.getTipoExame();
             if (tipoExame != null &&
                     tipoExame.getNome().equalsIgnoreCase(tipoExameCond.getNome()) &&
-                    exame.getIdFuncionario().equals(funcionario.getId())) {
+                    exame.getFuncionario().getId().equals(funcionario.getId())) {
                 return true;
             }
         }
