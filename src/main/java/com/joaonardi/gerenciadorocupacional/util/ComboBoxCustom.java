@@ -24,13 +24,20 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
     private FilteredList<T> filteredItems;
     private boolean isCommitting = false;
     private boolean isNavigating = false;
-
+    private String textNull = "";
     public ComboBoxCustom() {
         setEditable(true);
         setupEventHandlers();
     }
 
     public void setItemsAndDisplay(ObservableList<T> items, List<Function<T, String>> functions) {
+        this.displayFunctions = functions != null ? functions : List.of();
+        this.filteredItems = new FilteredList<>(items != null ? items : FXCollections.observableArrayList());
+        setItems(filteredItems);
+        setupConverter();
+    }
+    public void setItemsAndDisplay(ObservableList<T> items, List<Function<T, String>> functions,String textoNull) {
+        this.textNull=textoNull;
         this.displayFunctions = functions != null ? functions : List.of();
         this.filteredItems = new FilteredList<>(items != null ? items : FXCollections.observableArrayList());
         setItems(filteredItems);
@@ -246,9 +253,6 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
         setConverter(new StringConverter<T>() {
             @Override
             public String toString(T item) {
-                if (item == null) {
-                    return "";
-                }
                 return buildDisplayText(item);
             }
 
@@ -289,7 +293,10 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
 
     private String buildDisplayText(T item) {
         if (item == null) {
-            return "";
+            if (textNull == null){
+                return "";
+            }
+            return textNull;
         }
 
         return displayFunctions.stream()

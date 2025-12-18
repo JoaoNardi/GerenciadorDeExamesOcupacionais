@@ -1,13 +1,10 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
-import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import javafx.util.StringConverter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-//todo aplicar no projeto todo
 public class StringConverterUtil {
     public static <T> StringConverter<T> choice(
             Iterable<T> items,

@@ -4,45 +4,29 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import com.joaonardi.gerenciadorocupacional.util.StringConverterUtil;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
-import javafx.util.StringConverter;
-import org.apache.poi.ss.formula.functions.T;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 
 public class VinculoParticularidadeController extends Janela {
-
 
     private final ParticularidadeService particularidadeService = new ParticularidadeService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
     public Button btnCancelar;
     public Button btnSalvar;
-    public ChoiceBox<Particularidade> inputParticularidade;
-    public ChoiceBox<Funcionario> inputFuncionario;
+    public ComboBoxCustom<Particularidade> inputParticularidade;
+    public ComboBoxCustom<Funcionario> inputFuncionario;
     public TextArea inputMotivo;
 
     public void initialize() {
-
         particularidadeService.carregarTodasParticularidades();
-        List<Function<Particularidade, String>> functionsParticularidade = new ArrayList<>();
-        inputParticularidade.getItems().setAll(particularidadeService.listarParticularidades());
-        functionsParticularidade.add(Particularidade::getNome);
-        inputParticularidade.setConverter(StringConverterUtil.choice(particularidadeService.listarParticularidades(),
-                functionsParticularidade));
+        inputParticularidade.setItemsAndDisplay(particularidadeService.listarParticularidades(),List.of(Particularidade::getNome,
+                p->p.getTipoExame().getNome()));
         funcionarioService.carregarFuncionariosPorStatus(true);
-        List<Function<Funcionario, String>> functionsFuncionario = new ArrayList<>();
-        functionsFuncionario.add(Funcionario::getNome);
-        inputFuncionario.setConverter(StringConverterUtil.choice(funcionarioService.listarFuncionarios(),
-                functionsFuncionario));
-        inputFuncionario.getItems().setAll(funcionarioService.listarFuncionarios());
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(),List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
     }
 
 

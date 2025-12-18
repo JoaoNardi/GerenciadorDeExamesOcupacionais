@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
+<?import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom?>
 <AnchorPane prefHeight="290.0" prefWidth="334.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.VinculoParticularidadeController">
 
     <children>
@@ -18,7 +19,7 @@
                 <Font size="18.0" />
             </font>
         </Label>
-        <ChoiceBox fx:id="inputParticularidade" layoutX="107.0" layoutY="84.0" prefHeight="25.0" prefWidth="165.0" />
+        <ComboBoxCustom fx:id="inputParticularidade" layoutX="107.0" layoutY="84.0" prefHeight="25.0" prefWidth="165.0" />
       <HBox alignment="CENTER_RIGHT" layoutX="14.0" layoutY="51.0" prefHeight="17.0" prefWidth="85.0">
          <children>
             <Label text="Funcionário:" />
@@ -34,7 +35,7 @@
             <Label text="Motivo:" />
          </children>
       </HBox>
-      <ChoiceBox fx:id="inputFuncionario" layoutX="107.0" layoutY="47.0" prefHeight="25.0" prefWidth="165.0" />
+      <ComboBoxCustom fx:id="inputFuncionario" layoutX="107.0" layoutY="47.0" prefHeight="25.0" prefWidth="165.0" />
       <TextArea fx:id="inputMotivo" layoutX="106.0" layoutY="131.0" prefHeight="112.0" prefWidth="165.0" promptText="(Motivo, Indicação ou Prescrição Médica)" wrapText="true" />
     </children>
 

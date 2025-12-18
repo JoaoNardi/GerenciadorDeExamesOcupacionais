@@ -4,13 +4,14 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
-
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerMascara;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 
 import javax.swing.*;
 import java.util.List;
@@ -21,7 +22,7 @@ public class FuncionarioController {
     public TextField inputCpf;
     public DatePickerMascara inputDataNascimento;
     public DatePickerMascara inputDataAdmissao;
-    public ChoiceBox<Setor> inputSetor;
+    public ComboBoxCustom<Setor> inputSetor;
     public Button btnSalvar;
     public Button btnCancelar;
     public CheckBox inputAtivo;
@@ -35,7 +36,7 @@ public class FuncionarioController {
     @FXML
     public void initialize() {
         setorService.carregarSetores();
-        inputSetor.getItems().addAll(setorService.listarSetores());
+        inputSetor.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
     }
 
     public void setFuncionario(Funcionario funcionario) {

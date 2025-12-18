@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <?import com.joaonardi.gerenciadorocupacional.util.DatePickerMascara?>
+<?import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom?>
 <AnchorPane prefHeight="400.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.joaonardi.gerenciadorocupacional.controller.ExamesController">
@@ -22,9 +22,9 @@
         </Label>
         <Label layoutX="106.0" layoutY="68.0" text="Funcionário"/>
         <Label layoutX="106.0" layoutY="145.0" text="Tipo de Exame"/>
-        <ComboBox fx:id="inputFuncionario" onAction="#validadeAlteracao" editable="true" layoutX="104.0" layoutY="85.0" prefHeight="25.0"
+        <ComboBoxCustom fx:id="inputFuncionario" onAction="#validadeAlteracao" editable="true" layoutX="104.0" layoutY="85.0" prefHeight="25.0"
                   prefWidth="165.0" promptText="Pesquise ou selecione"/>
-        <ComboBox fx:id="inputTipoExame" editable="true" layoutX="104.0" layoutY="162.0" onAction="#validadeAlteracao"
+        <ComboBoxCustom fx:id="inputTipoExame" editable="true" layoutX="104.0" layoutY="162.0" onAction="#validadeAlteracao"
                   prefHeight="25.0" prefWidth="165.0" promptText="Pesquise ou selecione"/>
         <DatePickerMascara fx:id="inputDataEmissao" editable="false" layoutX="106.0" layoutY="226.0"
                            onAction="#validadeAlteracao" prefHeight="25.0" prefWidth="165.0"/>

@@ -5,28 +5,25 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.ExameService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
-import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ExamesController {
-    public ComboBox<Funcionario> inputFuncionario;
-    public ComboBox<TipoExame> inputTipoExame;
+    public ComboBoxCustom<Funcionario> inputFuncionario;
+    public ComboBoxCustom<TipoExame> inputTipoExame;
     public DatePicker inputDataEmissao;
     public DatePicker inputDataValidade;
     public Button btnSalvar;
     public Button btnCancelar;
     final Janela janela = new Janela();
-    final SetorService setorService = new SetorService();
     final FuncionarioService funcionarioService = new FuncionarioService();
     final TipoExameService tipoExameService = new TipoExameService();
     final ExameService exameService = new ExameService();
@@ -34,48 +31,12 @@ public class ExamesController {
 
     @FXML
     private void initialize() {
-        ObservableList<TipoExame> tipoExamesLista = tipoExameService.listarTiposExame();
         funcionarioService.carregarFuncionariosPorStatus(true);
-        inputFuncionario.setItems(funcionarioService.listarFuncionarios());
-        inputFuncionario.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + funcionario.getSetor().getArea() : "";
-            }
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
 
-            @Override
-            public Funcionario fromString(String s) {
-                for (Funcionario f : inputFuncionario.getItems()) {
-                    String funcionario = f.getNome();
-                    if (funcionario.equals(s)) {
-                        return f;
-                    }
-                }
-                return null;
-            }
-        });
-        inputTipoExame.setItems(tipoExamesLista);
-        inputTipoExame.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(TipoExame tipoExame) {
-                return tipoExame != null ? tipoExame.getNome() + " - " + tipoExame + " Meses" : "";
-            }
+        inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
 
-            @Override
-            public TipoExame fromString(String s) {
-                for (TipoExame t : inputTipoExame.getItems()) {
-                    String tipoExameString = t.getNome() + " - " + t + " Meses";
-                    if (tipoExameString.equalsIgnoreCase(s)) {
-                        return t;
-                    }
-                }
-                return null;
-            }
-        });
-        inputTipoExame.setValue(tipoExamesLista.getFirst());
         inputDataEmissao.setValue(LocalDate.now());
-        inputFuncionario.setValue(funcionarioService.listarFuncionarios().getFirst());
-        inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
 
     public void handleSalvarExame(ActionEvent event) {
@@ -109,20 +70,20 @@ public class ExamesController {
     }
 
     public void validadeAlteracao(ActionEvent event) {
-        inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
-                inputTipoExame.getValue()));
-
+        if (inputFuncionario.getValue() != null && inputTipoExame.getValue() != null) {
+            inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
+                    inputTipoExame.getValue()));
+        }
     }
 
     public void setExame(Exame exameSelecionado) {
-
         this.exame = exameSelecionado;
         if (exame != null) {
             inputFuncionario.setValue(exame.getFuncionario());
             inputTipoExame.setValue(exame.getTipoExame());
             inputDataEmissao.setValue(exameSelecionado.getDataEmissao());
             inputDataValidade.setValue(exameSelecionado.getDataEmissao());
-
         }
+        inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
 }

@@ -5,6 +5,7 @@ import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,12 +13,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.util.StringConverter;
+
+import java.util.List;
 
 public class ParticularidadeController extends Janela {
     public TextField inputNome;
     public TextArea inputDescricao;
-    public ChoiceBox<TipoExame> inputTipoExame;
+    public ComboBoxCustom<TipoExame> inputTipoExame;
     public ChoiceBox<Periodicidade> inputPeriodicidade;
     public Button btnSalvar;
     public Button btnCancelar;
@@ -28,24 +30,7 @@ public class ParticularidadeController extends Janela {
     @FXML
     private void initialize() {
         tipoExameService.carregarTipoExames();
-        inputTipoExame.getItems().setAll(tipoExameService.listarTiposExame());
-        inputTipoExame.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(TipoExame tipoExame) {
-                return tipoExame != null ? tipoExame.getNome() : "";
-            }
-
-            @Override
-            public TipoExame fromString(String s) {
-                for (TipoExame tipoExame: inputTipoExame.getItems()){
-                    String tipoE = tipoExame.getNome();
-                    if (tipoE.equals(s)){
-                        return tipoExame;
-                    }
-                }
-                return null;
-            }
-        });
+        inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputPeriodicidade.getItems().setAll(Periodicidade.values());
     }
 
@@ -58,8 +43,8 @@ public class ParticularidadeController extends Janela {
     }
 
     public void handleSalvarParticularidade(ActionEvent event) {
-        String contexto = null;
-        if (this.particularidade== null) {
+        String contexto = "";
+        if (this.particularidade == null) {
             contexto = "salvar";
         } else {
             contexto = "atualizar";

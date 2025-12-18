@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
+<?import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom?>
 <AnchorPane prefHeight="435.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.FuncionarioController">
     <children>
         <Button fx:id="btnSalvar" layoutX="128.0" layoutY="400.0" mnemonicParsing="false" onAction="#handleSalvarFuncionario" text="Salvar" />
@@ -30,7 +31,7 @@
         <Label layoutX="103.0" layoutY="205.0" text="Setor:" />
         <DatePickerMascara fx:id="inputDataNascimento" layoutX="145.0" layoutY="136.0" prefHeight="25.0" prefWidth="165.0" promptText="Selecione a data" />
         <DatePickerMascara fx:id="inputDataAdmissao" layoutX="144.0" layoutY="170.0" prefHeight="25.0" prefWidth="165.0" promptText="Selecione a data" />
-        <ChoiceBox fx:id="inputSetor" layoutX="144.0" layoutY="201.0" prefHeight="25.0" prefWidth="165.0" />
+        <ComboBoxCustom fx:id="inputSetor" layoutX="144.0" layoutY="201.0" prefHeight="25.0" prefWidth="165.0" />
         <CheckBox fx:id="inputAtivo" layoutX="352.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Ativo?" />
         <Label layoutX="152.0" layoutY="44.0" text="Complete os dados">
             <font>

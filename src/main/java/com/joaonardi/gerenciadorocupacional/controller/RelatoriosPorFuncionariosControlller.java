@@ -4,6 +4,7 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
 import com.joaonardi.gerenciadorocupacional.service.*;
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,18 +21,18 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class RelatoriosPorFuncionariosControlller {
     // Services
     private static final FuncionarioService funcionarioService = new FuncionarioService();
-    private static final SetorService setorService = new SetorService();
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     final TipoExameService tipoExameService = new TipoExameService();
     final RelatorioService relatorioService = new RelatorioService();
 
     //Elementos JavaFX
     @FXML
-    private ComboBox<Funcionario> inputFuncionario;
+    private ComboBoxCustom<Funcionario> inputFuncionario;
     public DatePicker inputDataInicial;
     public DatePicker inputDataFinal;
     public RadioButton inputPorEmissao;
@@ -49,7 +50,7 @@ public class RelatoriosPorFuncionariosControlller {
 
     public RadioButton inputExame;
     public RadioButton inputCertificado;
-    public ChoiceBox<TipoDe> inputTipoDe;
+    public ComboBoxCustom<TipoDe> inputTipoDe;
     public Button btnImprimir;
     public Button btnSalvarPDF;
     public Button btnSalvarPlanilha;
@@ -59,7 +60,6 @@ public class RelatoriosPorFuncionariosControlller {
     private boolean isListarCertifiados = true;
 
     //Dados a serem carregados
-    private ObservableList<Funcionario> funcionariosLista = FXCollections.observableArrayList();
     private final ObservableList<TipoDe> tiposDeLista = FXCollections.observableArrayList();
     private ObservableList<RelatorioItem> relatorioLista = FXCollections.observableArrayList();
 
@@ -78,7 +78,6 @@ public class RelatoriosPorFuncionariosControlller {
 
     private void loadFuncionarios() {
         funcionarioService.carregarTodosFuncionarios();
-        funcionariosLista = funcionarioService.listarFuncionarios();
     }
 
     private void setIcones() {
@@ -111,8 +110,8 @@ public class RelatoriosPorFuncionariosControlller {
         if (node instanceof ChoiceBox<?> choiceBox)
             choiceBox.valueProperty().addListener((obs, o, n) -> resetTabela.run());
 
-        if (node instanceof ComboBox<?> comboBox)
-            comboBox.valueProperty().addListener((obs, o, n) -> resetTabela.run());
+        if (node instanceof ComboBoxCustom<?> comboBoxCustom)
+            comboBoxCustom.valueProperty().addListener((obs, o, n) -> resetTabela.run());
 
         if (node instanceof DatePicker datePicker)
             datePicker.valueProperty().addListener((obs, o, n) -> resetTabela.run());
@@ -142,43 +141,8 @@ public class RelatoriosPorFuncionariosControlller {
     private void setInputs() {
         inputDataInicial.setValue(LocalDate.now().minusMonths(12));
         inputDataFinal.setValue(LocalDate.now());
-        inputFuncionario.setItems(funcionariosLista);
-        inputFuncionario.setValue(funcionariosLista.getFirst());
-        inputFuncionario.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Funcionario funcionario) {
-                return funcionario != null ? funcionario.getNome() + " - " + funcionario.getSetor().getArea() : "";
-            }
-
-            @Override
-            public Funcionario fromString(String s) {
-                for (Funcionario f : inputFuncionario.getItems()) {
-                    String funcionario = f.getNome();
-                    if (funcionario.equals(s)) {
-                        return f;
-                    }
-                }
-                return null;
-            }
-        });
-        inputTipoDe.setItems(tiposDeLista);
-        inputTipoDe.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(TipoDe tipoDe) {
-                return tipoDe != null ? tipoDe.getNome() : "Todos";
-            }
-
-            @Override
-            public TipoDe fromString(String s) {
-                if (s == null) return null;
-                for (TipoDe t : inputTipoDe.getItems()) {
-                    if (s.equals(t.getNome())) {
-                        return t;
-                    }
-                }
-                return null;
-            }
-        });
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        inputTipoDe.setItemsAndDisplay(tiposDeLista, List.of(TipoDe::getNome),"Todos");
         alteracaoInput(inputFuncionario);
         alteracaoInput(inputPorEmissao);
         alteracaoInput(inputPorValidade);

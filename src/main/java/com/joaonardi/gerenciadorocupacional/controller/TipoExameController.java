@@ -354,7 +354,6 @@ public class TipoExameController {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
-
     }
 
     public void handleSalvarExame() {
