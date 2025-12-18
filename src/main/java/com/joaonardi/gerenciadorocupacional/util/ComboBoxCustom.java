@@ -178,9 +178,12 @@ public class ComboBoxCustom<T> extends ComboBox<T> {
             }
         });
 
-        if (getValue() != null) {
-            listView.getSelectionModel().select((Integer) getValue());
-            listView.scrollTo((Integer) getValue());
+        if (this.getValue() != null) {
+            int index = listView.getItems().indexOf(getValue());
+            if (index >= 0) {
+                listView.getSelectionModel().select(index);
+                listView.scrollTo(index);
+            }
         }
     }
 
