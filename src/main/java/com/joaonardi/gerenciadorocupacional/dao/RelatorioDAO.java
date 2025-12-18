@@ -33,40 +33,89 @@ public class RelatorioDAO extends BaseDAO {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             String sql = """
-                        WITH filtros(funcionarioId, inputData, dataInicial, dataFinal, tipoDeId, exame, certificado) AS (
-                            VALUES(?, ?, ?, ?, ?, ?, ?)
-                        )
-                        SELECT e.id, 'Exame' AS origem, e.funcionario_id, e.tipo_exame_id AS tipo_id, e.data_emissao, e.data_validade, e.atualizado_por, 
-                        fu.id as fu_id, fu.nome as fu_nome, fu.cpf as fu_cpf, fu.data_nascimento as fu_data_nascimento, 
-                        fu.data_admissao as fu_data_admissao, fu.setor_id as fu_setor_id, fu.ativo as fu_ativo
-                        s.id as s_id, s.area as s_area
-                        FROM exames e, filtros f
-                        JOIN funcionarios fu on fu.id = e.funcionario_id 
-                        JOIN setores s on s.id = fu_setor_id 
-                        WHERE (f.exame = 1)
-                          AND (f.funcionarioId IS NULL OR e.funcionario_id = f.funcionarioId)
-                          AND (f.tipoDeId IS NULL OR e.tipo_exame_id = f.tipoDeId)
-                          AND (
-                              (f.inputData = 'Emissao' AND date(e.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                              OR
-                              (f.inputData = 'Validade' AND date(e.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                    WITH filtros (
+                              funcionarioId,
+                              inputData,
+                              dataInicial,
+                              dataFinal,
+                              tipoDeId,
+                              exame,
+                              certificado
+                          ) AS (
+                              VALUES (?, ?, ?, ?, ?, ?, ?)
                           )
-                        UNION ALL
-                        SELECT c.id, 'Certificado' AS origem, c.funcionario_id, c.tipo_certificado_id AS tipo_id, c.data_emissao, c.data_validade, c.atualizado_por,
-                        fu.data_admissao as fu_data_admissao, fu.setor_id as fu_setor_id, fu.ativo as fu_ativo
-                        s.id as s_id, s.area as s_area
-                        FROM certificados c, filtros f
-                        JOIN funcionarios fu on fu.id = e.funcionario_id 
-                        JOIN setores s on s.id = fu_setor_id 
-                        WHERE (f.certificado = 1)
-                          AND (f.funcionarioId IS NULL OR c.funcionario_id = f.funcionarioId)
-                          AND (f.tipoDeId IS NULL OR c.tipo_certificado_id = f.tipoDeId)
-                          AND (
-                              (f.inputData = 'Emissao' AND date(c.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                              OR
-                              (f.inputData = 'Validade' AND date(c.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
-                          )
-                        ORDER BY data_emissao;
+                    
+                          SELECT
+                              e.id,
+                              'Exame' AS origem,
+                              e.funcionario_id,
+                              e.tipo_exame_id AS tipo_id,
+                              e.data_emissao,
+                              e.data_validade,
+                              e.atualizado_por,
+                    
+                              fu.id AS fu_id,
+                              fu.nome AS fu_nome,
+                              fu.cpf AS fu_cpf,
+                              fu.data_nascimento AS fu_data_nascimento,
+                              fu.data_admissao AS fu_data_admissao,
+                              fu.setor_id AS fu_setor_id,
+                              fu.ativo AS fu_ativo,
+                    
+                              s.id AS s_id,
+                              s.area AS s_area
+                          FROM exames e
+                          JOIN funcionarios fu ON fu.id = e.funcionario_id
+                          JOIN setores s ON s.id = fu.setor_id
+                          JOIN filtros f ON 1 = 1
+                          WHERE f.exame = 1
+                            AND (f.funcionarioId IS NULL OR e.funcionario_id = f.funcionarioId)
+                            AND (f.tipoDeId IS NULL OR e.tipo_exame_id = f.tipoDeId)
+                            AND (
+                                  (f.inputData = 'Emissao'
+                                   AND date(e.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                                  OR
+                                  (f.inputData = 'Validade'
+                                   AND date(e.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                                )
+                    
+                          UNION ALL
+                    
+                          SELECT
+                              c.id,
+                              'Certificado' AS origem,
+                              c.funcionario_id,
+                              c.tipo_certificado_id AS tipo_id,
+                              c.data_emissao,
+                              c.data_validade,
+                              c.atualizado_por,
+                    
+                              fu.id AS fu_id,
+                              fu.nome AS fu_nome,
+                              fu.cpf AS fu_cpf,
+                              fu.data_nascimento AS fu_data_nascimento,
+                              fu.data_admissao AS fu_data_admissao,
+                              fu.setor_id AS fu_setor_id,
+                              fu.ativo AS fu_ativo,
+                    
+                              s.id AS s_id,
+                              s.area AS s_area
+                          FROM certificados c
+                          JOIN funcionarios fu ON fu.id = c.funcionario_id
+                          JOIN setores s ON s.id = fu.setor_id
+                          JOIN filtros f ON 1 = 1
+                          WHERE f.certificado = 1
+                            AND (f.funcionarioId IS NULL OR c.funcionario_id = f.funcionarioId)
+                            AND (f.tipoDeId IS NULL OR c.tipo_certificado_id = f.tipoDeId)
+                            AND (
+                                  (f.inputData = 'Emissao'
+                                   AND date(c.data_emissao) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                                  OR
+                                  (f.inputData = 'Validade'
+                                   AND date(c.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
+                                )
+                          ORDER BY 5; -- data_emissao                    
+                    
                     """;
             preparedStatement = connection.prepareStatement(sql);
             int i = 1;
@@ -87,11 +136,11 @@ public class RelatorioDAO extends BaseDAO {
                         .build();
 
                 Funcionario funcionario1 = Funcionario.FuncionarioBuilder.builder()
-                        .id(resultSet.getInt("f_id"))
-                        .nome(resultSet.getString("f_nome"))
-                        .cpf(resultSet.getString("f_cpf"))
-                        .dataNascimento(LocalDate.parse(resultSet.getString("f_data_nascimento")))
-                        .dataAdmissao(LocalDate.parse(resultSet.getString("f_data_admissao")))
+                        .id(resultSet.getInt("fu_id"))
+                        .nome(resultSet.getString("fu_nome"))
+                        .cpf(resultSet.getString("fu_cpf"))
+                        .dataNascimento(LocalDate.parse(resultSet.getString("fu_data_nascimento")))
+                        .dataAdmissao(LocalDate.parse(resultSet.getString("fu_data_admissao")))
                         .setor(setor)
                         .build();
 
