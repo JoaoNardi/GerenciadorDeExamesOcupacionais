@@ -3,18 +3,22 @@ package com.joaonardi.gerenciadorocupacional.controller;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
-import com.joaonardi.gerenciadorocupacional.service.*;
+import com.joaonardi.gerenciadorocupacional.model.TipoExame;
+import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
+import com.joaonardi.gerenciadorocupacional.service.RelatorioService;
+import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
+import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.Duration;
-import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -29,6 +33,7 @@ public class RelatoriosPorFuncionariosControlller {
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     final TipoExameService tipoExameService = new TipoExameService();
     final RelatorioService relatorioService = new RelatorioService();
+    TipoDe opcaoTodos = TipoExame.TipoExameBuilder.builder().nome("Todos").build();
 
     //Elementos JavaFX
     @FXML
@@ -37,7 +42,15 @@ public class RelatoriosPorFuncionariosControlller {
     public DatePicker inputDataFinal;
     public RadioButton inputPorEmissao;
     public RadioButton inputPorValidade;
+    public RadioButton inputExame;
+    public RadioButton inputCertificado;
+    public ComboBoxCustom<TipoDe> inputTipoDe;
+    public Button btnGerarRelatorio;
+    public Button btnImprimir;
+    public Button btnSalvarPDF;
+    public Button btnSalvarPlanilha;
     public String tipoData = "Emissao";
+
     //Tabela 1
     public TableView<RelatorioItem> tabelaVencimentos;
     public TableColumn<RelatorioItem, Integer> colunaId;
@@ -47,13 +60,6 @@ public class RelatoriosPorFuncionariosControlller {
     public TableColumn<RelatorioItem, LocalDate> colunaValidadeVencimentos;
     public TableColumn<RelatorioItem, String> colunaStatus;
     public TableColumn<RelatorioItem, Integer> colunaAtualizadoPor;
-
-    public RadioButton inputExame;
-    public RadioButton inputCertificado;
-    public ComboBoxCustom<TipoDe> inputTipoDe;
-    public Button btnImprimir;
-    public Button btnSalvarPDF;
-    public Button btnSalvarPlanilha;
 
     final Janela janela = new Janela();
     private boolean isListarExames = true;
@@ -70,6 +76,38 @@ public class RelatoriosPorFuncionariosControlller {
         setIcones();
         disableButtons(true);
         tabelaVencimentos.setItems(null);
+        setBindings();
+    }
+
+    private void setBindings() {
+        ToggleGroup grupoTipoData = new ToggleGroup();
+        inputPorEmissao.setToggleGroup(grupoTipoData);
+        inputPorValidade.setToggleGroup(grupoTipoData);
+
+        BooleanBinding inputsValidos =
+                inputFuncionario.valueProperty().isNotNull()
+                        .and(inputDataInicial.valueProperty().isNotNull())
+                        .and(inputDataFinal.valueProperty().isNotNull())
+                        .and(inputTipoDe.valueProperty().isNotNull())
+                        .and(grupoTipoData.selectedToggleProperty().isNotNull())
+                        .and(inputExame.selectedProperty()
+                                .or(inputCertificado.selectedProperty()));
+        btnGerarRelatorio.disableProperty().bind(inputsValidos.not());
+
+        InvalidationListener listenerResetTabela = obs -> resetTabela();
+        inputFuncionario.valueProperty().addListener(listenerResetTabela);
+        inputDataInicial.valueProperty().addListener(listenerResetTabela);
+        inputDataFinal.valueProperty().addListener(listenerResetTabela);
+        inputTipoDe.valueProperty().addListener(listenerResetTabela);
+        grupoTipoData.selectedToggleProperty().addListener(listenerResetTabela);
+        inputExame.selectedProperty().addListener(listenerResetTabela);
+        inputCertificado.selectedProperty().addListener(listenerResetTabela);
+    }
+
+    private void resetTabela() {
+        disableButtons(true);
+        tabelaVencimentos.setItems(null);
+        tabelaVencimentos.refresh();
     }
 
     private void loadAll() {
@@ -95,38 +133,9 @@ public class RelatoriosPorFuncionariosControlller {
         btnSalvarPlanilha.setDisable(able);
     }
 
-    public void alteracaoInput(Node node) {
-        Runnable resetTabela = () -> {
-            disableButtons(true);
-            tabelaVencimentos.setItems(null);
-            tabelaVencimentos.refresh();
-        };
-        if (node instanceof TextField textField)
-            textField.textProperty().addListener((obs, o, n) -> resetTabela.run());
-
-        if (node instanceof TextArea textArea)
-            textArea.textProperty().addListener((obs, o, n) -> resetTabela.run());
-
-        if (node instanceof ChoiceBox<?> choiceBox)
-            choiceBox.valueProperty().addListener((obs, o, n) -> resetTabela.run());
-
-        if (node instanceof ComboBoxCustom<?> comboBoxCustom)
-            comboBoxCustom.valueProperty().addListener((obs, o, n) -> resetTabela.run());
-
-        if (node instanceof DatePicker datePicker)
-            datePicker.valueProperty().addListener((obs, o, n) -> resetTabela.run());
-
-        if (node instanceof RadioButton radioButton)
-            radioButton.selectedProperty().addListener((obs, o, n) -> resetTabela.run());
-
-        if (node instanceof CheckBox checkBox)
-            checkBox.selectedProperty().addListener((obs, o, n) -> resetTabela.run());
-
-    }
-
     public void handleCarregarTiposDe() {
         tiposDeLista.clear();
-        tiposDeLista.add(null);
+        tiposDeLista.add(opcaoTodos);
         if (!inputExame.isSelected() || !inputCertificado.isSelected()) {
             if (isListarExames) {
                 tipoExameService.carregarTipoExames();
@@ -142,15 +151,7 @@ public class RelatoriosPorFuncionariosControlller {
         inputDataInicial.setValue(LocalDate.now().minusMonths(12));
         inputDataFinal.setValue(LocalDate.now());
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
-        inputTipoDe.setItemsAndDisplay(tiposDeLista, List.of(TipoDe::getNome),"Todos");
-        alteracaoInput(inputFuncionario);
-        alteracaoInput(inputPorEmissao);
-        alteracaoInput(inputPorValidade);
-        alteracaoInput(inputDataInicial);
-        alteracaoInput(inputDataFinal);
-        alteracaoInput(inputTipoDe);
-        alteracaoInput(inputCertificado);
-        alteracaoInput(inputExame);
+        inputTipoDe.setItemsAndDisplay(tiposDeLista, List.of(TipoDe::getNome));
     }
 
     public void setTabelaVencimentos() {

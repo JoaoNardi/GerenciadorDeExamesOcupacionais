@@ -25,7 +25,7 @@
         </Label>
         <ComboBoxCustom fx:id="inputFuncionario" editable="true" layoutX="68.0" layoutY="45.0" prefHeight="25.0"
                   prefWidth="165.0" promptText="Pesquise ou selecione"/>
-        <Button fx:id="btnGerarRelatório" layoutX="850.0" layoutY="17.0" mnemonicParsing="false"
+        <Button fx:id="btnGerarRelatorio" layoutX="850.0" layoutY="17.0" mnemonicParsing="false"
                 onAction="#handleGerarRelatorio" prefHeight="35.0" prefWidth="126.0" text="Gerar relatório">
             <font>
                 <Font size="14.0"/>
