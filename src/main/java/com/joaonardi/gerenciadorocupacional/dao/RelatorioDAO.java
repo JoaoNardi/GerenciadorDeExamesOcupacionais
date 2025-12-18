@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
@@ -114,8 +113,7 @@ public class RelatorioDAO extends BaseDAO {
                                   (f.inputData = 'Validade'
                                    AND date(c.data_validade) BETWEEN date(f.dataInicial) AND date(f.dataFinal))
                                 )
-                          ORDER BY 5; -- data_emissao                    
-                    
+                          ORDER BY 5; -- data_emissao
                     """;
             preparedStatement = connection.prepareStatement(sql);
             int i = 1;
