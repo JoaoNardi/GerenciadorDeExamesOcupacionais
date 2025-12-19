@@ -9,7 +9,6 @@ import java.time.temporal.ChronoUnit;
 
 public class PendenciaService {
     private final CertificadoService certificadoService = new CertificadoService();
-    private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     private final ExameService exameService = new ExameService();
     private final TipoExameService tipoExameService = new TipoExameService();
     private final SetorService setorService = new SetorService();
@@ -51,11 +50,8 @@ public class PendenciaService {
                     for (Condicao condicao : condicaoService.listarCondicoes()) {
                         if (condicao == null) continue;
                         TipoExame tipoExameCond = null;
-                        if (conjunto.getTipoExameId() != null) {
-                            TipoExame tipoExame = tipoExameService.getTipoExameMapeadoPorId(conjunto.getTipoExameId());
-                            if (tipoExame != null) {
-                                tipoExameCond = tipoExame;
-                            }
+                        if (conjunto.getTipoExame() != null) {
+                            tipoExameCond = conjunto.getTipoExame();
                         }
                         if (tipoExameCond == null) continue;
                         boolean precisaFazerExame = false;

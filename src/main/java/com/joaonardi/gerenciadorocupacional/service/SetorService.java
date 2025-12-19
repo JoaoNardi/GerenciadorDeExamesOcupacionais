@@ -5,15 +5,9 @@ import com.joaonardi.gerenciadorocupacional.model.Setor;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-
 public class SetorService {
 
     private final SetorDAO dao = new SetorDAO();
-    private static Map<Integer, String> setoresMap;
-    private static final SetorDAO setorDAO = new SetorDAO();
     ObservableList<Setor> setorList = FXCollections.observableArrayList();
 
     public void cadastrarSetor(Setor setor) {
@@ -22,23 +16,14 @@ public class SetorService {
         } else {
             dao.alterarSetor(setor.getId(), setor);
         }
+        carregarSetores();
     }
 
     public void carregarSetores(){
         setorList = dao.listarSetores();
-        setoresMap = setorList.stream()
-                .collect(Collectors.toMap(Setor::getId, Setor::getArea));
     }
 
     public ObservableList<Setor> listarSetores() {
         return setorList;
-    }
-
-    public String getSetorMapeado(int id){
-        return setoresMap.getOrDefault(id,"Sem Setor") ;
-    }
-
-    public Setor consultarSetorPorId(Integer id) {
-        return dao.consultarSetor(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.Conjunto;
+import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,18 +15,18 @@ public class ConjuntoDAO extends BaseDAO{
 
     private static final String CADASTRAR_CONJUNTO = "INSERT INTO conjuntos (id, tipo_exame_id, periodicidade) " +
             "VALUES (NULL, ?, ?)";
-    private static final String CONSULTAR_CONJUNTO = "SELECT * FROM conjuntos WHERE ID = ?";
-    private static final String ALTERAR_CONJUNTO = "UPDATE conjuntos SET tipo_exame_id = ?, periodicidade = ? WHERE id = ? ";
     private static final String DELETAR_CONJUNTO = "DELETE FROM conjuntos WHERE id = ?";
-    private static final String LISTAR_TODOS_CONJUNTOS = "SELECT * FROM conjuntos";
-    private static final String LISTAR_CONJUNTOS_EXAME_ID = "SELECT * FROM conjuntos WHERE tipo_exame_id = ?";
+    private static final String LISTAR_CONJUNTOS_EXAME_ID = "SELECT c.*, te.id as te_id, te.nome as te_nome " +
+            "FROM conjuntos c " +
+            "JOIN tipos_exame te on te.id = c.tipo_exame_id " +
+            "WHERE tipo_exame_id = ? ";
 
     public Conjunto cadastrarConjunto(Conjunto conjunto) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR_CONJUNTO, Statement.RETURN_GENERATED_KEYS);
             int i = 1;
-            preparedStatement.setInt(i++, conjunto.getTipoExameId());
+            preparedStatement.setInt(i++, conjunto.getTipoExame().getId());
             preparedStatement.setInt(i++, conjunto.getPeriodicidade());
             preparedStatement.execute();
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
@@ -59,32 +60,6 @@ public class ConjuntoDAO extends BaseDAO{
         }
     }
 
-//    public ObservableList<Conjunto> listarTodosConjuntos() {
-//        Connection connection = DBConexao.getInstance().abrirConexao();
-//        Condicao condicao;
-//        ObservableList<Condicao> listarCondicoesPorTipoExameId = FXCollections.observableArrayList();
-//        try {
-//            preparedStatement = connection.prepareStatement(LISTAR_TODAS_CONDICOES);
-//            resultSet = preparedStatement.executeQuery();
-//            while (resultSet.next()) {
-//                condicao = Condicao.CondicaoBuilder.builder()
-//                        .id(resultSet.getInt("id"))
-//                        .conjuntoId(resultSet.getInt("conjunto_id"))
-//                        .referencia(resultSet.getString("referencia"))
-//                        .operador(resultSet.getString("operador"))
-//                        .parametro(resultSet.getString("parametro"))
-//                        .build();
-//                listarCondicoesPorTipoExameId.add(condicao);
-//            }
-//        } catch (SQLException e) {
-//            rollback(connection);
-//            throw new DbException("Erro ao carregar condições", e);
-//        } finally {
-//            close(resultSet, preparedStatement);
-//        }
-//        return listarCondicoesPorTipoExameId;
-//    }
-
     public ObservableList<Conjunto> listarConjuntosPorTipoExameId(int idTipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Conjunto conjunto;
@@ -94,9 +69,14 @@ public class ConjuntoDAO extends BaseDAO{
             preparedStatement.setInt(1, idTipoExame);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
+                TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()
+                        .id(resultSet.getInt("te_id"))
+                        .nome(resultSet.getString("te_nome"))
+                        .build();
+
                 conjunto = Conjunto.ConjuntoBuilder.builder()
                         .id(resultSet.getInt("id"))
-                        .tipoExameId(resultSet.getInt("tipo_exame_id"))
+                        .tipoExame(tipoExame)
                         .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
                 listaConjuntosPorTipoExameId.add(conjunto);

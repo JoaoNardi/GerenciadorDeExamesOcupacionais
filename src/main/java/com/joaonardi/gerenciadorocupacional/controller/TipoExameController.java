@@ -5,16 +5,18 @@ import com.joaonardi.gerenciadorocupacional.service.CondicaoService;
 import com.joaonardi.gerenciadorocupacional.service.ConjuntoService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
+import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import com.joaonardi.gerenciadorocupacional.util.TooltipUtils;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -28,6 +30,7 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import javax.swing.*;
+import java.util.List;
 
 public class TipoExameController {
     public TextField inputNome;
@@ -40,9 +43,11 @@ public class TipoExameController {
     public TableColumn<Conjunto, String> colunaConjuntosRegras;
     public TableColumn<?, Node> colunaAcoesRegras;
     public Button btnAddRegra;
-    private ObjectProperty<Conjunto> conjuntoSelecionado = new SimpleObjectProperty<>(null);
+    private final ObjectProperty<Conjunto> conjuntoSelecionado = new SimpleObjectProperty<>(null);
 
     public ChoiceBox<Periodicidade> inputPeridicidade;
+
+    private final ObjectProperty<Node> parametroAtual = new SimpleObjectProperty<>();
 
     public TableView<Condicao> tabelaCondicoes;
     public TableColumn<Condicao, String> colunaReferencia;
@@ -59,7 +64,6 @@ public class TipoExameController {
     public Button btnAtivaModalCondicao;
     final ConjuntoService conjuntoService = new ConjuntoService();
     final SetorService setorService = new SetorService();
-    ObservableList<Setor> setores = null;
     final CondicaoService condicaoService = new CondicaoService();
 
     final Janela janela = new Janela();
@@ -78,10 +82,9 @@ public class TipoExameController {
         });
 
         setorService.carregarSetores();
-        setores = setorService.listarSetores();
-        setores.add(null);
         inputPeridicidade.getItems().addAll(Periodicidade.values());
         conjuntoService.listarConjuntos().clear();
+        condicaoService.listarCondicoes().clear();
         condicaoService.listarCondicoes().addListener(
                 (ListChangeListener<Condicao>) change -> {
                     if (conjuntoSelecionado.getValue() != null) {
@@ -89,9 +92,7 @@ public class TipoExameController {
                     }
                 }
         );
-        inputNome.focusedProperty().addListener((obs, oldValue, newValue) -> {
-            cadastrarTipoExame();
-        });
+        inputNome.focusedProperty().addListener((obs, oldValue, newValue) -> cadastrarTipoExame());
         setTabelaConjuntos();
     }
 
@@ -119,19 +120,25 @@ public class TipoExameController {
         btnAddCondicao.setGraphic(iconeAdd);
         btnAddCondicao.setOnAction(event -> criaCondicao());
 
-        FontIcon iconeRemover = new FontIcon(FontAwesomeSolid.TRASH);
+        FontIcon iconeRemover = new FontIcon(FontAwesomeSolid.WINDOW_CLOSE);
         btnCancelarCondicao.setGraphic(iconeRemover);
 
         modalReferencia.getItems().clear();
         modalReferencia.getItems().addAll(Referencia.values());
-        modalReferencia.setValue(Referencia.IDADE); // valor inicial
+        modalReferencia.setValue(Referencia.IDADE);
 
         operadorChoiceBoxPorReferencia(modalReferencia.getValue(), modalOperador);
         modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> operadorChoiceBoxPorReferencia(newVal, modalOperador));
 
-        modalParametro.getChildren().setAll(criarParametroNode(modalReferencia.getValue()));
-        modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> modalParametro.getChildren().setAll(criarParametroNode(modalReferencia.getValue())));
+        trocarParametro(criarParametroNode(modalReferencia.getValue()));
+        inicializarCondicao();
+        modalReferencia.valueProperty().addListener((obs, oldVal, newVal) -> trocarParametro(criarParametroNode(modalReferencia.getValue())));
         btnCancelarCondicao.setOnAction(event -> actionFecharModalCondicao());
+    }
+
+    private void trocarParametro(Node novoParametro) {
+        modalParametro.getChildren().setAll(novoParametro);
+        parametroAtual.set(novoParametro);
     }
 
     private void actionFecharModalCondicao() {
@@ -212,11 +219,11 @@ public class TipoExameController {
     }
 
     public void criaCondicao() {
-        String parametro = null;
-        if (modalParametro.getChildren().getFirst() instanceof Spinner<?>)
-            parametro = ((Spinner<?>) modalParametro.getChildren().getFirst()).getValue().toString();
-        if (modalParametro.getChildren().getFirst() instanceof ChoiceBox<?>)
-            parametro = ((ChoiceBox<?>) modalParametro.getChildren().getFirst()).getValue().toString();
+        Node parametroNode = modalParametro.getChildren().getFirst();
+        String parametro = extrairParametro(parametroNode);
+        if (parametro == null) {
+            return;
+        }
         Condicao condicao = Condicao.CondicaoBuilder.builder()
                 .id(null)
                 .conjuntoId(conjuntoSelecionado.getValue().getId())
@@ -224,8 +231,56 @@ public class TipoExameController {
                 .operador(String.valueOf(modalOperador.getValue().getOperador()))
                 .parametro(parametro)
                 .build();
-        condicaoService.listarCondicoes().addAll(condicao);
 
+        condicaoService.listarCondicoes().add(condicao);
+    }
+
+
+    private String extrairParametro(Node node) {
+        if (node instanceof Spinner<?> spinner)
+            return String.valueOf(spinner.getValue());
+
+        if (node instanceof ChoiceBox<?> choiceBox)
+            return choiceBox.getValue() != null
+                    ? choiceBox.getValue().toString()
+                    : null;
+
+        if (node instanceof ComboBoxCustom<?> combo)
+            return combo.getValue() != null
+                    ? combo.getValue().toString()
+                    : null;
+
+        return null;
+    }
+
+    private BooleanBinding bindingParametroValido(Node node) {
+        if (node instanceof Spinner<?> spinner)
+            return spinner.valueProperty().isNotNull();
+
+        if (node instanceof ChoiceBox<?> choiceBox)
+            return choiceBox.valueProperty().isNotNull();
+
+        if (node instanceof ComboBoxCustom<?> combo)
+            return combo.valueProperty().isNotNull();
+
+        return new SimpleBooleanProperty(false).not();
+    }
+
+    public void inicializarCondicao() {
+        BooleanBinding parametroValido = new BooleanBinding() {
+            {
+                bind(parametroAtual);
+            }
+
+            @Override
+            protected boolean computeValue() {
+                Node node = parametroAtual.get();
+                if (node == null) return false;
+
+                return bindingParametroValido(node).get();
+            }
+        };
+        btnAddCondicao.disableProperty().bind(parametroValido.not());
     }
 
     @FXML
@@ -278,10 +333,10 @@ public class TipoExameController {
                 return spinner;
 
             case Referencia.SETOR:
-                ChoiceBox<Setor> setorChoice = new ChoiceBox<>();
-                setorChoice.setItems(setores);
+                ComboBoxCustom<Setor> setorChoice = new ComboBoxCustom<>();
+                setorChoice.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
                 setorChoice.setPrefWidth(120);
-                setorChoice.setValue(setores.getFirst());
+                setorChoice.setValue(setorChoice.getItems().getFirst());
                 return setorChoice;
 
             case Referencia.ENFERMIDADE:
@@ -384,10 +439,10 @@ public class TipoExameController {
         tabelaCondicoes.setItems(FXCollections.observableArrayList(condicaoService.listarCondicoes()));
     }
 
-    public void handleAddPeriodicidade(ActionEvent event) {
+    public void handleAddPeriodicidade() {
         Conjunto conjuntoNovo = Conjunto.ConjuntoBuilder.builder()
                 .id(null)
-                .tipoExameId(tipoExame.getId())
+                .tipoExame(tipoExame)
                 .periodicidade(inputPeridicidade.getValue().getValor())
                 .build();
         conjuntoSelecionado.setValue(conjuntoNovo);

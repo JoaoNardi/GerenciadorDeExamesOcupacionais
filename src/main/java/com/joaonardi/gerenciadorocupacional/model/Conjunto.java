@@ -9,12 +9,12 @@ import lombok.ToString;
 public class Conjunto {
     @Setter
     private Integer id;
-    private Integer tipoExameId;
+    private TipoExame tipoExame;
     private Integer periodicidade;
 
     public static final class ConjuntoBuilder {
         private Integer id;
-        private Integer tipoExameId;
+        private TipoExame tipoExame;
         private Integer periodicidade;
 
         private ConjuntoBuilder() {
@@ -29,8 +29,8 @@ public class Conjunto {
             return this;
         }
 
-        public ConjuntoBuilder tipoExameId(Integer tipoExameId) {
-            this.tipoExameId = tipoExameId;
+        public ConjuntoBuilder tipoExame(TipoExame tipoExame) {
+            this.tipoExame = tipoExame;
             return this;
         }
 
@@ -42,7 +42,7 @@ public class Conjunto {
         public Conjunto build() {
             Conjunto conjunto = new Conjunto();
             conjunto.setId(id);
-            conjunto.tipoExameId = this.tipoExameId;
+            conjunto.tipoExame = this.tipoExame;
             conjunto.periodicidade = this.periodicidade;
             return conjunto;
         }

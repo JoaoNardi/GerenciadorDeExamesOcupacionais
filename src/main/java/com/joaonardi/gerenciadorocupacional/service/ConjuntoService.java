@@ -6,13 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class ConjuntoService {
-    private static ObservableList<Conjunto> listaConjuntos = FXCollections.observableArrayList();
+    private static final ObservableList<Conjunto> listaConjuntos = FXCollections.observableArrayList();
     private final ConjuntoDAO conjuntoDAO = new ConjuntoDAO();
 
-    public void carregarConjunto(){
-//        listaConjuntos.setAll(conjuntoDAO.listarConjuntosPorTipoExameId())
-    }
     public void carregarConjuntoTipoExameId(int tipoExameId){
+        listarConjuntos().clear();
         listaConjuntos.setAll(conjuntoDAO.listarConjuntosPorTipoExameId(tipoExameId));
     }
     public ObservableList<Conjunto> listarConjuntos(){
@@ -21,9 +19,8 @@ public class ConjuntoService {
 
     public Conjunto cadastrarConjunto(Conjunto conjunto){
         Conjunto conjunto1 = conjuntoDAO.cadastrarConjunto(conjunto);
-        carregarConjuntoTipoExameId(conjunto.getTipoExameId());
+        carregarConjuntoTipoExameId(conjunto.getTipoExame().getId());
         return conjunto1;
-
     }
 
     public void deletarConjunto(Conjunto conjunto) {

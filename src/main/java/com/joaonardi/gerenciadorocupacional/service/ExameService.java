@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.dao.CondicaoDAO;
 import com.joaonardi.gerenciadorocupacional.dao.ExameDAO;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import javafx.collections.FXCollections;
@@ -13,11 +12,9 @@ import java.util.stream.Collectors;
 
 public class ExameService {
     private final ExameDAO exameDAO = new ExameDAO();
-    private final CondicaoDAO condicaoDAO = new CondicaoDAO();
     private final FuncionarioService funcionarioService = new FuncionarioService();
     private final ConjuntoService conjuntoService = new ConjuntoService();
     private final CondicaoService condicaoService = new CondicaoService();
-    final SetorService setorService = new SetorService();
     private static ObservableList<Exame> examesList = FXCollections.observableArrayList();
 
     public void carregarExamesVigentes() {
@@ -56,13 +53,14 @@ public class ExameService {
 
     public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Conjunto> conjuntos) {
 
+        // Carrega condições A
+        // Carrega condições B
         Conjunto melhor = conjuntos.stream()
                 .filter(conjunto -> {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
                     return condicaoService.listarCondicoes().stream()
                             .allMatch(cond -> verificaCondicao(funcionario, cond));
-                })
-                .sorted((a, b) -> {
+                }).min((a, b) -> {
                     // Carrega condições A
                     condicaoService.carregarCondicoesPorConjuntoId(a.getId());
                     int sizeA = condicaoService.listarCondicoes().size();
@@ -74,7 +72,6 @@ public class ExameService {
                     if (result != 0) return result;
                     return Integer.compare(a.getPeriodicidade(), b.getPeriodicidade());
                 })
-                .findFirst()
                 .orElse(null);
         return melhor != null ? melhor.getPeriodicidade() : null;
     }
@@ -92,7 +89,7 @@ public class ExameService {
                 return compara(idade, operador, valor);
 
             case "setor":
-                return comparaString(setorService.getSetorMapeado(funcionario.getSetor().getId()), operador, parametro);
+                return comparaString(funcionario.getSetor().getArea(), operador, parametro);
 
 //            case "enfermidade":
 //                return
