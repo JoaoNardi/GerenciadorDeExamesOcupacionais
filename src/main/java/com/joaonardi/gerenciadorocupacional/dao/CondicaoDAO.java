@@ -2,6 +2,8 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Condicao;
+import com.joaonardi.gerenciadorocupacional.model.Conjunto;
+import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +23,13 @@ public class CondicaoDAO extends BaseDAO {
     private static final String ALTERAR_CONDICAO = "UPDATE condicoes SET conjunto_id = ?, referencia = ?, operador - ?, parametro = ? WHERE id = ? ";
     private static final String DELETAR_CONDICAO = "DELETE FROM condicoes WHERE id = ?";
     private static final String LISTAR_TODAS_CONDICOES = "SELECT * FROM condicoes";
-    private static final String LISTAR_CONDICOES_POR_CONJUNTO_ID = "SELECT * FROM condicoes WHERE conjunto_id = ?";
+    private static final String LISTAR_CONDICOES_POR_CONJUNTO_ID = "SELECT cd.*, " +
+            "ct.id as ct_id, ct.tipo_exame_id as ct_tipo_exame_id, ct.periodicidade as ct_periodicidade, " +
+            "te.id as te_id, te.nome as te_nome " +
+            "FROM condicoes as cd " +
+            "JOIN tipos_exame te on te.id = ct.tipo_exame_id " +
+            "JOIN conjuntos ct on ct.id = cd.conjunto_id " +
+            "WHERE conjunto_id = ?";
 
     public CondicaoDAO() {
     }
@@ -31,7 +39,7 @@ public class CondicaoDAO extends BaseDAO {
         try {
             preparedStatement = connection.prepareStatement(CADASTRAR_CONDICAO);
             int i = 1;
-            preparedStatement.setInt(i++, condicao.getConjuntoId());
+            preparedStatement.setInt(i++, condicao.getConjunto().getId());
             preparedStatement.setString(i++, condicao.getReferencia());
             preparedStatement.setString(i++, condicao.getOperador());
             preparedStatement.setString(i++, condicao.getParametro());
@@ -67,7 +75,7 @@ public class CondicaoDAO extends BaseDAO {
 
             for (Condicao condicao : lista) {
                 int i = 1;
-                preparedStatement.setInt(i++, condicao.getConjuntoId());
+                preparedStatement.setInt(i++, condicao.getConjunto().getId());
                 preparedStatement.setString(i++, condicao.getReferencia());
                 preparedStatement.setString(i++, condicao.getOperador());
                 preparedStatement.setString(i++, condicao.getParametro());
@@ -83,33 +91,6 @@ public class CondicaoDAO extends BaseDAO {
         }
     }
 
-
-    public ObservableList<Condicao> listarTodasCondicoes() {
-        Connection connection = DBConexao.getInstance().abrirConexao();
-        Condicao condicao;
-        ObservableList<Condicao> listarCondicoesPorTipoExameId = FXCollections.observableArrayList();
-        try {
-            preparedStatement = connection.prepareStatement(LISTAR_TODAS_CONDICOES);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                condicao = Condicao.CondicaoBuilder.builder()
-                        .id(resultSet.getInt("id"))
-                        .conjuntoId(resultSet.getInt("conjunto_id"))
-                        .referencia(resultSet.getString("referencia"))
-                        .operador(resultSet.getString("operador"))
-                        .parametro(resultSet.getString("parametro"))
-                        .build();
-                listarCondicoesPorTipoExameId.add(condicao);
-            }
-        } catch (SQLException e) {
-            rollback(connection);
-            trataSqlExceptions(e, "Erro ao carregar condicao");
-        } finally {
-            close(resultSet, preparedStatement);
-        }
-        return listarCondicoesPorTipoExameId;
-    }
-
     public ObservableList<Condicao> listarCondicoesPorConjuntoId(int idTipoExame) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Condicao condicao;
@@ -119,9 +100,20 @@ public class CondicaoDAO extends BaseDAO {
             preparedStatement.setInt(1, idTipoExame);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
+                TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()
+                        .id(resultSet.getInt("te_id"))
+                        .nome(resultSet.getString("te_nome"))
+                        .build();
+
+                Conjunto conjunto = Conjunto.ConjuntoBuilder.builder()
+                        .id(resultSet.getInt("ct_id"))
+                        .tipoExame(tipoExame)
+                        .periodicidade(resultSet.getInt("ct_periodicidade"))
+                        .build();
+
                 condicao = Condicao.CondicaoBuilder.builder()
                         .id(resultSet.getInt("id"))
-                        .conjuntoId(resultSet.getInt("conjunto_id"))
+                        .conjunto(conjunto)
                         .referencia(resultSet.getString("referencia"))
                         .operador(resultSet.getString("operador"))
                         .parametro(resultSet.getString("parametro"))

@@ -226,7 +226,7 @@ public class TipoExameController {
         }
         Condicao condicao = Condicao.CondicaoBuilder.builder()
                 .id(null)
-                .conjuntoId(conjuntoSelecionado.getValue().getId())
+                .conjunto(conjuntoSelecionado.getValue())
                 .referencia(String.valueOf(modalReferencia.getValue()))
                 .operador(String.valueOf(modalOperador.getValue().getOperador()))
                 .parametro(parametro)

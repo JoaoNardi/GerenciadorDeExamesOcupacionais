@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 public class Condicao {
     private Integer id;
-    private Integer conjuntoId;
+    private Conjunto conjunto;
     private String referencia; //idade, setor, enfermidade
     private String operador; // ==;>=;!= etc
     private String parametro; // idade 45; setor Escritrorio
@@ -15,7 +15,7 @@ public class Condicao {
 
     public static final class CondicaoBuilder {
         private Integer id;
-        private Integer conjuntoId;
+        private Conjunto conjunto;
         private String referencia;
         private String operador;
         private String parametro;
@@ -32,8 +32,8 @@ public class Condicao {
             return this;
         }
 
-        public CondicaoBuilder conjuntoId(Integer conjuntoId) {
-            this.conjuntoId = conjuntoId;
+        public CondicaoBuilder conjunto(Conjunto conjunto) {
+            this.conjunto = conjunto;
             return this;
         }
 
@@ -54,9 +54,9 @@ public class Condicao {
 
         public Condicao build() {
             Condicao condicao = new Condicao();
-            condicao.conjuntoId = this.conjuntoId;
-            condicao.operador = this.operador;
             condicao.id = this.id;
+            condicao.conjunto = this.conjunto;
+            condicao.operador = this.operador;
             condicao.referencia = this.referencia;
             condicao.parametro = this.parametro;
             return condicao;

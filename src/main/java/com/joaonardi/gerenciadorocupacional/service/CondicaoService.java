@@ -39,7 +39,4 @@ public class CondicaoService {
         condicaoDAO.deletarCondicao(condicao.getId());
     }
 
-    public ObservableList<Condicao> listarTodasCondicoes() {
-        return condicaoDAO.listarTodasCondicoes();
-    }
 }
