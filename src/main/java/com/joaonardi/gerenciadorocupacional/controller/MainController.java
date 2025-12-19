@@ -222,8 +222,6 @@ public class MainController {
                                     });
                                 }
                                 btnLancarPendencia.setDisable(false);
-
-
                             }
                             setGraphic(hBox);
                         }
@@ -366,6 +364,10 @@ public class MainController {
         Label label1 = new Label("Data de emissão");
         DatePicker datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
+        Label label2 =
+                new Label("Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(exameService.calcularValidadeExame(exame.getFuncionario(),
+                        datePicker.getValue(),
+                        exame.getTipoExame())));
         Button btnConfirmar = new Button("Concluir");
         btnConfirmar.setOnAction(e -> {
             btnConfirmar.setDisable(true);
@@ -375,7 +377,7 @@ public class MainController {
                     .funcionario(exame.getFuncionario())
                     .dataEmissao(datePicker.getValue())
                     .dataValidade(exameService.calcularValidadeExame(exame.getFuncionario(), datePicker.getValue(),
-                                    exame.getTipoExame()))
+                            exame.getTipoExame()))
                     .atualizadoPor(null)
                     .build();
             exame1 = exameService.lancarExame(exame1);
@@ -393,7 +395,7 @@ public class MainController {
             setTodos();
         });
         btnConfirmar.setDisable(false);
-        VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
+        VBox layout = new VBox(10, label, label1, datePicker, label2, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);

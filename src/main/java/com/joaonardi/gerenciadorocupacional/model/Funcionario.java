@@ -1,10 +1,12 @@
 package com.joaonardi.gerenciadorocupacional.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDate;
 
+@EqualsAndHashCode
 @ToString
 @Getter
 public class Funcionario {

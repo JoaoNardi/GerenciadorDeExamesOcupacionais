@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.Objects;
 
 public class PendenciaService {
     private final CertificadoService certificadoService = new CertificadoService();
@@ -22,7 +24,6 @@ public class PendenciaService {
         funcionarioService.carregarFuncionariosPorStatus(true);
         tipoExameService.carregarTipoExames();
         setorService.carregarSetores();
-
         for (Funcionario funcionario : funcionarioService.listarFuncionarios()) {
             for (Certificado certificado : certificadoService.listarCertificados()) {
                 if (funcionario.getId().equals(certificado.getFuncionario().getId())) {
@@ -45,7 +46,7 @@ public class PendenciaService {
             String setorFuncionario = funcionario.getSetor().getArea();
             for (TipoExame tipoExameL : tipoExameService.listarTiposExame()) {
                 conjuntoService.carregarConjuntoTipoExameId(tipoExameL.getId());
-                for (Conjunto conjunto : conjuntoService.listarConjuntos()) {
+                for (Conjunto conjunto : conjuntoService.listarConjuntos().stream().sorted(Comparator.comparing(Conjunto::getPeriodicidade)).toList()) {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
                     for (Condicao condicao : condicaoService.listarCondicoes()) {
                         if (condicao == null) continue;
@@ -98,7 +99,7 @@ public class PendenciaService {
             default -> false;
         };
     }
-
+    // tinhamu leleko tiamu jhonjhonaaaa !!!
     private void criarPendencia(Funcionario funcionario, TipoDe tipoDe) {
         Pendencia pendencia = new Pendencia(funcionario, tipoDe);
         if (!pendencias.contains(pendencia)) {

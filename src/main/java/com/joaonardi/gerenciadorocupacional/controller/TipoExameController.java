@@ -23,6 +23,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
@@ -72,9 +74,13 @@ public class TipoExameController {
 
     public void initialize() {
         FontIcon iconInfo = new FontIcon(FontAwesomeSolid.INFO);
-        Tooltip tooltip = new Tooltip("A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra");
+        Tooltip tooltip = new Tooltip("A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra \n " +
+                "OBS: Será atendida atendindo o conjunto de regras que houver maior compatibilidade com o funcionário! \n " +
+                "(Em caso de conflito, será aplicada a menor periodicidade)");
+
         btnInfo.setGraphic(iconInfo);
         btnInfo.setTooltip(tooltip);
+        tooltip.fontProperty().set(new Font(14));
         TooltipUtils.installWithDelay(btnInfo, tooltip, 200);
         conjuntoSelecionado.addListener((obs, oldV, newV) -> {
             atualizarTabelaCondicoes();
