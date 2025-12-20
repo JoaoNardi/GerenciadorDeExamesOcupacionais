@@ -69,17 +69,16 @@ public class TipoExameDAO extends BaseDAO {
     }
 
     public void alterarTipoExame(int id, TipoExame tipoExame) {
+        System.out.println(id);
+        System.out.println(tipoExame);
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(ALTERAR);
             int i = 1;
             preparedStatement.setString(i++, tipoExame.getNome());
-            preparedStatement.setObject(i++, null);
             preparedStatement.setInt(i++, id);
-
             preparedStatement.executeUpdate();
             connection.commit();
-
 
         } catch (SQLException e) {
             rollback(connection);

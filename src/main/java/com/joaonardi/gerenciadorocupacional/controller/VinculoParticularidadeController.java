@@ -6,9 +6,10 @@ import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.event.ActionEvent;
+import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+
 import java.util.List;
 
 public class VinculoParticularidadeController extends Janela {
@@ -23,24 +24,31 @@ public class VinculoParticularidadeController extends Janela {
 
     public void initialize() {
         particularidadeService.carregarTodasParticularidades();
-        inputParticularidade.setItemsAndDisplay(particularidadeService.listarParticularidades(),List.of(Particularidade::getNome,
-                p->p.getTipoExame().getNome()));
+        inputParticularidade.setItemsAndDisplay(particularidadeService.listarParticularidades(), List.of(Particularidade::getNome,
+                p -> p.getTipoExame().getNome()));
         funcionarioService.carregarFuncionariosPorStatus(true);
-        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(),List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        setBindings();
+    }
+
+    private void setBindings() {
+        BooleanBinding inputsValidos =
+                inputFuncionario.valueProperty().isNotNull()
+                        .and(inputParticularidade.valueProperty().isNotNull())
+                        .and(inputMotivo.textProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
 
-    public void handleSalvarVinculo(ActionEvent event) {
+    public void handleSalvarVinculo() {
         salvar("salvar",
                 btnSalvar,
-                () -> {
-                    particularidadeService.vincularFuncionarioParticularidade(inputFuncionario.getValue(),
-                            inputParticularidade.getValue(),
-                            inputMotivo.getText());
-                });
+                () -> particularidadeService.vincularFuncionarioParticularidade(inputFuncionario.getValue(),
+                        inputParticularidade.getValue(),
+                        inputMotivo.getText()));
     }
 
-    public void handleCancelarVinculo(ActionEvent event) {
+    public void handleCancelarVinculo() {
         fecharJanela(btnCancelar);
     }
 }

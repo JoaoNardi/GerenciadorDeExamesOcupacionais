@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,6 +38,17 @@ public class FuncionarioController {
     public void initialize() {
         setorService.carregarSetores();
         inputSetor.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
+        setBindings();
+    }
+
+    private void setBindings(){
+        BooleanBinding inputsValidos =
+                inputNome.textProperty().isNotNull()
+                        .and(inputCpf.textProperty().isNotNull())
+                        .and(inputDataNascimento.valueProperty().isNotNull())
+                        .and(inputDataAdmissao.valueProperty().isNotNull())
+                        .and(inputSetor.valueProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
     public void setFuncionario(Funcionario funcionario) {

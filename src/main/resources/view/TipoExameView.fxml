@@ -67,6 +67,6 @@
          </children>
       </Pane>
       <Button fx:id="btnAddRegra" layoutX="46.0" layoutY="134.0" mnemonicParsing="false" onAction="#handleAdicionarRegra" text="Adicionar Regra" />
-      <ChoiceBox fx:id="inputPeridicidade" disable="true" layoutX="46.0" layoutY="134.0" onAction="#handleAddPeriodicidade" opacity="0.0" prefHeight="25.0" prefWidth="102.0" />
+      <ChoiceBox fx:id="inputPeriodicidade" disable="true" layoutX="46.0" layoutY="134.0" onAction="#handleAddPeriodicidade" opacity="0.0" prefHeight="25.0" prefWidth="102.0" />
     </children>
 </AnchorPane>

@@ -8,6 +8,7 @@ import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,8 +39,18 @@ public class CertificadoController {
         tipoCertificadoService.carregarTiposCertificado();
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(),List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
         inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
-        inputDataEmissao.setValue(LocalDate.now());
+        setBindings();
     }
+
+    private void setBindings(){
+        BooleanBinding inputsValidos =
+                inputFuncionario.valueProperty().isNotNull()
+                        .and(inputTipoCertificado.valueProperty().isNotNull())
+                        .and(inputDataEmissao.valueProperty().isNotNull())
+                        .and(inputDataValidade.valueProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
+    }
+
 
     public void validadeAlteracao() {
         inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),

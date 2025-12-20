@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,6 +33,7 @@ public class ParticularidadeController extends Janela {
         tipoExameService.carregarTipoExames();
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputPeriodicidade.getItems().setAll(Periodicidade.values());
+        setBindings();
     }
 
     public void setParticularidade(Particularidade particularidade) {
@@ -40,6 +42,14 @@ public class ParticularidadeController extends Janela {
         inputDescricao.setText(particularidade.getDescricao());
         inputTipoExame.setValue(particularidade.getTipoExame());
         inputPeriodicidade.setValue(Periodicidade.fromValor(particularidade.getPeriodicidade()));
+    }
+
+    private void setBindings(){
+        BooleanBinding inputsValidos =
+                inputNome.textProperty().isNotNull()
+                        .and(inputTipoExame.valueProperty().isNotNull())
+                        .and(inputPeriodicidade.valueProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
     public void handleSalvarParticularidade(ActionEvent event) {

@@ -8,6 +8,7 @@ import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -36,6 +37,16 @@ public class ExamesController {
 
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputDataValidade.setEditable(false);
+        setBindings();
+    }
+
+    private void setBindings(){
+        BooleanBinding inputsValidos =
+                inputFuncionario.valueProperty().isNotNull()
+                        .and(inputTipoExame.valueProperty().isNotNull())
+                        .and(inputDataEmissao.valueProperty().isNotNull())
+                        .and(inputDataValidade.valueProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
     public void handleSalvarExame(ActionEvent event) {

@@ -24,7 +24,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
@@ -47,7 +46,7 @@ public class TipoExameController {
     public Button btnAddRegra;
     private final ObjectProperty<Conjunto> conjuntoSelecionado = new SimpleObjectProperty<>(null);
 
-    public ChoiceBox<Periodicidade> inputPeridicidade;
+    public ChoiceBox<Periodicidade> inputPeriodicidade;
 
     private final ObjectProperty<Node> parametroAtual = new SimpleObjectProperty<>();
 
@@ -88,7 +87,7 @@ public class TipoExameController {
         });
 
         setorService.carregarSetores();
-        inputPeridicidade.getItems().addAll(Periodicidade.values());
+        inputPeriodicidade.getItems().addAll(Periodicidade.values());
         conjuntoService.listarConjuntos().clear();
         condicaoService.listarCondicoes().clear();
         condicaoService.listarCondicoes().addListener(
@@ -98,8 +97,22 @@ public class TipoExameController {
                     }
                 }
         );
-        inputNome.focusedProperty().addListener((obs, oldValue, newValue) -> cadastrarTipoExame());
+        inputNome.focusedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                return;
+            }
+            cadastrarTipoExame();
+        });
         setTabelaConjuntos();
+        setBindings();
+    }
+
+    private void setBindings() {
+        BooleanBinding inputsValidos =
+                inputNome.textProperty().isNotNull()
+                        .and(tabelaCondicoes.itemsProperty().isNotNull())
+                        .and(inputPeriodicidade.valueProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
     public void setTipoExame(TipoExame tipoExameSelecionado) {
@@ -428,8 +441,8 @@ public class TipoExameController {
     }
 
     private void modalAddRegraSwitch(boolean inChoicebox) {
-        inputPeridicidade.setDisable(!inChoicebox);
-        inputPeridicidade.setOpacity(inChoicebox ? 1 : 0);
+        inputPeriodicidade.setDisable(!inChoicebox);
+        inputPeriodicidade.setOpacity(inChoicebox ? 1 : 0);
         btnAddRegra.setDisable(inChoicebox);
         btnAddRegra.setOpacity(inChoicebox ? 0 : 1);
     }
@@ -449,7 +462,7 @@ public class TipoExameController {
         Conjunto conjuntoNovo = Conjunto.ConjuntoBuilder.builder()
                 .id(null)
                 .tipoExame(tipoExame)
-                .periodicidade(inputPeridicidade.getValue().getValor())
+                .periodicidade(inputPeriodicidade.getValue().getValor())
                 .build();
         conjuntoSelecionado.setValue(conjuntoNovo);
         conjuntoService.cadastrarConjunto(conjuntoNovo);

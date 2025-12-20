@@ -4,6 +4,7 @@ import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -21,20 +22,29 @@ public class TipoCertificadoController {
 
     public void initialize() {
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
+        setBindings();
+    }
+
+    private void setBindings(){
+        BooleanBinding inputsValidos =
+                inputNome.textProperty().isNotNull()
+                        .and(inputPeriodicidade.valueProperty().isNotNull());
+        btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
     public void setTipoCertificado(TipoCertificado tipoCertificadoSelecionado) {
-        this.tipoCertificado = tipoCertificadoSelecionado;        
-        if (tipoCertificado !=null){
+        this.tipoCertificado = tipoCertificadoSelecionado;
+        if (tipoCertificado != null) {
 
             inputNome.setText(tipoCertificado.getNome());
             inputPeriodicidade.setValue(Periodicidade.fromValor(tipoCertificadoSelecionado.getPeriodicidade()));
         }
 
     }
+
     @FXML
     public void handleSalvarCertificado() {
-        if (tipoCertificado == null || tipoCertificado.getId() ==null){
+        if (tipoCertificado == null || tipoCertificado.getId() == null) {
             tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
                     .id(null)
                     .nome(inputNome.getText())
