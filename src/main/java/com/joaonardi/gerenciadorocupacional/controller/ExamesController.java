@@ -35,8 +35,7 @@ public class ExamesController {
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
 
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
-
-        inputDataEmissao.setValue(LocalDate.now());
+        inputDataValidade.setEditable(false);
     }
 
     public void handleSalvarExame(ActionEvent event) {
