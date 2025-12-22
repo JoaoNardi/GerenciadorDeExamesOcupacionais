@@ -510,16 +510,22 @@ public class MainController {
         }
     }
 
-    public void handleAbrirParticularidades(ActionEvent event) {
+    public void handleAbrirParticularidades() {
         janela.abrirJanela("/view/ParticularidadeView.fxml", "Cadastro de Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
-    public void handleAbrirVincularParticularidades(ActionEvent event) {
+    public void handleAbrirGerenciarParticularidades() {
+        janela.abrirJanela("/view/GerenciarParticularidadesView.fxml", "Gerenciar Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    }
+
+    public void handleAbrirVincularParticularidades() {
         janela.abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
-    public void handleAbrirGerenciarParticularidades(ActionEvent event) {
-        janela.abrirJanela("/view/GerenciarParticularidadesView.fxml", "Gerenciar Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    public void handleAbrirGerenciarVinculos() {
+        janela.abrirJanela("/view/GerenciarVinculosParticularidadesView.fxml", "Gerenciar Vinculos Funcionários-Particularidades",
+                MainApp.STAGE_PRINCIPAL,
+                this::setTodos);
     }
 
     @FXML
@@ -655,6 +661,4 @@ public class MainController {
         tabelaPrincipal.refresh();
         pendenciaService.varreduraPendencias();
     }
-
-
 }

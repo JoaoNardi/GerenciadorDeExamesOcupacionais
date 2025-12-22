@@ -32,8 +32,9 @@
             <Menu mnemonicParsing="false" text="Particularidade">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#handleAbrirParticularidades" text="Criar Particularidades" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirVincularParticularidades" text="Vincular Particularidades" />
                   <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarParticularidades" text="Gerenciar Particularidades" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirVincularParticularidades" text="Vincular Particularidades" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarVinculos" text="Gerenciar Vínculos" />
               </items>
             </Menu>
                 <Menu mnemonicParsing="false" text="Exames">

@@ -53,13 +53,13 @@ public class ParticularidadeController extends Janela {
     }
 
     public void handleSalvarParticularidade(ActionEvent event) {
-        String contexto = "";
+        String acao = "";
         if (this.particularidade == null) {
-            contexto = "salvar";
+            acao = "salvo";
         } else {
-            contexto = "atualizar";
+            acao = "atualizado";
         }
-        salvar(contexto,
+        salvar("Particularidade",acao,
                 btnSalvar,
                 () -> {
                     Particularidade particularidade = Particularidade.ParticularidadeBuilder.builder()

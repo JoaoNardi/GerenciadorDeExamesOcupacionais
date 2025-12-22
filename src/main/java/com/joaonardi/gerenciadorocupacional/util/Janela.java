@@ -35,13 +35,14 @@ public class Janela {
         }
     }
 
-
-    public void salvar(String contexto,Node node, ActionSalvar actionSalvar ) {
+    //todo implementar em todo o projeto
+    public void salvar(String contexto,String acao,Node node, ActionSalvar actionSalvar ) {
         try {
             actionSalvar.executar();
+            JOptionPane.showMessageDialog(null, "Registro: *" + contexto + "* " + acao + " com sucesso");
             fecharJanela(node);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao " + contexto +": " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro ao " + acao + " *" + contexto +"*: " + e.getMessage());
         }
     }
 

@@ -7,20 +7,23 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarVinculosParticularidadesController">
+<AnchorPane prefHeight="428.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.GerenciarVinculosParticularidadesController">
     <children>
         <Label layoutX="26.0" layoutY="14.0" text="Vinculos Particularidades - Funcionários">
             <font>
                 <Font size="14.0" />
             </font>
         </Label>
-        <TableView fx:id="tabelaFuncionarios" layoutX="26.0" layoutY="38.0" onMouseClicked="#handleTableDoubleClick" prefHeight="321.0" prefWidth="548.0">
+        <TableView fx:id="tabelaVinculos" layoutX="26.0" layoutY="54.0" onMouseClicked="#handleTableDoubleClick" prefHeight="321.0" prefWidth="548.0">
             <columns>
                 <TableColumn fx:id="colunaFuncionario" prefWidth="110.0" text="Funcionário" />
                 <TableColumn fx:id="colunaParticularidade" prefWidth="115.0" text="Particularidade" />
-                <TableColumn fx:id="colunaMotivo" prefWidth="255.0" text="Motivo" />
+                <TableColumn fx:id="colunaTipoExame" prefWidth="98.0" text="Tipo Exame" />
+                <TableColumn fx:id="colunaMotivo" prefWidth="232.0" text="Motivo" />
             </columns>
         </TableView>
-        <Button fx:id="inputEditar" layoutX="517.0" layoutY="368.0" mnemonicParsing="false" onAction="#handleEditar" text="Editar" />
+        <Button fx:id="btnEditar" layoutX="449.0" layoutY="384.0" mnemonicParsing="false" onAction="#handleEditar" text="Editar" />
+        <Button fx:id="btnDeletar" layoutX="513.0" layoutY="384.0" mnemonicParsing="false" onAction="#handleDeletar" text="Deletar" />
+      <Button fx:id="btnAdicionar" layoutX="365.0" layoutY="384.0" mnemonicParsing="false" onAction="#handleAdicionar" text="Adicionar" />
     </children>
 </AnchorPane>

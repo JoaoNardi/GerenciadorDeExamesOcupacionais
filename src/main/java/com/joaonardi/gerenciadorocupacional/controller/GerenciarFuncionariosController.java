@@ -28,7 +28,6 @@ public class GerenciarFuncionariosController {
     boolean listarAtivos = true;
     FuncionarioController funcionarioController = new FuncionarioController();
     final FuncionarioService funcionarioService = new FuncionarioService();
-    final SetorService setorService = new SetorService();
 
     @FXML
     private void initialize() {

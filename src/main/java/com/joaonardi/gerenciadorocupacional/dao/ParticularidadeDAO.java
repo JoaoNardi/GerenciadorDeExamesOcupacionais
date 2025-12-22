@@ -1,9 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.model.Funcionario;
-import com.joaonardi.gerenciadorocupacional.model.Particularidade;
-import com.joaonardi.gerenciadorocupacional.model.Setor;
-import com.joaonardi.gerenciadorocupacional.model.TipoExame;
+import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,8 +43,22 @@ public class ParticularidadeDAO extends BaseDAO {
             "JOIN particularidade p ON p.id = vp.particularidade_id" +
             "JOIN tipos_exame t on t.id p.tipo_exame_id" +
             "WHERE vp.funcionario_id = ?;";
+
+
+    private static final String LISTAR_TODOS_VINCULOS = "SELECT vp.id as vp_id, vp.motivo as vp_motivo, " +
+            "p.id as p_id, p.nome as p_nome, p.descricao as p_descricao, p.tipo_exame_id as p_tipo_exame_id, p.periodicidade as p_periodicidade, " +
+            "f.id as f_id, f.nome as f_nome, f.cpf as f_cpf, f.data_nascimento as f_data_nascimento, " +
+            "f.data_admissao as f_data_admissao, f.setor_id as f_setor_id, f.ativo as f_ativo, " +
+            "s.id as s_id, s.area as s_area, " +
+            "t.id AS t_id, t.nome AS t_nome " +
+            "FROM vinculos_particularidades vp " +
+            "JOIN particularidades p ON p.id = vp.particularidade_id " +
+            "JOIN funcionarios f ON f.id = vp.funcionario_id " +
+            "JOIN tipos_exame t on t.id = p.tipo_exame_id " +
+            "JOIN setores s on s.id = f_setor_id ";
+
     private static final String DESVINCULAR_PARTICULARIDADE_FUNCIONARIO = "DELETE FROM vinculos_particularidades WHERE particularidade_id = ? AND " +
-            "WHERE funcionario_id = ?  ";
+            "funcionario_id = ?  ";
 
     public Particularidade cadastrarParticularidade(Particularidade particularidade) {
         Connection connection = DBConexao.getInstance().abrirConexao();
@@ -75,7 +86,7 @@ public class ParticularidadeDAO extends BaseDAO {
         return particularidade;
     }
 
-    public ObservableList<Particularidade> listarTodasParticularidades(){
+    public ObservableList<Particularidade> listarTodasParticularidades() {
         Connection connection = DBConexao.getInstance().abrirConexao();
         ObservableList<Particularidade> particularidadeList = FXCollections.observableArrayList();
         try {
@@ -154,6 +165,63 @@ public class ParticularidadeDAO extends BaseDAO {
         } finally {
             close(resultSet, preparedStatement);
         }
+    }
+
+    public ObservableList<VinculoFuncionarioParticularidade> listarVinculos() {
+        Connection connection = DBConexao.getInstance().abrirConexao();
+        Funcionario funcionario;
+        ObservableList<VinculoFuncionarioParticularidade> list = FXCollections.observableArrayList();
+        try {
+            preparedStatement = connection.prepareStatement(LISTAR_TODOS_VINCULOS);
+
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+
+                Setor setor = Setor.SetorBuilder.builder()
+                        .id(resultSet.getInt("s_id"))
+                        .area(resultSet.getString("s_area"))
+                        .build();
+
+                funcionario = Funcionario.FuncionarioBuilder.builder()
+                        .id(resultSet.getInt("f_id"))
+                        .nome(resultSet.getString("f_nome"))
+                        .cpf(resultSet.getString("f_cpf"))
+                        .dataNascimento(LocalDate.parse(resultSet.getString("f_data_nascimento")))
+                        .dataAdmissao(LocalDate.parse(resultSet.getString("f_data_admissao")))
+                        .setor(setor)
+                        .ativo(resultSet.getBoolean("f_ativo"))
+                        .build();
+
+                TipoExame tipoExameObj = TipoExame.TipoExameBuilder.builder()
+                        .id(resultSet.getInt("t_id"))
+                        .nome(resultSet.getString("t_nome"))
+                        .build();
+
+                Particularidade particularidade = Particularidade.ParticularidadeBuilder.builder()
+                        .id(resultSet.getInt("p_id"))
+                        .nome(resultSet.getString("p_nome"))
+                        .descricao(resultSet.getString("p_descricao"))
+                        .tipoExame(tipoExameObj)
+                        .periodicidade(resultSet.getInt("p_periodicidade"))
+                        .build();
+
+                VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade = VinculoFuncionarioParticularidade
+                        .VinculoFuncionarioParticularidadeBuilder.builder()
+                        .id(resultSet.getInt("vp_id"))
+                        .funcionario(funcionario)
+                        .particularidade(particularidade)
+                        .motivo(resultSet.getString("vp_motivo"))
+                        .build();
+                list.add(vinculoFuncionarioParticularidade);
+
+            }
+        } catch (SQLException e) {
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao carregar funcionario vinculados a particularidade");
+        } finally {
+            close(resultSet, preparedStatement);
+        }
+        return list;
     }
 
     public void atualizarMotivoVinculo(Particularidade particularidade, Funcionario funcionario, String motivo) {

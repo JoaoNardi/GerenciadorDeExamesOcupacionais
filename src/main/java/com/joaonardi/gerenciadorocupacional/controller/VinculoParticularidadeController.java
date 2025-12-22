@@ -2,6 +2,7 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Particularidade;
+import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularidade;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
@@ -39,9 +40,8 @@ public class VinculoParticularidadeController extends Janela {
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-
     public void handleSalvarVinculo() {
-        salvar("salvar",
+        salvar("Vinculo", "Salvo",
                 btnSalvar,
                 () -> particularidadeService.vincularFuncionarioParticularidade(inputFuncionario.getValue(),
                         inputParticularidade.getValue(),
@@ -50,5 +50,11 @@ public class VinculoParticularidadeController extends Janela {
 
     public void handleCancelarVinculo() {
         fecharJanela(btnCancelar);
+    }
+
+    public void setVinculo(VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade) {
+        inputFuncionario.setValue(vinculoFuncionarioParticularidade.getFuncionario());
+        inputParticularidade.setValue(vinculoFuncionarioParticularidade.getParticularidade());
+        inputMotivo.setText(vinculoFuncionarioParticularidade.getMotivo());
     }
 }
