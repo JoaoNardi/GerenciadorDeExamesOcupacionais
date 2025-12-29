@@ -3,14 +3,16 @@ package com.joaonardi.gerenciadorocupacional.controller;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.beans.binding.BooleanBinding;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 
-public class SetorController {
+public class SetorController extends Janela {
 
     public TextField inputArea;
     public Button btnCancelar;
@@ -23,13 +25,12 @@ public class SetorController {
     @FXML
     private void initialize() {
         btnSalvar.disableProperty().bind(inputArea.textProperty().isNotNull().not());
-    }
-
-    public void setSetor(Setor setor) {
-        this.setor = setor;
-        if (setor != null) {
-            inputArea.setText(setor.getArea());
-        }
+        Platform.runLater(() -> {
+            this.setor = (Setor) objetoPrincipal;
+            if (setor != null) {
+                inputArea.setText(setor.getArea());
+            }
+        });
     }
 
     @FXML
@@ -53,5 +54,4 @@ public class SetorController {
     public void handleCancelarSetor() {
         janela.fecharJanela(btnCancelar);
     }
-
 }

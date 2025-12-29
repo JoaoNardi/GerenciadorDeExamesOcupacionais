@@ -36,7 +36,6 @@ import java.time.format.DateTimeFormatter;
 public class RelatorioService {
     final DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final RelatorioDAO relatorioDAO = new RelatorioDAO();
-    private final SetorService setorService = new SetorService();
     private ObservableList<RelatorioItem> relatorioItemsLista = FXCollections.observableArrayList();
     private final TipoExameService tipoExameService = new TipoExameService();
     private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
@@ -53,7 +52,6 @@ public class RelatorioService {
     public void imprimir(ObservableList<RelatorioItem> relatorioLista,
                          Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
                          boolean inputCertificado, TipoDe tipoDe) {
-        setorService.carregarSetores();
         tipoCertificadoService.carregarTiposCertificado();
         tipoExameService.carregarTipoExames();
 
@@ -140,7 +138,6 @@ public class RelatorioService {
     public void gerarPDF(Stage stage, ObservableList<RelatorioItem> relatorioLista,
                          Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
                          boolean inputCertificado, TipoDe tipoDe) {
-        setorService.carregarSetores();
         tipoCertificadoService.carregarTiposCertificado();
         tipoExameService.carregarTipoExames();
 

@@ -8,6 +8,8 @@ import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.binding.BooleanBinding;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,6 +31,8 @@ public class FuncionarioController {
     public CheckBox inputAtivo;
     final FuncionarioService funcionarioService = new FuncionarioService();
     final SetorService setorService = new SetorService();
+    private final ObservableList<Setor> setores = FXCollections.observableArrayList();
+
 
     private Funcionario funcionario;
 
@@ -36,7 +40,7 @@ public class FuncionarioController {
 
     @FXML
     public void initialize() {
-        setorService.carregarSetores();
+        setores.setAll(setorService.listarSetores());
         inputSetor.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
         setBindings();
     }

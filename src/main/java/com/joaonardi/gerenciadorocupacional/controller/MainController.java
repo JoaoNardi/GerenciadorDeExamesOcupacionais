@@ -3,6 +3,7 @@ package com.joaonardi.gerenciadorocupacional.controller;
 import com.joaonardi.gerenciadorocupacional.MainApp;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.service.*;
+import com.joaonardi.gerenciadorocupacional.util.Coluna;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -28,6 +29,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 
 public class MainController {
@@ -68,6 +70,7 @@ public class MainController {
 
 
     final Janela janela = new Janela();
+    final JanelaGerenciar janelaGerenciar = new JanelaGerenciar();
 
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     final FuncionarioService funcionarioService = new FuncionarioService();
@@ -78,6 +81,7 @@ public class MainController {
     final CertificadoService certificadoService = new CertificadoService();
     final PendenciaService pendenciaService = new PendenciaService();
     int diasVencimento = 0;
+
 
     @FXML
     private void initialize() {
@@ -92,7 +96,6 @@ public class MainController {
         certificadoService.carregarCertificadosVigentes();
         tipoExameService.carregarTipoExames();
         tipoCertificadoService.carregarTiposCertificado();
-        setorService.carregarSetores();
         setLabels();
         setTabelaPrincipal();
         setTabelaSecundaria();
@@ -545,7 +548,29 @@ public class MainController {
 
     @FXML
     public void handleAbrirGerenciarSetor() {
-        janela.abrirJanela("/view/GerenciarSetoresView.fxml", "Gerenciar Setores", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        ObservableList<Setor> setores = FXCollections.observableArrayList(setorService.listarSetores());
+
+        Janela janela = new Janela();
+        janela.abrirJanela(
+                "/view/GerenciarBaseView.fxml",
+                "Gerenciar Setores",
+                MainApp.STAGE_PRINCIPAL,
+                this::setTodos
+        );
+
+        JanelaGerenciar<Setor> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                "Setores",
+                "/view/SetorView.fxml",
+                setores,
+                List.of(
+                new Coluna<>("area", Setor::getArea)
+                ),
+                (setorService::listarSetores),
+                (setorService::deletarSetor)
+        );
     }
 
     @FXML

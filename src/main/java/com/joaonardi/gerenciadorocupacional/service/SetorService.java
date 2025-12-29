@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 public class SetorService {
 
     private final SetorDAO dao = new SetorDAO();
-    ObservableList<Setor> setorList = FXCollections.observableArrayList();
 
     public void cadastrarSetor(Setor setor) {
         if (setor.getId() == null) {
@@ -16,14 +15,13 @@ public class SetorService {
         } else {
             dao.alterarSetor(setor.getId(), setor);
         }
-        carregarSetores();
-    }
-
-    public void carregarSetores(){
-        setorList = dao.listarSetores();
     }
 
     public ObservableList<Setor> listarSetores() {
-        return setorList;
+        return dao.listarSetores();
+    }
+
+    public void deletarSetor(Setor setor){
+        dao.deletarSetor(setor.getId());
     }
 }

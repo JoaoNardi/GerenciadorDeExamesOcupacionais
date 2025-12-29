@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
-import com.joaonardi.gerenciadorocupacional.MainApp;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -11,9 +10,11 @@ import javafx.stage.Stage;
 import javax.swing.*;
 import java.io.IOException;
 
-public class Janela {
+public class Janela<T> {
     public FXMLLoader loader;
     public Stage stage;
+
+    public T objetoPrincipal;
 
     public void abrirJanela(String diretorioView, String tituloJanela, Stage stagePai, Runnable aoFechar) {
         try {
@@ -33,6 +34,10 @@ public class Janela {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void set(T objeto){
+        this.objetoPrincipal = objeto;
     }
 
     //todo implementar em todo o projeto

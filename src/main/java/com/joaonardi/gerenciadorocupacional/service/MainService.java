@@ -1,6 +1,12 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
-import com.joaonardi.gerenciadorocupacional.model.*;
+import com.joaonardi.gerenciadorocupacional.model.Certificado;
+import com.joaonardi.gerenciadorocupacional.model.Exame;
+import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.Setor;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -8,22 +14,24 @@ import java.util.Objects;
 
 public class MainService {
 
-    private final CondicaoService condicaoService = new CondicaoService();
-    private final TipoExameService tipoExameService = new TipoExameService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
     private final ExameService exameService = new ExameService();
     private final SetorService setorService = new SetorService();
     private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     private final CertificadoService certificadoService = new CertificadoService();
+    private final ObservableList<Setor> setores = FXCollections.observableArrayList();
 
-    private final ConjuntoService conjuntoService = new ConjuntoService();
 
     public void loadInicial() {
         tipoCertificadoService.carregarTiposCertificado();
-        setorService.carregarSetores();
         funcionarioService.carregarFuncionariosPorStatus(true);
         exameService.carregarExamesVigentes();
         certificadoService.carregarCertificadosVigentes();
+        setListenners();
+    }
+
+    private void setListenners() {
+
     }
 
     public Exame getExameVencido(Funcionario funcionario) {

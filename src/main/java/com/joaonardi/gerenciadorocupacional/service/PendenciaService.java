@@ -13,7 +13,6 @@ public class PendenciaService {
     private final CertificadoService certificadoService = new CertificadoService();
     private final ExameService exameService = new ExameService();
     private final TipoExameService tipoExameService = new TipoExameService();
-    private final SetorService setorService = new SetorService();
     private final ConjuntoService conjuntoService = new ConjuntoService();
     private final CondicaoService condicaoService = new CondicaoService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
@@ -23,7 +22,6 @@ public class PendenciaService {
         pendencias.clear();
         funcionarioService.carregarFuncionariosPorStatus(true);
         tipoExameService.carregarTipoExames();
-        setorService.carregarSetores();
         for (Funcionario funcionario : funcionarioService.listarFuncionarios()) {
             for (Certificado certificado : certificadoService.listarCertificados()) {
                 if (funcionario.getId().equals(certificado.getFuncionario().getId())) {

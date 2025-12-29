@@ -67,6 +67,8 @@ public class TipoExameController {
     final SetorService setorService = new SetorService();
     final CondicaoService condicaoService = new CondicaoService();
 
+    private final ObservableList<Setor> setores = FXCollections.observableArrayList();
+
     final Janela janela = new Janela();
     private TipoExame tipoExame;
     final TipoExameService tipoExameService = new TipoExameService();
@@ -86,7 +88,7 @@ public class TipoExameController {
             btnAtivaModalCondicao.setOpacity(newV != null ? 1 : 0);
         });
 
-        setorService.carregarSetores();
+        setores.setAll(setorService.listarSetores());
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
         conjuntoService.listarConjuntos().clear();
         condicaoService.listarCondicoes().clear();
@@ -353,7 +355,7 @@ public class TipoExameController {
 
             case Referencia.SETOR:
                 ComboBoxCustom<Setor> setorChoice = new ComboBoxCustom<>();
-                setorChoice.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
+                setorChoice.setItemsAndDisplay(setores, List.of(Setor::getArea));
                 setorChoice.setPrefWidth(120);
                 setorChoice.setValue(setorChoice.getItems().getFirst());
                 return setorChoice;
