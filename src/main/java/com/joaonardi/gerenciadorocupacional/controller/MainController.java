@@ -496,10 +496,8 @@ public class MainController {
         ObservableList<Setor> setores = FXCollections.observableArrayList(setorService.listarSetores());
 
         Janela janela = new Janela();
-        janela.abrirJanela(
-                "/view/GerenciarBaseView.fxml",
-                "Gerenciar Setores",
-                MainApp.STAGE_PRINCIPAL,
+        String titulo = "Setores";
+        janela.abrirJanelaGerenciar(titulo,
                 this::setTodos
         );
 
@@ -507,7 +505,7 @@ public class MainController {
                 janela.loader.getController();
 
         controller.configurar(
-                "Setores",
+                titulo,
                 "/view/SetorView.fxml",
                 setores,
                 List.of(
@@ -529,10 +527,9 @@ public class MainController {
         ObservableList<Funcionario> funcionarios = FXCollections.observableArrayList(funcionarioService.listarFuncionariosPorStatus(true));
 
         Janela janela = new Janela();
-        janela.abrirJanela(
-                "/view/GerenciarBaseView.fxml",
-                "Gerenciar Funcionários",
-                MainApp.STAGE_PRINCIPAL,
+
+        String titulo = "Funcionários";
+        janela.abrirJanelaGerenciar(titulo,
                 this::setTodos
         );
 
@@ -540,7 +537,7 @@ public class MainController {
                 janela.loader.getController();
 
         controller.configurar(
-                "Funcionários",
+                titulo,
                 "/view/FuncionarioView.fxml",
                 funcionarios,
                 List.of(
@@ -565,7 +562,30 @@ public class MainController {
 
     @FXML
     public void handleAbrirGerenciarParticularidades() {
-        janela.abrirJanela("/view/GerenciarParticularidadesView.fxml", "Gerenciar Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        final ParticularidadeService particularidadeService = new ParticularidadeService();
+        ObservableList<Particularidade> particularidades = FXCollections.observableArrayList(particularidadeService.listarTodasParticularidades());
+        String titulo = "Particularidades";
+        Janela janela = new Janela();
+        janela.abrirJanelaGerenciar(titulo,
+                this::setTodos
+        );
+
+        JanelaGerenciar<Particularidade> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                titulo,
+                "/view/ParticularidadeView.fxml",
+                particularidades,
+                List.of(
+                        new Coluna<>("Particularidade", Particularidade::getNome),
+                        new Coluna<>("Tipo Exame", f-> f.getTipoExame().getNome()),
+                        new Coluna<>("Periodicidade", Particularidade::getPeriodicidade)
+                ),
+                (particularidadeService::listarTodasParticularidades),
+                (particularidadeService::deletarParticularidade),
+                false
+        );
     }
 
     @FXML
@@ -575,9 +595,33 @@ public class MainController {
 
     @FXML
     public void handleAbrirGerenciarVinculos() {
-        janela.abrirJanela("/view/GerenciarVinculosParticularidadesView.fxml", "Gerenciar Vinculos Funcionários-Particularidades",
-                MainApp.STAGE_PRINCIPAL,
-                this::setTodos);
+        final ParticularidadeService particularidadeService = new ParticularidadeService();
+        ObservableList<VinculoFuncionarioParticularidade> vinculoFuncionarioParticularidade =
+                FXCollections.observableArrayList(particularidadeService.listarTodosVinculos());
+        String titulo = "Vinculos Funcionarios Particularidades";
+        Janela janela = new Janela();
+        janela.abrirJanelaGerenciar(titulo,
+                this::setTodos
+        );
+
+        JanelaGerenciar<VinculoFuncionarioParticularidade> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                titulo,
+                "/view/VinculoParticularidadesFuncionarios.fxml",
+                vinculoFuncionarioParticularidade,
+                List.of(
+                        new Coluna<>("Funcionário", f->f.getFuncionario().getNome()),
+                        new Coluna<>("Particularidade", f->f.getParticularidade().getNome()),
+                        new Coluna<>("Tipo Exame", f->f.getParticularidade().getTipoExame().getNome()),
+                        new Coluna<>("Motivo", VinculoFuncionarioParticularidade::getMotivo)
+
+                ),
+                (particularidadeService::listarTodosVinculos),
+                (particularidadeService::desvincularParticularidadeFuncionario),
+                false
+        );
     }
 
     @FXML

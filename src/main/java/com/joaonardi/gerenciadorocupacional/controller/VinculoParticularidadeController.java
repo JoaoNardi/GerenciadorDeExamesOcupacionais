@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -24,12 +25,14 @@ public class VinculoParticularidadeController extends Janela {
     public TextArea inputMotivo;
 
     public void initialize() {
-        particularidadeService.carregarTodasParticularidades();
-        inputParticularidade.setItemsAndDisplay(particularidadeService.listarParticularidades(), List.of(Particularidade::getNome,
+        inputParticularidade.setItemsAndDisplay(particularidadeService.listarTodasParticularidades(), List.of(Particularidade::getNome,
                 p -> p.getTipoExame().getNome()));
         funcionarioService.listarFuncionariosPorStatus(true);
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
         setBindings();
+        Platform.runLater(() -> {
+            setVinculo((VinculoFuncionarioParticularidade) this.objetoPrincipal);
+        });
     }
 
     private void setBindings() {
@@ -53,8 +56,10 @@ public class VinculoParticularidadeController extends Janela {
     }
 
     public void setVinculo(VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade) {
-        inputFuncionario.setValue(vinculoFuncionarioParticularidade.getFuncionario());
-        inputParticularidade.setValue(vinculoFuncionarioParticularidade.getParticularidade());
-        inputMotivo.setText(vinculoFuncionarioParticularidade.getMotivo());
+        if (vinculoFuncionarioParticularidade != null) {
+            inputFuncionario.setValue(vinculoFuncionarioParticularidade.getFuncionario());
+            inputParticularidade.setValue(vinculoFuncionarioParticularidade.getParticularidade());
+            inputMotivo.setText(vinculoFuncionarioParticularidade.getMotivo());
+        }
     }
 }

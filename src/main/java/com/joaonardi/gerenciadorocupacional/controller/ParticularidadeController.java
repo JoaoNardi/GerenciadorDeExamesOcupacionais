@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,17 +35,22 @@ public class ParticularidadeController extends Janela {
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputPeriodicidade.getItems().setAll(Periodicidade.values());
         setBindings();
+        Platform.runLater(() -> {
+            setParticularidade((Particularidade) this.objetoPrincipal);
+        });
     }
 
     public void setParticularidade(Particularidade particularidade) {
-        this.particularidade = particularidade;
-        inputNome.setText(particularidade.getNome());
-        inputDescricao.setText(particularidade.getDescricao());
-        inputTipoExame.setValue(particularidade.getTipoExame());
-        inputPeriodicidade.setValue(Periodicidade.fromValor(particularidade.getPeriodicidade()));
+        if (particularidade != null) {
+            this.particularidade = particularidade;
+            inputNome.setText(particularidade.getNome());
+            inputDescricao.setText(particularidade.getDescricao());
+            inputTipoExame.setValue(particularidade.getTipoExame());
+            inputPeriodicidade.setValue(Periodicidade.fromValor(particularidade.getPeriodicidade()));
+        }
     }
 
-    private void setBindings(){
+    private void setBindings() {
         BooleanBinding inputsValidos =
                 inputNome.textProperty().isNotNull()
                         .and(inputTipoExame.valueProperty().isNotNull())
@@ -59,7 +65,7 @@ public class ParticularidadeController extends Janela {
         } else {
             acao = "atualizado";
         }
-        salvar("Particularidade",acao,
+        salvar("Particularidade", acao,
                 btnSalvar,
                 () -> {
                     Particularidade particularidade = Particularidade.ParticularidadeBuilder.builder()

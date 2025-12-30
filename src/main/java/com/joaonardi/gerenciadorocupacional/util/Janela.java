@@ -1,5 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
+import com.joaonardi.gerenciadorocupacional.MainApp;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -25,6 +26,25 @@ public class Janela<T> {
             Parent root = loader.load();
 
             stage.setTitle(tituloJanela);
+            stage.setScene(new Scene(root));
+
+            if (aoFechar != null) {
+                stage.setOnHiding(e -> aoFechar.run());
+            }
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void abrirJanelaGerenciar(String contexto, Runnable aoFechar) {
+        try {
+            stage = new Stage();
+            loader = new FXMLLoader(getClass().getResource("/view/GerenciarBaseView.fxml"));
+            stage.initOwner(MainApp.STAGE_PRINCIPAL);
+            stage.initModality(Modality.WINDOW_MODAL);
+            Parent root = loader.load();
+
+            stage.setTitle("Gerenciar  " + contexto);
             stage.setScene(new Scene(root));
 
             if (aoFechar != null) {
