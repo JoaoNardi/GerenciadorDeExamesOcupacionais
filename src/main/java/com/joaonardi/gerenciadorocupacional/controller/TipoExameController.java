@@ -33,7 +33,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import javax.swing.*;
 import java.util.List;
 
-public class TipoExameController {
+public class TipoExameController extends Janela {
     public TextField inputNome;
     public Button btnFechar;
     public Button btnSalvar;
@@ -107,6 +107,9 @@ public class TipoExameController {
         });
         setTabelaConjuntos();
         setBindings();
+        Platform.runLater(() -> {
+            setTipoExame((TipoExame) this.objetoPrincipal);
+        });
     }
 
     private void setBindings() {

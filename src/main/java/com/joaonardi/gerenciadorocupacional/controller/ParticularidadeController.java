@@ -31,7 +31,6 @@ public class ParticularidadeController extends Janela {
 
     @FXML
     private void initialize() {
-        tipoExameService.carregarTipoExames();
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputPeriodicidade.getItems().setAll(Periodicidade.values());
         setBindings();

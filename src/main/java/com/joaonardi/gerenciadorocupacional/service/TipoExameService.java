@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 public class TipoExameService {
     private final TipoExameDAO dao = new TipoExameDAO();
-    private static Map<Integer, TipoExame> tipoExameMap;
 
     public TipoExame cadastrarTipoExame(TipoExame tipoExame) {
         if (tipoExame.getId() == null) {
@@ -17,25 +16,27 @@ public class TipoExameService {
         } else {
             dao.alterarTipoExame(tipoExame.getId(), tipoExame);
         }
-        carregarTipoExames();
         return tipoExame;
     }
 
-    public void deletarTipoExame(int id) {
-        dao.deletarTipoExame(id);
+    public void deletarTipoExame(TipoExame tipoExame) {
+        dao.deletarTipoExame(tipoExame.getId());
     }
 
-    public void carregarTipoExames() {
-        tipoExameMap = listarTiposExame().stream()
-                .collect(Collectors.toMap(TipoExame::getId, f -> f));
-
-    }
     public ObservableList<TipoExame> listarTiposExame() {
         return dao.listarTiposExame();
     }
 
-    public TipoExame getTipoExameMapeadoPorId(Integer id) {
-        return tipoExameMap.get(id);
+    public ObservableList<TipoExame> listarTiposExame(boolean ativos) {
+        return dao.listarTiposExame();
+    }
+
+    public TipoExame getTipoExameMapeadoPorId(int tipoId) {
+        return dao.listarTiposExame()
+                .stream()
+                .filter(t -> t.getId() == tipoId)
+                .findFirst()
+                .orElse(null);
     }
 
 }

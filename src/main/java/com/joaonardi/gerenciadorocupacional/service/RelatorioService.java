@@ -53,7 +53,6 @@ public class RelatorioService {
                          Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
                          boolean inputCertificado, TipoDe tipoDe) {
         tipoCertificadoService.carregarTiposCertificado();
-        tipoExameService.carregarTipoExames();
 
         try {
             File fileTemp = File.createTempFile("relatorioPorFuncionario", ".pdf");
@@ -139,7 +138,6 @@ public class RelatorioService {
                          Funcionario funcionario, TableView<RelatorioItem> tableView, LocalDate dataInicial, LocalDate dataFinal, boolean inputExame,
                          boolean inputCertificado, TipoDe tipoDe) {
         tipoCertificadoService.carregarTiposCertificado();
-        tipoExameService.carregarTipoExames();
 
         try {
             FileChooser fileChooser = new FileChooser();

@@ -94,7 +94,6 @@ public class MainController {
     private void setTodos() {
         exameService.carregarExamesVigentes();
         certificadoService.carregarCertificadosVigentes();
-        tipoExameService.carregarTipoExames();
         tipoCertificadoService.carregarTiposCertificado();
         setLabels();
         setTabelaPrincipal();
@@ -579,7 +578,7 @@ public class MainController {
                 particularidades,
                 List.of(
                         new Coluna<>("Particularidade", Particularidade::getNome),
-                        new Coluna<>("Tipo Exame", f-> f.getTipoExame().getNome()),
+                        new Coluna<>("Tipo Exame", f -> f.getTipoExame().getNome()),
                         new Coluna<>("Periodicidade", Particularidade::getPeriodicidade)
                 ),
                 (particularidadeService::listarTodasParticularidades),
@@ -612,9 +611,9 @@ public class MainController {
                 "/view/VinculoParticularidadesFuncionarios.fxml",
                 vinculoFuncionarioParticularidade,
                 List.of(
-                        new Coluna<>("Funcionário", f->f.getFuncionario().getNome()),
-                        new Coluna<>("Particularidade", f->f.getParticularidade().getNome()),
-                        new Coluna<>("Tipo Exame", f->f.getParticularidade().getTipoExame().getNome()),
+                        new Coluna<>("Funcionário", f -> f.getFuncionario().getNome()),
+                        new Coluna<>("Particularidade", f -> f.getParticularidade().getNome()),
+                        new Coluna<>("Tipo Exame", f -> f.getParticularidade().getTipoExame().getNome()),
                         new Coluna<>("Motivo", VinculoFuncionarioParticularidade::getMotivo)
 
                 ),
@@ -631,7 +630,29 @@ public class MainController {
 
     @FXML
     public void handleAbrirGerenciarExame() {
-        janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        ObservableList<TipoExame> tipoExames =
+                FXCollections.observableArrayList(tipoExameService.listarTiposExame());
+
+        String titulo = "Tipos Exame";
+        Janela janela = new Janela();
+        janela.abrirJanelaGerenciar(titulo,
+                this::setTodos
+        );
+
+        JanelaGerenciar<TipoExame> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                titulo,
+                "/view/TipoExameView.fxml",
+                tipoExames,
+                List.of(
+                        new Coluna<>("Tipo Exame", TipoDe::getNome)
+                ),
+                (tipoExameService::listarTiposExame),
+                (tipoExameService::deletarTipoExame),
+                false
+        );
     }
 
     @FXML
@@ -695,7 +716,6 @@ public class MainController {
 
     public void handleLancarExame() {
         try {
-            tipoExameService.carregarTipoExames();
             if (tipoExameService.listarTiposExame().isEmpty()) {
                 Notifications.create()
                         .owner(janela.stage)

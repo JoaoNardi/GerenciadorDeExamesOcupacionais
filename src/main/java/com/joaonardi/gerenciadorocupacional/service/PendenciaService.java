@@ -20,7 +20,6 @@ public class PendenciaService {
     public void varreduraPendencias() {
         pendencias.clear();
         funcionarioService.listarFuncionariosPorStatus(true);
-        tipoExameService.carregarTipoExames();
         for (Funcionario funcionario : funcionarioService.listarFuncionariosPorStatus(true)) {
             for (Certificado certificado : certificadoService.listarCertificados()) {
                 if (funcionario.getId().equals(certificado.getFuncionario().getId())) {

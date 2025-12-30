@@ -129,7 +129,6 @@ public class RelatoriosPorFuncionariosControlller {
         tiposDeLista.add(opcaoTodos);
         if (!inputExame.isSelected() || !inputCertificado.isSelected()) {
             if (isListarExames) {
-                tipoExameService.carregarTipoExames();
                 tiposDeLista.addAll(tipoExameService.listarTiposExame());
             } else if (isListarCertifiados) {
                 tipoCertificadoService.carregarTiposCertificado();
