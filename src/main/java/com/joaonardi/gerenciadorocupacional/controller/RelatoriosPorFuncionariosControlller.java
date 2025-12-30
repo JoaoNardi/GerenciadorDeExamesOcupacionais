@@ -71,7 +71,6 @@ public class RelatoriosPorFuncionariosControlller {
 
     @FXML
     private void initialize() {
-        loadAll();
         setInputs();
         setIcones();
         disableButtons(true);
@@ -110,14 +109,6 @@ public class RelatoriosPorFuncionariosControlller {
         tabelaVencimentos.refresh();
     }
 
-    private void loadAll() {
-        loadFuncionarios();
-    }
-
-    private void loadFuncionarios() {
-        funcionarioService.carregarTodosFuncionarios();
-    }
-
     private void setIcones() {
         FontIcon iconeImprimir = new FontIcon(FontAwesomeSolid.PRINT);
         btnImprimir.setGraphic(iconeImprimir);
@@ -150,7 +141,7 @@ public class RelatoriosPorFuncionariosControlller {
     private void setInputs() {
         inputDataInicial.setValue(LocalDate.now().minusMonths(12));
         inputDataFinal.setValue(LocalDate.now());
-        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarTodosFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
         inputTipoDe.setItemsAndDisplay(tiposDeLista, List.of(TipoDe::getNome));
     }
 

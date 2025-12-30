@@ -1,13 +1,15 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -23,6 +25,10 @@ public class FuncionarioDAO extends BaseDAO {
     private static final String ALTERAR_FUNCIONARIO = "UPDATE FUNCIONARIOS SET "
             + "nome = ?,  cpf = ?, data_nascimento = ?, data_admissao = ?, setor_id = ?, ativo = ?"
             + "WHERE id = ?";
+    private static final String ATIVAR_INATIVAR_FUNCIONARIO = "UPDATE FUNCIONARIOS SET "
+            + "ativo = ?"
+            + "WHERE id = ?";
+
     private static final String LISTAR_FUNCIONARIOS_POR_STATUS = "SELECT f.*, s.id as s_id, s.area as s_area FROM FUNCIONARIOS f " +
             "JOIN setores s on s.id = f.setor_id " +
             "WHERE 1=1 AND ativo = ? ";
@@ -49,7 +55,7 @@ public class FuncionarioDAO extends BaseDAO {
             connection.commit();
         } catch (SQLException e) {
             rollback(connection);
-            trataSqlExceptions(e,"Erro ao cadastrar funcionário");
+            trataSqlExceptions(e, "Erro ao cadastrar funcionário");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -162,6 +168,24 @@ public class FuncionarioDAO extends BaseDAO {
             close(resultSet, preparedStatement);
         }
         return listaFuncionariosAtivos;
+    }
+
+    public void ativarInativarFuncionario(Funcionario funcionario) {
+        Connection connection = DBConexao.getInstance().abrirConexao();
+        try {
+            preparedStatement = connection.prepareStatement(ATIVAR_INATIVAR_FUNCIONARIO);
+            preparedStatement.setBoolean(1, !funcionario.getAtivo());
+            preparedStatement.setInt(2, funcionario.getId());
+
+            preparedStatement.executeUpdate();
+            connection.commit();
+
+        } catch (SQLException e) {
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao Ativar/Inativar funcionario");
+        } finally {
+            close(resultSet, preparedStatement);
+        }
     }
 }
 

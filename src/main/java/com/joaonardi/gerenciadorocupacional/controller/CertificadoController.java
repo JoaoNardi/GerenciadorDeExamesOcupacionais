@@ -9,12 +9,10 @@ import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.binding.BooleanBinding;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class CertificadoController {
@@ -35,9 +33,10 @@ public class CertificadoController {
     @FXML
     private void initialize() {
         inputDataValidade.setEditable(false);
-        funcionarioService.carregarFuncionariosPorStatus(true);
+        funcionarioService.listarFuncionariosPorStatus(true);
         tipoCertificadoService.carregarTiposCertificado();
-        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(),List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true),List.of(Funcionario::getNome,
+                f -> f.getSetor().getArea()));
         inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
         setBindings();
     }

@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +21,7 @@ import javax.swing.*;
 import java.util.List;
 
 
-public class FuncionarioController {
+public class FuncionarioController extends Janela {
     public TextField inputNome;
     public TextField inputCpf;
     public DatePickerCustom inputDataNascimento;
@@ -43,6 +44,10 @@ public class FuncionarioController {
         setores.setAll(setorService.listarSetores());
         inputSetor.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
         setBindings();
+
+        Platform.runLater(() -> {
+            setFuncionario((Funcionario) this.objetoPrincipal);
+    });
     }
 
     private void setBindings(){

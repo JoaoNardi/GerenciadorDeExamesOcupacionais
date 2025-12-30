@@ -5,7 +5,6 @@ import com.joaonardi.gerenciadorocupacional.model.Exame;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
@@ -24,7 +23,7 @@ public class MainService {
 
     public void loadInicial() {
         tipoCertificadoService.carregarTiposCertificado();
-        funcionarioService.carregarFuncionariosPorStatus(true);
+        funcionarioService.listarFuncionariosPorStatus(true);
         exameService.carregarExamesVigentes();
         certificadoService.carregarCertificadosVigentes();
         setListenners();

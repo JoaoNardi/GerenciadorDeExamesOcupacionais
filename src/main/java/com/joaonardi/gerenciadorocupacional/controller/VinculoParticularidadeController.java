@@ -27,8 +27,8 @@ public class VinculoParticularidadeController extends Janela {
         particularidadeService.carregarTodasParticularidades();
         inputParticularidade.setItemsAndDisplay(particularidadeService.listarParticularidades(), List.of(Particularidade::getNome,
                 p -> p.getTipoExame().getNome()));
-        funcionarioService.carregarFuncionariosPorStatus(true);
-        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        funcionarioService.listarFuncionariosPorStatus(true);
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
         setBindings();
     }
 

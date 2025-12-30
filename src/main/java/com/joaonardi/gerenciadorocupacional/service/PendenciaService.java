@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.Objects;
 
 public class PendenciaService {
     private final CertificadoService certificadoService = new CertificadoService();
@@ -20,9 +19,9 @@ public class PendenciaService {
 
     public void varreduraPendencias() {
         pendencias.clear();
-        funcionarioService.carregarFuncionariosPorStatus(true);
+        funcionarioService.listarFuncionariosPorStatus(true);
         tipoExameService.carregarTipoExames();
-        for (Funcionario funcionario : funcionarioService.listarFuncionarios()) {
+        for (Funcionario funcionario : funcionarioService.listarFuncionariosPorStatus(true)) {
             for (Certificado certificado : certificadoService.listarCertificados()) {
                 if (funcionario.getId().equals(certificado.getFuncionario().getId())) {
                     int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());

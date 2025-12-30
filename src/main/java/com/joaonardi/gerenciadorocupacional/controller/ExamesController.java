@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class ExamesController {
@@ -32,8 +31,9 @@ public class ExamesController {
 
     @FXML
     private void initialize() {
-        funcionarioService.carregarFuncionariosPorStatus(true);
-        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionarios(), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
+        funcionarioService.listarFuncionariosPorStatus(true);
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome,
+                f -> f.getSetor().getArea()));
 
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputDataValidade.setEditable(false);

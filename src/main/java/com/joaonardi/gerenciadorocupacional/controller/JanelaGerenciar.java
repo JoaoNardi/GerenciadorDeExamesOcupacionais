@@ -1,20 +1,17 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
-
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class JanelaGerenciar<T> extends Janela {
@@ -25,10 +22,17 @@ public class JanelaGerenciar<T> extends Janela {
     public Button btnDeletar;
     public Janela janela = new Janela();
 
-    public ObservableList<T> lista;
-    private Supplier<List<T>> loader;
-    private Consumer<T> delete;
+    private ObservableList<T> lista;
+    @FXML
+    private RadioButton radioBtnAtivos;
+    @FXML
+    private RadioButton radioBtnInativos;
+    private boolean inAtivos;
+    private final ToggleGroup ativosInativos = new ToggleGroup();
+    private Function<Boolean, List<T>> loader;
 
+    private Consumer<T> delete;
+    private boolean ativarRadioBtns;
 
     public String diretorioObjeto;
     @FXML
@@ -40,22 +44,29 @@ public class JanelaGerenciar<T> extends Janela {
             String diretorioObjeto,
             ObservableList<T> lista,
             List<Coluna<T>> colunas,
-            Supplier<List<T>> loader,
-            Consumer<T> delete
+            Function<Boolean, List<T>> loader,
+            Consumer<T> delete,
+            boolean ativarRadioBtns
     ) {
         this.diretorioObjeto = diretorioObjeto;
         this.delete = delete;
         this.lista = lista;
         this.loader = loader;
-        this.lista.setAll(loader.get());
         this.colunas = colunas;
+        this.ativarRadioBtns = ativarRadioBtns;
         tituloLabel.setText(titulo);
+
+        this.lista.setAll(loader.apply(true));
+        radioBtnAtivos.setDisable(!ativarRadioBtns);
+        radioBtnInativos.setDisable(!ativarRadioBtns);
+        radioBtnAtivos.setSelected(true);
         configurarTabela();
         configurarEventos();
     }
 
-    public void atualizar() {
-        lista.setAll(loader.get());
+
+    public void atualizar(boolean ativos) {
+        this.lista.setAll(loader.apply(ativos));
     }
 
     private void configurarTabela() {
@@ -74,6 +85,13 @@ public class JanelaGerenciar<T> extends Janela {
     }
 
     private void setBindings() {
+        ativosInativos.getToggles().setAll(radioBtnAtivos, radioBtnInativos);
+        ativosInativos.selectedToggleProperty().addListener((obs, old, novo) -> {
+            if (novo == null) {
+                old.setSelected(true);
+            }
+        });
+
         BooleanBinding inputsValidos =
                 tabela.getSelectionModel().selectedItemProperty().isNotNull();
         btnDeletar.disableProperty().bind(inputsValidos.not());
@@ -82,10 +100,27 @@ public class JanelaGerenciar<T> extends Janela {
 
     @FXML
     private void initialize() {
+        //disabilitar ativosinativos
+        radioBtnAtivos.setToggleGroup(ativosInativos);
+        radioBtnInativos.setToggleGroup(ativosInativos);
+
+        ativosInativos.selectedToggleProperty().addListener((obs, old, selected) -> {
+            if (selected == null) return;
+
+            inAtivos = selected == radioBtnAtivos;
+            atualizar(inAtivos);
+        });
+
         setBindings();
     }
 
     private void configurarEventos() {
+        ativosInativos.selectedToggleProperty().addListener((obs, old, novo) -> {
+            if (novo == null) {
+                // atualiza a lista com inativos se houver
+            }
+        });
+
         tabela.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && !tabela.getSelectionModel().isEmpty()) {
                 handleEditar();
@@ -101,7 +136,7 @@ public class JanelaGerenciar<T> extends Janela {
                 diretorioObjeto,
                 selecionado == null ? "Adicionar" : "Editar",
                 stage1,
-                this::atualizar
+                () -> atualizar(inAtivos)
         );
         if (selecionado != null) {
             Janela controller = janelaEditor.loader.getController();
@@ -126,6 +161,6 @@ public class JanelaGerenciar<T> extends Janela {
     public void handleDeletar() {
         T selecionado = tabela.getSelectionModel().getSelectedItem();
         delete.accept(selecionado);
-        atualizar();
+        atualizar(inAtivos);
     }
 }

@@ -119,9 +119,9 @@ public class MainController {
     }
 
     private void setTabelaPrincipal() {
-        funcionarioService.carregarFuncionariosPorStatus(true);
+
         try {
-            if (!funcionarioService.listarFuncionarios().isEmpty()) {
+            if (!funcionarioService.listarFuncionariosPorStatus(true).isEmpty()) {
                 colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
                 colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
@@ -230,7 +230,7 @@ public class MainController {
                         }
                     }
                 });
-                tabelaPrincipal.setItems(funcionarioService.listarFuncionarios());
+                tabelaPrincipal.setItems(funcionarioService.listarFuncionariosPorStatus(true));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -538,7 +538,37 @@ public class MainController {
 
     @FXML
     public void handleAbrirGerenciarFuncionario() {
-        janela.abrirJanela("/view/GerenciarFuncionariosView.fxml", "Gerenciar Funcionarios", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        ObservableList<Funcionario> funcionarios  = FXCollections.observableArrayList(funcionarioService.listarFuncionariosPorStatus(true));
+
+        Janela janela = new Janela();
+        janela.abrirJanela(
+                "/view/GerenciarBaseView.fxml",
+                "Gerenciar Funcionários",
+                MainApp.STAGE_PRINCIPAL,
+                this::setTodos
+        );
+
+        JanelaGerenciar<Funcionario> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                "Funcionários",
+                "/view/FuncionarioView.fxml",
+                funcionarios,
+                List.of(
+                        new Coluna<>("Nome", Funcionario::getNome),
+                        new Coluna<>("Cpf", Funcionario::getCpf),
+                        new Coluna<>("Data Nascimento", Funcionario::getDataNascimento),
+                        new Coluna<>("Setor", Funcionario::getSetor),
+                        new Coluna<>("Data Admissão", Funcionario::getDataAdmissao),
+                        new Coluna<>("Ativo", Funcionario::getAtivo)
+
+                ),
+                (funcionarioService::listarFuncionariosPorStatus),
+                (funcionarioService::ativarInativar),
+                true
+        );
+
     }
 
     @FXML
@@ -569,7 +599,8 @@ public class MainController {
                 new Coluna<>("area", Setor::getArea)
                 ),
                 (setorService::listarSetores),
-                (setorService::deletarSetor)
+                (setorService::deletarSetor),
+                false
         );
     }
 
