@@ -485,50 +485,38 @@ public class MainController {
         popOver.show(anchor);
     }
 
-    public void handleDeletarExame(Exame exame) {
-        exameService.deletarExame(exame.getId());
-        setTodos();
-    }
 
-    public void handleDeletarCertificado(Certificado certificado) {
-        certificadoService.deletarCertificado(certificado);
-        setTodos();
+    @FXML
+    public void handleAbrirSetor() {
+        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
-    public void handleEditarExame(Exame exame) {
-        if (exame != null) {
-            janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
-            examesController = janela.loader.getController();
-            examesController.setExame(exame);
-        }
-    }
+    public void handleAbrirGerenciarSetor() {
+        ObservableList<Setor> setores = FXCollections.observableArrayList(setorService.listarSetores());
 
-    @FXML
-    public void handleEditarCertificado(Certificado certificado) {
-        if (certificado != null) {
-            janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
-            certificadoController = janela.loader.getController();
-            certificadoController.setCertificado(certificado);
-        }
-    }
-
-    public void handleAbrirParticularidades() {
-        janela.abrirJanela("/view/ParticularidadeView.fxml", "Cadastro de Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
-    }
-
-    public void handleAbrirGerenciarParticularidades() {
-        janela.abrirJanela("/view/GerenciarParticularidadesView.fxml", "Gerenciar Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
-    }
-
-    public void handleAbrirVincularParticularidades() {
-        janela.abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
-    }
-
-    public void handleAbrirGerenciarVinculos() {
-        janela.abrirJanela("/view/GerenciarVinculosParticularidadesView.fxml", "Gerenciar Vinculos Funcionários-Particularidades",
+        Janela janela = new Janela();
+        janela.abrirJanela(
+                "/view/GerenciarBaseView.fxml",
+                "Gerenciar Setores",
                 MainApp.STAGE_PRINCIPAL,
-                this::setTodos);
+                this::setTodos
+        );
+
+        JanelaGerenciar<Setor> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                "Setores",
+                "/view/SetorView.fxml",
+                setores,
+                List.of(
+                        new Coluna<>("area", Setor::getArea)
+                ),
+                (setorService::listarSetores),
+                (setorService::deletarSetor),
+                false
+        );
     }
 
     @FXML
@@ -538,7 +526,7 @@ public class MainController {
 
     @FXML
     public void handleAbrirGerenciarFuncionario() {
-        ObservableList<Funcionario> funcionarios  = FXCollections.observableArrayList(funcionarioService.listarFuncionariosPorStatus(true));
+        ObservableList<Funcionario> funcionarios = FXCollections.observableArrayList(funcionarioService.listarFuncionariosPorStatus(true));
 
         Janela janela = new Janela();
         janela.abrirJanela(
@@ -568,40 +556,28 @@ public class MainController {
                 (funcionarioService::ativarInativar),
                 true
         );
-
     }
 
     @FXML
-    public void handleAbrirSetor() {
-        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    public void handleAbrirParticularidades() {
+        janela.abrirJanela("/view/ParticularidadeView.fxml", "Cadastro de Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
     @FXML
-    public void handleAbrirGerenciarSetor() {
-        ObservableList<Setor> setores = FXCollections.observableArrayList(setorService.listarSetores());
+    public void handleAbrirGerenciarParticularidades() {
+        janela.abrirJanela("/view/GerenciarParticularidadesView.fxml", "Gerenciar Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    }
 
-        Janela janela = new Janela();
-        janela.abrirJanela(
-                "/view/GerenciarBaseView.fxml",
-                "Gerenciar Setores",
+    @FXML
+    public void handleAbrirVincularParticularidades() {
+        janela.abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+    }
+
+    @FXML
+    public void handleAbrirGerenciarVinculos() {
+        janela.abrirJanela("/view/GerenciarVinculosParticularidadesView.fxml", "Gerenciar Vinculos Funcionários-Particularidades",
                 MainApp.STAGE_PRINCIPAL,
-                this::setTodos
-        );
-
-        JanelaGerenciar<Setor> controller =
-                janela.loader.getController();
-
-        controller.configurar(
-                "Setores",
-                "/view/SetorView.fxml",
-                setores,
-                List.of(
-                new Coluna<>("area", Setor::getArea)
-                ),
-                (setorService::listarSetores),
-                (setorService::deletarSetor),
-                false
-        );
+                this::setTodos);
     }
 
     @FXML
@@ -614,14 +590,47 @@ public class MainController {
         janela.abrirJanela("/view/GerenciarExamesView.fxml", "Gerenciar Exames", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
+    @FXML
+    public void handleDeletarExame(Exame exame) {
+        exameService.deletarExame(exame.getId());
+        setTodos();
+    }
+
+    @FXML
+    public void handleEditarExame(Exame exame) {
+        if (exame != null) {
+            janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
+            examesController = janela.loader.getController();
+            examesController.setExame(exame);
+        }
+    }
+
+    @FXML
+    public void handleEditarCertificado(Certificado certificado) {
+        if (certificado != null) {
+            janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
+            certificadoController = janela.loader.getController();
+            certificadoController.setCertificado(certificado);
+        }
+    }
+
+    @FXML
+    public void handleDeletarCertificado(Certificado certificado) {
+        certificadoService.deletarCertificado(certificado);
+        setTodos();
+    }
+
+    @FXML
     public void handleTipoCertificado() {
         janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
+    @FXML
     public void handleGerenciarTiposCertificado() {
         janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Tipos Certificados", MainApp.STAGE_PRINCIPAL, this::setTodos);
     }
 
+    @FXML
     public void handleLancarCertificado() {
         try {
             tipoCertificadoService.carregarTiposCertificado();
