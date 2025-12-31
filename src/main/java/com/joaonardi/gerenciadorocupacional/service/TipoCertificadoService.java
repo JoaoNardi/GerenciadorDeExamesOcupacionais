@@ -28,6 +28,12 @@ public class TipoCertificadoService {
     public ObservableList<TipoCertificado> listarTiposCertificados(){
         return dao.listarTiposCertificado();
     }
+    public ObservableList<TipoCertificado> listarTiposCertificados(boolean ativos){
+        return dao.listarTiposCertificado();
+    }
+    public void deletarTipoCertificado(TipoCertificado tipoCertificado){
+        dao.deletarTipoCertificado(tipoCertificado.getId());
+    }
 
     public TipoCertificado getTipoCertificadoMapeadoPorId(Integer id) {
         return tipoCertificadoMap.get(id);

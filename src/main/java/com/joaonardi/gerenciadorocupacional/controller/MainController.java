@@ -692,7 +692,29 @@ public class MainController {
 
     @FXML
     public void handleGerenciarTiposCertificado() {
-        janela.abrirJanela("/view/GerenciarCertificadosView.fxml", "Gerenciar Tipos Certificados", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        ObservableList<TipoCertificado> tipoCertificados =
+                FXCollections.observableArrayList(tipoCertificadoService.listarTiposCertificados());
+
+        String titulo = "Tipos Certificado";
+        Janela janela = new Janela();
+        janela.abrirJanelaGerenciar(titulo,
+                this::setTodos
+        );
+
+        JanelaGerenciar<TipoCertificado> controller =
+                janela.loader.getController();
+
+        controller.configurar(
+                titulo,
+                "/view/TipoCertificadoView.fxml",
+                tipoCertificados,
+                List.of(
+                        new Coluna<>("Tipo Certificado", TipoDe::getNome)
+                ),
+                (tipoCertificadoService::listarTiposCertificados),
+                (tipoCertificadoService::deletarTipoCertificado),
+                false
+        );
     }
 
     @FXML

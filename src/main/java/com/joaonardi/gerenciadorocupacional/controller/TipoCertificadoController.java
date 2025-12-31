@@ -4,13 +4,14 @@ import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
-public class TipoCertificadoController {
+public class TipoCertificadoController extends Janela {
     public TextField inputNome;
     public ChoiceBox<Periodicidade> inputPeriodicidade;
     public Button btnCancelar;
@@ -23,9 +24,12 @@ public class TipoCertificadoController {
     public void initialize() {
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
         setBindings();
+        Platform.runLater(() -> {
+            setTipoCertificado((TipoCertificado) this.objetoPrincipal);
+        });
     }
 
-    private void setBindings(){
+    private void setBindings() {
         BooleanBinding inputsValidos =
                 inputNome.textProperty().isNotNull()
                         .and(inputPeriodicidade.valueProperty().isNotNull());
@@ -35,11 +39,9 @@ public class TipoCertificadoController {
     public void setTipoCertificado(TipoCertificado tipoCertificadoSelecionado) {
         this.tipoCertificado = tipoCertificadoSelecionado;
         if (tipoCertificado != null) {
-
             inputNome.setText(tipoCertificado.getNome());
             inputPeriodicidade.setValue(Periodicidade.fromValor(tipoCertificadoSelecionado.getPeriodicidade()));
         }
-
     }
 
     @FXML
@@ -64,6 +66,4 @@ public class TipoCertificadoController {
     public void handleCancelarCertificado() {
         janela.fecharJanela(btnCancelar);
     }
-
-
 }
