@@ -1,7 +1,9 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.dao.RelatorioDAO;
-import com.joaonardi.gerenciadorocupacional.model.*;
+import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
+import com.joaonardi.gerenciadorocupacional.model.TipoDe;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -24,7 +26,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.Notifications;
 
-
 import java.awt.*;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -36,7 +37,7 @@ import java.time.format.DateTimeFormatter;
 public class RelatorioService {
     final DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final RelatorioDAO relatorioDAO = new RelatorioDAO();
-    private ObservableList<RelatorioItem> relatorioItemsLista = FXCollections.observableArrayList();
+    private final ObservableList<RelatorioItem> relatorioItemsLista = FXCollections.observableArrayList();
     private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
     public void carregarRelatorio(Funcionario funcionario, String inputData, LocalDate dataInicial, LocalDate dataFinal, TipoDe tipoDe, boolean exame,
@@ -128,7 +129,6 @@ public class RelatorioService {
             }
             owner.dispose();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Erro ao gerar arquivo de impressão", e);
         }
     }
@@ -232,7 +232,6 @@ public class RelatorioService {
                         }
                     }).showInformation();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Erro ao gerar PDF", e);
         }
     }

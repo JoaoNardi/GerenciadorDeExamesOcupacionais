@@ -2,16 +2,13 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
-import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -57,8 +54,8 @@ public class ParticularidadeController extends Janela<Particularidade> implement
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-    public void handleSalvarParticularidade(ActionEvent event) {
-        String acao = "";
+    public void handleSalvarParticularidade() {
+        String acao;
         if (this.particularidade == null) {
             acao = "salvo";
         } else {
@@ -78,7 +75,7 @@ public class ParticularidadeController extends Janela<Particularidade> implement
                 });
     }
 
-    public void handleCancelarParticularidade(ActionEvent event) {
+    public void handleCancelarParticularidade() {
         fecharJanela(btnCancelar);
     }
 }

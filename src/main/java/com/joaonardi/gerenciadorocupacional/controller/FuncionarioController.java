@@ -1,7 +1,6 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
-import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
@@ -9,11 +8,9 @@ import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -72,7 +69,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     }
 
     @FXML
-    public void handleSalvarFuncionario(ActionEvent event) {
+    public void handleSalvarFuncionario() {
         if (this.funcionario == null || this.funcionario.getId() == null) {
             this.funcionario = Funcionario
                     .FuncionarioBuilder.builder()
@@ -104,14 +101,14 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
         janela.fecharJanela(btnSalvar);
     }
 
-    public void handleCancelarFuncionario(ActionEvent event) {
+    public void handleCancelarFuncionario() {
         janela.fecharJanela(btnCancelar);
 
     }
 
-    public void handleAdicionarVincularidade(ActionEvent event) {
+    public void handleAdicionarVincularidade() {
     }
 
-    public void handleRemoverParticularidade(ActionEvent event) {
+    public void handleRemoverParticularidade() {
     }
 }
