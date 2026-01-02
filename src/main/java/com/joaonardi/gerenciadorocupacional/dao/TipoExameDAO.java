@@ -69,8 +69,6 @@ public class TipoExameDAO extends BaseDAO {
     }
 
     public void alterarTipoExame(int id, TipoExame tipoExame) {
-        System.out.println(id);
-        System.out.println(tipoExame);
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(ALTERAR);

@@ -1,20 +1,25 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
+import com.joaonardi.gerenciadorocupacional.MainApp;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
+import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularidade;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
+import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.swing.*;
 import java.util.List;
@@ -32,7 +37,12 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     final FuncionarioService funcionarioService = new FuncionarioService();
     final SetorService setorService = new SetorService();
     private final ObservableList<Setor> setores = FXCollections.observableArrayList();
-
+    public TableView<VinculoFuncionarioParticularidade> tabelaParticularidade;
+    public TableColumn<VinculoFuncionarioParticularidade, String> colunaParticularidades;
+    public TableColumn<VinculoFuncionarioParticularidade, String> colunaTipoExame;
+    public TableColumn<VinculoFuncionarioParticularidade, String> colunaMotivo;
+    public Button btnRemover;
+    private ParticularidadeService particularidadeService = new ParticularidadeService();
 
     private Funcionario funcionario;
 
@@ -43,10 +53,22 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
         setores.setAll(setorService.listarSetores());
         inputSetor.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
         setBindings();
-
     }
 
-    private void setBindings(){
+    private void setTabelaParticularidade() {
+        if (funcionario == null) {
+            return;
+        }
+        colunaParticularidades.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getParticularidade().getNome()));
+        colunaTipoExame.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getParticularidade().getTipoExame().getNome()));
+        colunaMotivo.setCellValueFactory(new PropertyValueFactory<>("motivo"));
+        tabelaParticularidade.setItems(particularidadeService.listarParticularidadesVinculadas(funcionario));
+    }
+
+    private void setBindings() {
+        BooleanBinding removerBinding = tabelaParticularidade.getSelectionModel().selectedItemProperty().isNull();
+        btnRemover.disableProperty().bind(removerBinding);
+
         BooleanBinding inputsValidos =
                 inputNome.textProperty().isNotNull()
                         .and(inputCpf.textProperty().isNotNull())
@@ -60,6 +82,8 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     public void set(Funcionario objeto) {
         super.set(objeto);
         if (objeto != null) {
+            this.funcionario = objeto;
+            setTabelaParticularidade();
             inputNome.setText(objeto.getNome());
             inputCpf.setText(objeto.getCpf());
             inputDataNascimento.setValue(objeto.getDataNascimento());
@@ -93,9 +117,9 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
         }
         try {
             funcionarioService.cadastrarFuncionario(this.funcionario);
-            JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso");
+            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             return;
         }
         janela.fecharJanela(btnSalvar);
@@ -107,8 +131,16 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     }
 
     public void handleAdicionarVincularidade() {
+        VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade =
+                VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
+                        .funcionario(funcionario)
+                        .build();
+        new Janela<>().abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", janela.stage,
+                this::initialize, vinculoFuncionarioParticularidade);
     }
 
     public void handleRemoverParticularidade() {
+        particularidadeService.desvincularParticularidadeFuncionario(tabelaParticularidade.getSelectionModel().getSelectedItem());
+        setTabelaParticularidade();
     }
 }

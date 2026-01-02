@@ -34,15 +34,16 @@ public class ParticularidadeDAO extends BaseDAO {
     private static final String ALTERAR_MOTIVO_VINCULO = "UPDATE particularidades SET motivo = ? WHERE particularidade_id = ? AND" +
             "WHERE funcionario_id = ?";
     private static final String LISTAR_FUNCIONARIOS_VINCULADOS_PARTICULARIDADE = "SELECT f.*, s.id as s_id, s.area as s_area " +
-            "FROM vinculos_particularidades vp" +
-            "JOIN setores s on s.id = f.setor_id" +
-            "JOIN funcionarios f ON f.id = vp.funcionario_id" +
-            "WHERE vp.particularidade_id = ?;";
-    private static final String LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO = "SELECT p.* , t.id AS t_id, t.nome AS t_nome" +
-            "FROM vinculos_particularidades vp" +
-            "JOIN particularidade p ON p.id = vp.particularidade_id" +
-            "JOIN tipos_exame t on t.id p.tipo_exame_id" +
-            "WHERE vp.funcionario_id = ?;";
+            "FROM vinculos_particularidades vp " +
+            "JOIN setores s on s.id = f.setor_id " +
+            "JOIN funcionarios f ON f.id = vp.funcionario_id " +
+            "WHERE vp.particularidade_id = ?";
+    private static final String LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO = "SELECT p.* , t.id AS t_id, t.nome AS t_nome, " +
+            "vp.id as vp_id, vp.motivo as vp_motivo  " +
+            "FROM vinculos_particularidades vp " +
+            "JOIN particularidades p ON p.id = vp.particularidade_id " +
+            "JOIN tipos_exame t on t.id = p.tipo_exame_id " +
+            "WHERE vp.funcionario_id = ?";
 
 
     private static final String LISTAR_TODOS_VINCULOS = "SELECT vp.id as vp_id, vp.motivo as vp_motivo, " +
@@ -298,10 +299,10 @@ public class ParticularidadeDAO extends BaseDAO {
         return funcionariosList;
     }
 
-    public ObservableList<Particularidade> listarParticularidadePorFuncionario(Funcionario funcionario) {
+    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadePorFuncionario(Funcionario funcionario) {
         Connection connection = DBConexao.getInstance().abrirConexao();
 
-        ObservableList<Particularidade> particularidadeList = FXCollections.observableArrayList();
+        ObservableList<VinculoFuncionarioParticularidade> particularidadeList = FXCollections.observableArrayList();
         try {
             preparedStatement = connection.prepareStatement(LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO);
             preparedStatement.setInt(1, funcionario.getId());
@@ -320,7 +321,16 @@ public class ParticularidadeDAO extends BaseDAO {
                         .tipoExame(tipoExameObj)
                         .periodicidade(resultSet.getInt("periodicidade"))
                         .build();
-                particularidadeList.add(particularidade);
+
+                VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade =
+                        VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
+                                .id(resultSet.getInt("vp_id"))
+                                .funcionario(funcionario)
+                                .particularidade(particularidade)
+                                .motivo(resultSet.getString("vp_motivo"))
+                                .build();
+
+                particularidadeList.add(vinculoFuncionarioParticularidade);
             }
         } catch (SQLException e) {
             rollback(connection);

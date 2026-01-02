@@ -32,6 +32,11 @@ public class ParticularidadeService {
     public ObservableList<VinculoFuncionarioParticularidade> listarTodosVinculos(boolean ativos) {
         return particularidadeDAO.listarVinculos();
     }
+
+    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadesVinculadas(Funcionario funcionario){
+        return particularidadeDAO.listarParticularidadePorFuncionario(funcionario);
+    }
+
     public void deletarParticularidade(Particularidade particularidade){
         particularidadeDAO.deletarParticularidade(particularidade);
     }
