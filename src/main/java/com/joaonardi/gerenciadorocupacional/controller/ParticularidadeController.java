@@ -2,10 +2,12 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
+import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
@@ -18,7 +20,7 @@ import javafx.scene.control.TextField;
 
 import java.util.List;
 
-public class ParticularidadeController extends Janela {
+public class ParticularidadeController extends Janela<Particularidade> implements Editavel<Particularidade> {
     public TextField inputNome;
     public TextArea inputDescricao;
     public ComboBoxCustom<TipoExame> inputTipoExame;
@@ -34,18 +36,16 @@ public class ParticularidadeController extends Janela {
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputPeriodicidade.getItems().setAll(Periodicidade.values());
         setBindings();
-        Platform.runLater(() -> {
-            setParticularidade((Particularidade) this.objetoPrincipal);
-        });
     }
 
-    public void setParticularidade(Particularidade particularidade) {
-        if (particularidade != null) {
-            this.particularidade = particularidade;
-            inputNome.setText(particularidade.getNome());
-            inputDescricao.setText(particularidade.getDescricao());
-            inputTipoExame.setValue(particularidade.getTipoExame());
-            inputPeriodicidade.setValue(Periodicidade.fromValor(particularidade.getPeriodicidade()));
+    @Override
+    public void set(Particularidade objeto) {
+        super.set(objeto);
+        if (objeto != null) {
+            inputNome.setText(objeto.getNome());
+            inputDescricao.setText(objeto.getDescricao());
+            inputTipoExame.setValue(objeto.getTipoExame());
+            inputPeriodicidade.setValue(Periodicidade.fromValor(objeto.getPeriodicidade()));
         }
     }
 

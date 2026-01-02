@@ -2,35 +2,39 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 
-public class SetorController extends Janela {
+public class SetorController extends Janela<Setor> implements Editavel<Setor> {
 
     public TextField inputArea;
     public Button btnCancelar;
     public Button btnSalvar;
 
     final SetorService service = new SetorService();
-    final Janela janela = new Janela();
+    final Janela<Setor> janela = new Janela<>();
     private Setor setor;
 
     @FXML
     private void initialize() {
         btnSalvar.disableProperty().bind(inputArea.textProperty().isNotNull().not());
         Platform.runLater(() -> {
-            this.setor = (Setor) objetoPrincipal;
-            if (setor != null) {
-                inputArea.setText(setor.getArea());
-            }
+
         });
+    }
+
+    @Override
+    public void set(Setor objeto) {
+        super.set(objeto);
+        this.setor = objeto;
+        if (setor != null) {
+            inputArea.setText(setor.getArea());
+        }
     }
 
     @FXML

@@ -3,30 +3,27 @@ package com.joaonardi.gerenciadorocupacional.controller;
 import com.joaonardi.gerenciadorocupacional.model.Periodicidade;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
-public class TipoCertificadoController extends Janela {
+public class TipoCertificadoController extends Janela<TipoCertificado> implements Editavel<TipoCertificado> {
     public TextField inputNome;
     public ChoiceBox<Periodicidade> inputPeriodicidade;
     public Button btnCancelar;
     public Button btnSalvar;
 
-    final Janela janela = new Janela();
+    final Janela<TipoCertificado> janela = new Janela<>();
     private TipoCertificado tipoCertificado;
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
     public void initialize() {
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
         setBindings();
-        Platform.runLater(() -> {
-            setTipoCertificado((TipoCertificado) this.objetoPrincipal);
-        });
     }
 
     private void setBindings() {
@@ -36,11 +33,14 @@ public class TipoCertificadoController extends Janela {
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-    public void setTipoCertificado(TipoCertificado tipoCertificadoSelecionado) {
-        this.tipoCertificado = tipoCertificadoSelecionado;
-        if (tipoCertificado != null) {
-            inputNome.setText(tipoCertificado.getNome());
-            inputPeriodicidade.setValue(Periodicidade.fromValor(tipoCertificadoSelecionado.getPeriodicidade()));
+    @Override
+    public void set(TipoCertificado objeto) {
+        super.set(objeto);
+        if (objeto != null) {
+            inputNome.setText(objeto.getNome());
+            inputPeriodicidade.setValue(
+                    Periodicidade.fromValor(objeto.getPeriodicidade())
+            );
         }
     }
 

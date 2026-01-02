@@ -6,15 +6,15 @@ import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularid
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 
 import java.util.List;
 
-public class VinculoParticularidadeController extends Janela {
+public class VinculoParticularidadeController extends Janela<VinculoFuncionarioParticularidade> implements Editavel<VinculoFuncionarioParticularidade> {
 
     private final ParticularidadeService particularidadeService = new ParticularidadeService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
@@ -30,9 +30,6 @@ public class VinculoParticularidadeController extends Janela {
         funcionarioService.listarFuncionariosPorStatus(true);
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome, f -> f.getSetor().getArea()));
         setBindings();
-        Platform.runLater(() -> {
-            setVinculo((VinculoFuncionarioParticularidade) this.objetoPrincipal);
-        });
     }
 
     private void setBindings() {
@@ -55,11 +52,13 @@ public class VinculoParticularidadeController extends Janela {
         fecharJanela(btnCancelar);
     }
 
-    public void setVinculo(VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade) {
-        if (vinculoFuncionarioParticularidade != null) {
-            inputFuncionario.setValue(vinculoFuncionarioParticularidade.getFuncionario());
-            inputParticularidade.setValue(vinculoFuncionarioParticularidade.getParticularidade());
-            inputMotivo.setText(vinculoFuncionarioParticularidade.getMotivo());
+    @Override
+    public void set(VinculoFuncionarioParticularidade objeto) {
+        super.set(objeto);
+        if (objeto != null) {
+            inputFuncionario.setValue(objeto.getFuncionario());
+            inputParticularidade.setValue(objeto.getParticularidade());
+            inputMotivo.setText(objeto.getMotivo());
         }
     }
 }

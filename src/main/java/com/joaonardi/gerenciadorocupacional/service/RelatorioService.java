@@ -37,12 +37,11 @@ public class RelatorioService {
     final DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final RelatorioDAO relatorioDAO = new RelatorioDAO();
     private ObservableList<RelatorioItem> relatorioItemsLista = FXCollections.observableArrayList();
-    private final TipoExameService tipoExameService = new TipoExameService();
     private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
 
     public void carregarRelatorio(Funcionario funcionario, String inputData, LocalDate dataInicial, LocalDate dataFinal, TipoDe tipoDe, boolean exame,
                                   boolean certificado) {
-        relatorioItemsLista = relatorioDAO.montarRelatorio(funcionario, inputData, dataInicial, dataFinal, tipoDe, exame, certificado);
+        relatorioItemsLista.setAll(relatorioDAO.montarRelatorio(funcionario, inputData, dataInicial, dataFinal, tipoDe, exame, certificado));
     }
 
     public ObservableList<RelatorioItem> listarRelatorio() {

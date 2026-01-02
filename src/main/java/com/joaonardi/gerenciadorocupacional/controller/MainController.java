@@ -69,8 +69,7 @@ public class MainController {
     public TableColumn<Tipo, Node> colunaAcoesVencimentos;
 
 
-    final Janela janela = new Janela();
-    final JanelaGerenciar janelaGerenciar = new JanelaGerenciar();
+    final Janela<?> janela = new Janela<>();
 
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     final FuncionarioService funcionarioService = new FuncionarioService();
@@ -192,7 +191,7 @@ public class MainController {
                                         Exame exame = mainService.getExameVencido(getTableRow().getItem());
                                         if (exame != null) {
                                             handleLancarPendecia(exame, btnLancarPendencia);
-                                        } else if (exame == null) {
+                                        } else {
                                             exame = Exame.ExameBuilder.builder()
                                                     .id(null)
                                                     .tipoExame(tipoExame)
@@ -210,7 +209,7 @@ public class MainController {
                                         Certificado certificado = mainService.getCetificadoVencido(getTableRow().getItem());
                                         if (certificado != null) {
                                             handleLancarPendecia(certificado, btnLancarPendencia);
-                                        } else if (certificado == null) {
+                                        } else {
                                             certificado = Certificado.CertificadoBuilder.builder()
                                                     .id(null)
                                                     .tipoCertificado(tipoCertificado)
@@ -297,7 +296,6 @@ public class MainController {
 
                 private final HBox hBox = new HBox(15, btnLancarNovoTipo, btnOpcoes);
 
-
                 @Override
                 protected void updateItem(Node node, boolean b) {
                     hBox.setAlignment(Pos.CENTER);
@@ -311,32 +309,24 @@ public class MainController {
                     String tipo = String.valueOf(valorColuna.getValue());
 
                     if (tipo.equals("Exame")) {
-                        if (b) {
-                            setGraphic(null);
-                        } else {
-                            btnOpcoes.setGraphic(iconeOpcoes);
-                            btnOpcoes.setOnAction(e -> handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo));
-                            btnLancarNovoTipo.setGraphic(iconeLancar);
-                            btnLancarNovoTipo.setOnAction(e -> {
-                                Exame exame = (Exame) getTableView().getItems().get(getIndex());
-                                handleLancarPendecia(exame, btnLancarNovoTipo);
-                            });
-                            setGraphic(hBox);
-                        }
+                        btnOpcoes.setGraphic(iconeOpcoes);
+                        btnOpcoes.setOnAction(e -> handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo));
+                        btnLancarNovoTipo.setGraphic(iconeLancar);
+                        btnLancarNovoTipo.setOnAction(e -> {
+                            Exame exame = (Exame) getTableView().getItems().get(getIndex());
+                            handleLancarPendecia(exame, btnLancarNovoTipo);
+                        });
+                        setGraphic(hBox);
                     }
                     if (tipo.equals("Certificado")) {
-                        if (b) {
-                            setGraphic(null);
-                        } else {
-                            btnOpcoes.setGraphic(iconeOpcoes);
-                            btnOpcoes.setOnAction(e -> handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo));
-                            btnLancarNovoTipo.setGraphic(iconeLancar);
-                            btnLancarNovoTipo.setOnAction(e -> {
-                                Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
-                                handleLancarPendecia(certificado, btnLancarNovoTipo);
-                            });
-                            setGraphic(hBox);
-                        }
+                        btnOpcoes.setGraphic(iconeOpcoes);
+                        btnOpcoes.setOnAction(e -> handleOpcoes(getTableView().getItems().get(getIndex()), btnOpcoes, tipo));
+                        btnLancarNovoTipo.setGraphic(iconeLancar);
+                        btnLancarNovoTipo.setOnAction(e -> {
+                            Certificado certificado = (Certificado) getTableView().getItems().get(getIndex());
+                            handleLancarPendecia(certificado, btnLancarNovoTipo);
+                        });
+                        setGraphic(hBox);
                     }
                 }
             });
@@ -354,9 +344,7 @@ public class MainController {
     @FXML
     public void editarFuncionario(Funcionario funcionario) {
         if (funcionario != null) {
-            janela.abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", MainApp.STAGE_PRINCIPAL, null);
-            funcionarioController = janela.loader.getController();
-            funcionarioController.setFuncionario(funcionario);
+            new Janela<>().abrirJanela("/view/FuncionarioView.fxml", "Editar funcionario", MainApp.STAGE_PRINCIPAL, this::setTodos, funcionario);
         }
     }
 
@@ -487,21 +475,20 @@ public class MainController {
 
     @FXML
     public void handleAbrirSetor() {
-        janela.abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        new Janela<>().abrirJanela("/view/SetorView.fxml", "Cadastro de Setores", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
     }
 
     @FXML
     public void handleAbrirGerenciarSetor() {
         ObservableList<Setor> setores = FXCollections.observableArrayList(setorService.listarSetores());
 
-        Janela janela = new Janela();
         String titulo = "Setores";
-        janela.abrirJanelaGerenciar(titulo,
-                this::setTodos
-        );
-
         JanelaGerenciar<Setor> controller =
-                janela.loader.getController();
+                new Janela<Setor>().abrirJanelaGerenciar(
+                        titulo,
+                        MainApp.STAGE_PRINCIPAL,
+                        this::setTodos
+                );
 
         controller.configurar(
                 titulo,
@@ -518,22 +505,20 @@ public class MainController {
 
     @FXML
     private void handleAbrirFuncionario(ActionEvent event) {
-        janela.abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        new Janela<>().abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
     }
 
     @FXML
     public void handleAbrirGerenciarFuncionario() {
         ObservableList<Funcionario> funcionarios = FXCollections.observableArrayList(funcionarioService.listarFuncionariosPorStatus(true));
 
-        Janela janela = new Janela();
-
         String titulo = "Funcionários";
-        janela.abrirJanelaGerenciar(titulo,
-                this::setTodos
-        );
-
         JanelaGerenciar<Funcionario> controller =
-                janela.loader.getController();
+                new Janela<Funcionario>().abrirJanelaGerenciar(
+                        titulo,
+                        MainApp.STAGE_PRINCIPAL,
+                        this::setTodos
+                );
 
         controller.configurar(
                 titulo,
@@ -556,7 +541,7 @@ public class MainController {
 
     @FXML
     public void handleAbrirParticularidades() {
-        janela.abrirJanela("/view/ParticularidadeView.fxml", "Cadastro de Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        new Janela<>().abrirJanela("/view/ParticularidadeView.fxml", "Cadastro de Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
     }
 
     @FXML
@@ -564,14 +549,13 @@ public class MainController {
         final ParticularidadeService particularidadeService = new ParticularidadeService();
         ObservableList<Particularidade> particularidades = FXCollections.observableArrayList(particularidadeService.listarTodasParticularidades());
         String titulo = "Particularidades";
-        Janela janela = new Janela();
-        janela.abrirJanelaGerenciar(titulo,
-                this::setTodos
-        );
 
         JanelaGerenciar<Particularidade> controller =
-                janela.loader.getController();
-
+                new Janela<Particularidade>().abrirJanelaGerenciar(
+                        titulo,
+                        MainApp.STAGE_PRINCIPAL,
+                        this::setTodos
+                );
         controller.configurar(
                 titulo,
                 "/view/ParticularidadeView.fxml",
@@ -589,7 +573,8 @@ public class MainController {
 
     @FXML
     public void handleAbrirVincularParticularidades() {
-        janela.abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        new Janela<>().abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", MainApp.STAGE_PRINCIPAL,
+                this::setTodos, null);
     }
 
     @FXML
@@ -598,13 +583,13 @@ public class MainController {
         ObservableList<VinculoFuncionarioParticularidade> vinculoFuncionarioParticularidade =
                 FXCollections.observableArrayList(particularidadeService.listarTodosVinculos());
         String titulo = "Vinculos Funcionarios Particularidades";
-        Janela janela = new Janela();
-        janela.abrirJanelaGerenciar(titulo,
-                this::setTodos
-        );
 
         JanelaGerenciar<VinculoFuncionarioParticularidade> controller =
-                janela.loader.getController();
+                new Janela<VinculoFuncionarioParticularidade>().abrirJanelaGerenciar(
+                        titulo,
+                        MainApp.STAGE_PRINCIPAL,
+                        this::setTodos
+                );
 
         controller.configurar(
                 titulo,
@@ -625,32 +610,35 @@ public class MainController {
 
     @FXML
     public void handleAbrirExame() {
-        janela.abrirJanela("/view/TipoExameView.fxml", "Cadastro Tipo Exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        new Janela<>().abrirJanela("/view/TipoExameView.fxml", "Cadastro Tipo Exame", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
     }
 
     @FXML
     public void handleAbrirGerenciarExame() {
+
         ObservableList<TipoExame> tipoExames =
-                FXCollections.observableArrayList(tipoExameService.listarTiposExame());
+                FXCollections.observableArrayList(
+                        tipoExameService.listarTiposExame()
+                );
 
         String titulo = "Tipos Exame";
-        Janela janela = new Janela();
-        janela.abrirJanelaGerenciar(titulo,
-                this::setTodos
-        );
 
         JanelaGerenciar<TipoExame> controller =
-                janela.loader.getController();
+                new Janela<TipoExame>().abrirJanelaGerenciar(
+                        titulo,
+                        MainApp.STAGE_PRINCIPAL,
+                        this::setTodos
+                );
 
         controller.configurar(
                 titulo,
                 "/view/TipoExameView.fxml",
                 tipoExames,
                 List.of(
-                        new Coluna<>("Tipo Exame", TipoDe::getNome)
+                        new Coluna<>("Tipo Exame", TipoExame::getNome)
                 ),
-                (tipoExameService::listarTiposExame),
-                (tipoExameService::deletarTipoExame),
+                tipoExameService::listarTiposExame,
+                tipoExameService::deletarTipoExame,
                 false
         );
     }
@@ -664,18 +652,14 @@ public class MainController {
     @FXML
     public void handleEditarExame(Exame exame) {
         if (exame != null) {
-            janela.abrirJanela("/view/ExamesView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
-            examesController = janela.loader.getController();
-            examesController.setExame(exame);
+            new Janela<>().abrirJanela("/view/ExamesView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos, exame);
         }
     }
 
     @FXML
     public void handleEditarCertificado(Certificado certificado) {
         if (certificado != null) {
-            janela.abrirJanela("/view/CertificadosView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos);
-            certificadoController = janela.loader.getController();
-            certificadoController.setCertificado(certificado);
+            new Janela<>().abrirJanela("/view/CertificadosView.fxml", "Editar exame", MainApp.STAGE_PRINCIPAL, this::setTodos, certificado);
         }
     }
 
@@ -687,7 +671,7 @@ public class MainController {
 
     @FXML
     public void handleTipoCertificado() {
-        janela.abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", MainApp.STAGE_PRINCIPAL, this::setTodos);
+        new Janela<>().abrirJanela("/view/TipoCertificadoView.fxml", "Cadastro Tipo Certificado", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
     }
 
     @FXML
@@ -696,13 +680,12 @@ public class MainController {
                 FXCollections.observableArrayList(tipoCertificadoService.listarTiposCertificados());
 
         String titulo = "Tipos Certificado";
-        Janela janela = new Janela();
-        janela.abrirJanelaGerenciar(titulo,
-                this::setTodos
-        );
-
         JanelaGerenciar<TipoCertificado> controller =
-                janela.loader.getController();
+                new Janela<TipoCertificado>().abrirJanelaGerenciar(
+                        titulo,
+                        MainApp.STAGE_PRINCIPAL,
+                        this::setTodos
+                );
 
         controller.configurar(
                 titulo,
@@ -730,7 +713,7 @@ public class MainController {
                         .showError();
                 return;
             }
-            janela.abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", MainApp.STAGE_PRINCIPAL, this::setTodos);
+            new Janela<>().abrirJanela("/view/CertificadosView.fxml", "Lançar Certificados", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -747,15 +730,15 @@ public class MainController {
                         .showError();
                 return;
             }
-            janela.abrirJanela("/view/ExamesView.fxml", "Lançar Exames", MainApp.STAGE_PRINCIPAL, this::setTodos);
+            new Janela<>().abrirJanela("/view/ExamesView.fxml", "Lançar Exames", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public void handleAbrirRelatorioFuncionario() {
-        janela.abrirJanela("/view/RelatoriosPorFuncionariosView.fxml", "Relatórios por Funcionários", MainApp.STAGE_PRINCIPAL, this::setTodos);
-
+        new Janela<>().abrirJanela("/view/RelatoriosPorFuncionariosView.fxml", "Relatórios por Funcionários", MainApp.STAGE_PRINCIPAL,
+                this::setTodos, null);
     }
 
     public void handleBtnVencidos() {

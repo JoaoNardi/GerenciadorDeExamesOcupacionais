@@ -1,11 +1,13 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
+import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
@@ -21,7 +23,7 @@ import javax.swing.*;
 import java.util.List;
 
 
-public class FuncionarioController extends Janela {
+public class FuncionarioController extends Janela<Funcionario> implements Editavel<Funcionario> {
     public TextField inputNome;
     public TextField inputCpf;
     public DatePickerCustom inputDataNascimento;
@@ -45,9 +47,6 @@ public class FuncionarioController extends Janela {
         inputSetor.setItemsAndDisplay(setorService.listarSetores(), List.of(Setor::getArea));
         setBindings();
 
-        Platform.runLater(() -> {
-            setFuncionario((Funcionario) this.objetoPrincipal);
-    });
     }
 
     private void setBindings(){
@@ -60,14 +59,15 @@ public class FuncionarioController extends Janela {
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-    public void setFuncionario(Funcionario funcionario) {
-        this.funcionario = funcionario;
-        if (funcionario != null) {
-            inputNome.setText(funcionario.getNome());
-            inputCpf.setText(funcionario.getCpf());
-            inputDataNascimento.setValue(funcionario.getDataNascimento());
-            inputDataAdmissao.setValue(funcionario.getDataAdmissao());
-            inputSetor.setValue(funcionario.getSetor());
+    @Override
+    public void set(Funcionario objeto) {
+        super.set(objeto);
+        if (objeto != null) {
+            inputNome.setText(objeto.getNome());
+            inputCpf.setText(objeto.getCpf());
+            inputDataNascimento.setValue(objeto.getDataNascimento());
+            inputDataAdmissao.setValue(objeto.getDataAdmissao());
+            inputSetor.setValue(objeto.getSetor());
         }
     }
 

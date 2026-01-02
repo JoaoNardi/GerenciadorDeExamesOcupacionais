@@ -1,6 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -12,15 +13,14 @@ import javafx.stage.Stage;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
-public class JanelaGerenciar<T> extends Janela {
+public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
 
     public TableView<T> tabela;
     public Button btnAdiconar;
     public Button btnEditar;
     public Button btnDeletar;
-    public Janela janela = new Janela();
+    public Janela<T> janela = new Janela<>();
 
     private ObservableList<T> lista;
     @FXML
@@ -32,7 +32,6 @@ public class JanelaGerenciar<T> extends Janela {
     private Function<Boolean, List<T>> loader;
 
     private Consumer<T> delete;
-    private boolean ativarRadioBtns;
 
     public String diretorioObjeto;
     @FXML
@@ -53,7 +52,6 @@ public class JanelaGerenciar<T> extends Janela {
         this.lista = lista;
         this.loader = loader;
         this.colunas = colunas;
-        this.ativarRadioBtns = ativarRadioBtns;
         tituloLabel.setText(titulo);
 
         this.lista.setAll(loader.apply(true));
@@ -115,12 +113,6 @@ public class JanelaGerenciar<T> extends Janela {
     }
 
     private void configurarEventos() {
-        ativosInativos.selectedToggleProperty().addListener((obs, old, novo) -> {
-            if (novo == null) {
-                // atualiza a lista com inativos se houver
-            }
-        });
-
         tabela.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && !tabela.getSelectionModel().isEmpty()) {
                 handleEditar();
@@ -129,19 +121,15 @@ public class JanelaGerenciar<T> extends Janela {
     }
 
     public void abrirSelecionado(T selecionado) {
-        Janela janelaEditor = new Janela();
-        Stage stage1 = (Stage) tabela.getScene().getWindow();
-        System.out.println(stage1);
-        janelaEditor.abrirJanela(
+        Stage stagePai = (Stage) tabela.getScene().getWindow();
+
+        new Janela<T>().abrirJanela(
                 diretorioObjeto,
                 selecionado == null ? "Adicionar" : "Editar",
-                stage1,
-                () -> atualizar(inAtivos)
+                stagePai,
+                () -> atualizar(inAtivos),
+                selecionado
         );
-        if (selecionado != null) {
-            Janela controller = janelaEditor.loader.getController();
-            controller.set(selecionado);
-        }
     }
 
     @FXML

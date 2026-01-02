@@ -6,6 +6,7 @@ import com.joaonardi.gerenciadorocupacional.service.ConjuntoService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import com.joaonardi.gerenciadorocupacional.util.TooltipUtils;
 import javafx.application.Platform;
@@ -33,7 +34,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import javax.swing.*;
 import java.util.List;
 
-public class TipoExameController extends Janela {
+public class TipoExameController extends Janela<TipoExame> implements Editavel<TipoExame> {
     public TextField inputNome;
     public Button btnFechar;
     public Button btnSalvar;
@@ -69,15 +70,18 @@ public class TipoExameController extends Janela {
 
     private final ObservableList<Setor> setores = FXCollections.observableArrayList();
 
-    final Janela janela = new Janela();
+    final Janela<TipoExame> janela = new Janela<>();
     private TipoExame tipoExame;
     final TipoExameService tipoExameService = new TipoExameService();
 
     public void initialize() {
         FontIcon iconInfo = new FontIcon(FontAwesomeSolid.INFO);
-        Tooltip tooltip = new Tooltip("A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra \n " +
-                "OBS: Será atendida atendindo o conjunto de regras que houver maior compatibilidade com o funcionário! \n " +
-                "(Em caso de conflito, será aplicada a menor periodicidade)");
+        Tooltip tooltip = new Tooltip("""
+                A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra\s
+                 \
+                OBS: Será atendida atendindo o conjunto de regras que houver maior compatibilidade com o funcionário!\s
+                 \
+                (Em caso de conflito, será aplicada a menor periodicidade)""");
 
         btnInfo.setGraphic(iconInfo);
         btnInfo.setTooltip(tooltip);
@@ -107,9 +111,6 @@ public class TipoExameController extends Janela {
         });
         setTabelaConjuntos();
         setBindings();
-        Platform.runLater(() -> {
-            setTipoExame((TipoExame) this.objetoPrincipal);
-        });
     }
 
     private void setBindings() {
@@ -120,13 +121,15 @@ public class TipoExameController extends Janela {
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-    public void setTipoExame(TipoExame tipoExameSelecionado) {
-        this.tipoExame = tipoExameSelecionado;
+    @Override
+    public void set(TipoExame objeto) {
+        super.set(objeto);
+        this.tipoExame = objeto;
         if (tipoExame != null) {
             inputNome.setText(tipoExame.getNome());
         }
-        if (tipoExameSelecionado != null) {
-            conjuntoService.carregarConjuntoTipoExameId(tipoExameSelecionado.getId());
+        if (objeto != null) {
+            conjuntoService.carregarConjuntoTipoExameId(objeto.getId());
         }
         setTabelaCondicoes();
         setTabelaConjuntos();
@@ -219,7 +222,7 @@ public class TipoExameController extends Janela {
                     .build();
         }
         try {
-            setTipoExame(tipoExameService.cadastrarTipoExame(tipoExame));
+            set(tipoExameService.cadastrarTipoExame(tipoExame));
             Notifications.create()
                     .title("Sucesso")
                     .text("Tipo de Exame salvo com sucesso")
