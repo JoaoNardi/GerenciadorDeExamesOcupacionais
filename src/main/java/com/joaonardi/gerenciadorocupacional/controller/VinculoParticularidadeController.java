@@ -43,7 +43,9 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
     }
 
     public void handleSalvarVinculo() {
+        String acao  = "";
         if (this.vinculoFuncionarioParticularidade == null || this.vinculoFuncionarioParticularidade.getId() == null) {
+            acao = "salvo";
             this.vinculoFuncionarioParticularidade =
                     VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
                             .funcionario(inputFuncionario.getValue())
@@ -51,6 +53,7 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
                             .motivo(inputMotivo.getText())
                             .build();
         } else {
+            acao = "atualizado";
             this.vinculoFuncionarioParticularidade =
                     VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
                             .id(this.vinculoFuncionarioParticularidade.getId())
@@ -60,7 +63,7 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
                             .build();
         }
 
-        salvar("Vinculo", "Salvo",
+        salvar("Vinculo", acao,
                 btnSalvar,
                 () -> particularidadeService.vincularFuncionarioParticularidade(this.vinculoFuncionarioParticularidade
                 ));
