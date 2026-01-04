@@ -9,6 +9,7 @@ import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -59,9 +60,10 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
-            exameService.lancarExame(exame);
+            ;
+            salvar("Exame", "Salvo",btnSalvar,()->exameService.lancarExame(exame));
         }
-        if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null) { // editar exame que nao é nao atualizado ainda
+        if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null) {
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(this.exame.getId())
                     .tipoExame(inputTipoExame.getValue())
@@ -70,7 +72,7 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
-            exameService.editarExame(exame1);
+            salvar("Exame", "Editado",btnSalvar,()->exameService.editarExame(exame1));
         }
         janela.fecharJanela(btnSalvar);
     }
@@ -89,14 +91,16 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
     @Override
     public void set(Exame objeto) {
         super.set(objeto);
-        if (exame != null) {
-            this.exame = objeto;
-            inputFuncionario.setValue(objeto.getFuncionario());
-            inputTipoExame.setValue(objeto.getTipoExame());
-            inputDataEmissao.setValue(objeto.getDataEmissao());
-            inputDataValidade.setValue(objeto.getDataEmissao());
+        if (objeto != null) {
+            Platform.runLater(()->{
+                this.exame = objeto;
+                inputTipoExame.setDisable(true);
+                inputFuncionario.setValue(objeto.getFuncionario());
+                inputTipoExame.setValue(objeto.getTipoExame());
+                inputDataEmissao.setValue(objeto.getDataEmissao());
+                inputDataValidade.setValue(objeto.getDataEmissao());
+                inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
+            });
         }
-        inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
-
 }

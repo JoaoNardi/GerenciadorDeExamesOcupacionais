@@ -94,6 +94,7 @@ public class CertificadoController extends Janela<Certificado> implements Editav
         if (objeto != null) {
             Platform.runLater(()->{
                 this.certificado = objeto;
+                inputTipoCertificado.setDisable(true);
                 inputFuncionario.setValue(objeto.getFuncionario());
                 inputTipoCertificado.setValue(objeto.getTipoCertificado());
                 inputDataEmissao.setValue(objeto.getDataEmissao());

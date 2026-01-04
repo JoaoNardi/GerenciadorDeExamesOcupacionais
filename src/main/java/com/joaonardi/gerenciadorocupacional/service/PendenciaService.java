@@ -41,8 +41,8 @@ public class PendenciaService {
 
             String setorFuncionario = funcionario.getSetor().getArea();
             for (TipoExame tipoExameL : tipoExameService.listarTiposExame()) {
-                conjuntoService.carregarConjuntoTipoExameId(tipoExameL.getId());
-                for (Conjunto conjunto : conjuntoService.listarConjuntos().stream().sorted(Comparator.comparing(Conjunto::getPeriodicidade)).toList()) {
+                ObservableList<Conjunto> list = conjuntoService.listarConjuntos(tipoExameL.getId());
+                for (Conjunto conjunto : list.stream().sorted(Comparator.comparing(Conjunto::getPeriodicidade)).toList()) {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
                     for (Condicao condicao : condicaoService.listarCondicoes()) {
                         if (condicao == null) continue;

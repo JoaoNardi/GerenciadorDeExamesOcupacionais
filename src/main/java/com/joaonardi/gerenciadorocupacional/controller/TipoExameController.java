@@ -94,7 +94,6 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
 
         setores.setAll(setorService.listarSetores());
         inputPeriodicidade.getItems().addAll(Periodicidade.values());
-        conjuntoService.listarConjuntos().clear();
         condicaoService.listarCondicoes().clear();
         condicaoService.listarCondicoes().addListener(
                 (ListChangeListener<Condicao>) change -> {
@@ -128,9 +127,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
         if (tipoExame != null) {
             inputNome.setText(tipoExame.getNome());
         }
-        if (objeto != null) {
-            conjuntoService.carregarConjuntoTipoExameId(objeto.getId());
-        }
+
         setTabelaCondicoes();
         setTabelaConjuntos();
     }
@@ -139,7 +136,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
         colunaConjuntosRegras.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getPeriodicidade() + " Meses"));
         setColunaAcoesGeneric((TableColumn<Object, Node>) colunaAcoesRegras);
 
-        tabelaConjuntos.setItems(conjuntoService.listarConjuntos());
+        tabelaConjuntos.setItems(conjuntoService.listarConjuntos(this.tipoExame.getId()));
     }
 
     private void setModalCondicao() {
@@ -411,7 +408,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
                             acaoRemmoverColuna(index, condicaoService.listarCondicoes(), getTableRow());
                         }
                         if (getTableRow().getItem() instanceof Conjunto) {
-                            acaoRemmoverColuna(index, conjuntoService.listarConjuntos(), getTableRow());
+                            acaoRemmoverColuna(index, conjuntoService.listarConjuntos(tipoExame.getId()), getTableRow());
                         }
                     });
                     setGraphic(hBox);
@@ -478,7 +475,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
             tabelaConjuntos.getSelectionModel().select(tabelaConjuntos.getItems().size() - 1);
             tabelaConjuntos.scrollTo(tabelaConjuntos.getItems().size() - 1);
         });
-        tabelaConjuntos.setItems(conjuntoService.listarConjuntos());
+        tabelaConjuntos.setItems(conjuntoService.listarConjuntos(tipoExame.getId()));
         modalAddRegraSwitch(false);
         setTabelaConjuntos();
     }

@@ -9,17 +9,13 @@ public class ConjuntoService {
     private static final ObservableList<Conjunto> listaConjuntos = FXCollections.observableArrayList();
     private final ConjuntoDAO conjuntoDAO = new ConjuntoDAO();
 
-    public void carregarConjuntoTipoExameId(int tipoExameId){
-        listarConjuntos().clear();
-        listaConjuntos.setAll(conjuntoDAO.listarConjuntosPorTipoExameId(tipoExameId));
-    }
-    public ObservableList<Conjunto> listarConjuntos(){
-        return listaConjuntos;
+
+    public ObservableList<Conjunto> listarConjuntos(int tipoExameId){
+        return conjuntoDAO.listarConjuntosPorTipoExameId(tipoExameId);
     }
 
     public Conjunto cadastrarConjunto(Conjunto conjunto){
         Conjunto conjunto1 = conjuntoDAO.cadastrarConjunto(conjunto);
-        carregarConjuntoTipoExameId(conjunto.getTipoExame().getId());
         return conjunto1;
     }
 

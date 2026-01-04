@@ -37,8 +37,7 @@ public class ExameService {
     }
 
     public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
-        conjuntoService.carregarConjuntoTipoExameId(tipoExame.getId());
-        ObservableList<Conjunto> conjuntos = conjuntoService.listarConjuntos();
+        ObservableList<Conjunto> conjuntos = conjuntoService.listarConjuntos(tipoExame.getId());
 
         Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, conjuntos);
 
