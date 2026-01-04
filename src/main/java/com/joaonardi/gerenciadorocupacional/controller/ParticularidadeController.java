@@ -39,6 +39,7 @@ public class ParticularidadeController extends Janela<Particularidade> implement
     public void set(Particularidade objeto) {
         super.set(objeto);
         if (objeto != null) {
+            particularidade = objeto;
             inputNome.setText(objeto.getNome());
             inputDescricao.setText(objeto.getDescricao());
             inputTipoExame.setValue(objeto.getTipoExame());

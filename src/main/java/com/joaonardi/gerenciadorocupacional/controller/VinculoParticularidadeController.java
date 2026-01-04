@@ -24,6 +24,8 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
     public ComboBoxCustom<Funcionario> inputFuncionario;
     public TextArea inputMotivo;
 
+    private VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade;
+
     public void initialize() {
         inputParticularidade.setItemsAndDisplay(particularidadeService.listarTodasParticularidades(), List.of(Particularidade::getNome,
                 p -> p.getTipoExame().getNome()));
@@ -41,11 +43,27 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
     }
 
     public void handleSalvarVinculo() {
+        if (this.vinculoFuncionarioParticularidade == null || this.vinculoFuncionarioParticularidade.getId() == null) {
+            this.vinculoFuncionarioParticularidade =
+                    VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
+                            .funcionario(inputFuncionario.getValue())
+                            .particularidade(inputParticularidade.getValue())
+                            .motivo(inputMotivo.getText())
+                            .build();
+        } else {
+            this.vinculoFuncionarioParticularidade =
+                    VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
+                            .id(this.vinculoFuncionarioParticularidade.getId())
+                            .funcionario(inputFuncionario.getValue())
+                            .particularidade(inputParticularidade.getValue())
+                            .motivo(inputMotivo.getText())
+                            .build();
+        }
+
         salvar("Vinculo", "Salvo",
                 btnSalvar,
-                () -> particularidadeService.vincularFuncionarioParticularidade(inputFuncionario.getValue(),
-                        inputParticularidade.getValue(),
-                        inputMotivo.getText()));
+                () -> particularidadeService.vincularFuncionarioParticularidade(this.vinculoFuncionarioParticularidade
+                ));
     }
 
     public void handleCancelarVinculo() {
@@ -56,6 +74,9 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
     public void set(VinculoFuncionarioParticularidade objeto) {
         super.set(objeto);
         if (objeto != null) {
+            vinculoFuncionarioParticularidade = objeto;
+            inputFuncionario.setDisable(true);
+            inputParticularidade.setDisable(true);
             inputFuncionario.setValue(objeto.getFuncionario());
             inputParticularidade.setValue(objeto.getParticularidade());
             inputMotivo.setText(objeto.getMotivo());

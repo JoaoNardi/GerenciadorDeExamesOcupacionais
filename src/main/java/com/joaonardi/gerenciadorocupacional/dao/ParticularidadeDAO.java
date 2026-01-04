@@ -31,8 +31,7 @@ public class ParticularidadeDAO extends BaseDAO {
 
     private static final String VINCULAR_PARTICULARIDADE_FUNCIONARIO = "INSERT INTO vinculos_particularidades (id, funcionario_id, " +
             "particularidade_id, motivo) VALUES (NULL, ?, ?, ?)";
-    private static final String ALTERAR_MOTIVO_VINCULO = "UPDATE particularidades SET motivo = ? WHERE particularidade_id = ? AND" +
-            "WHERE funcionario_id = ?";
+    private static final String ALTERAR_MOTIVO_VINCULO = "UPDATE vinculos_particularidades SET motivo = ? WHERE id = ?";
     private static final String LISTAR_FUNCIONARIOS_VINCULADOS_PARTICULARIDADE = "SELECT f.*, s.id as s_id, s.area as s_area " +
             "FROM vinculos_particularidades vp " +
             "JOIN setores s on s.id = f.setor_id " +
@@ -58,8 +57,7 @@ public class ParticularidadeDAO extends BaseDAO {
             "JOIN tipos_exame t on t.id = p.tipo_exame_id " +
             "JOIN setores s on s.id = f_setor_id ";
 
-    private static final String DESVINCULAR_PARTICULARIDADE_FUNCIONARIO = "DELETE FROM vinculos_particularidades WHERE particularidade_id = ? AND " +
-            "funcionario_id = ?  ";
+    private static final String DESVINCULAR_PARTICULARIDADE_FUNCIONARIO = "DELETE FROM vinculos_particularidades WHERE id = ?  ";
 
     public Particularidade cadastrarParticularidade(Particularidade particularidade) {
         Connection connection = DBConexao.getInstance().abrirConexao();
@@ -150,14 +148,14 @@ public class ParticularidadeDAO extends BaseDAO {
         return particularidadeList;
     }
 
-    public void vincularParticularidadeFuncionario(Funcionario funcionario, Particularidade particularidade, String motivo) {
+    public void vincularParticularidadeFuncionario(VinculoFuncionarioParticularidade vfp) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(VINCULAR_PARTICULARIDADE_FUNCIONARIO);
             int i = 1;
-            preparedStatement.setInt(i++, funcionario.getId());
-            preparedStatement.setInt(i++, particularidade.getId());
-            preparedStatement.setString(i++, motivo);
+            preparedStatement.setInt(i++, vfp.getFuncionario().getId());
+            preparedStatement.setInt(i++, vfp.getParticularidade().getId());
+            preparedStatement.setString(i++, vfp.getMotivo());
             preparedStatement.execute();
             commit(connection);
         } catch (SQLException e) {
@@ -225,14 +223,13 @@ public class ParticularidadeDAO extends BaseDAO {
         return list;
     }
 
-    public void atualizarMotivoVinculo(Particularidade particularidade, Funcionario funcionario, String motivo) {
+    public void atualizarMotivoVinculo(VinculoFuncionarioParticularidade vfp) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(ALTERAR_MOTIVO_VINCULO);
             int i = 1;
-            preparedStatement.setString(i++, motivo);
-            preparedStatement.setInt(i++, particularidade.getId());
-            preparedStatement.setInt(i++, funcionario.getId());
+            preparedStatement.setString(i++, vfp.getMotivo());
+            preparedStatement.setInt(i++, vfp.getId());
 
             int linhasAfetadas = preparedStatement.executeUpdate();
             commit(connection);
@@ -248,12 +245,35 @@ public class ParticularidadeDAO extends BaseDAO {
         }
     }
 
-    public void desvincularParticularidadesFuncionario(Particularidade particularidade, Funcionario funcionario) {
+    public void atualizarParticularidade(int id, Particularidade particularidade) {
+        Connection connection = DBConexao.getInstance().abrirConexao();
+        try {
+            preparedStatement = connection.prepareStatement(ALTERAR_PARTICULARIDADE);
+            int i = 1;
+            preparedStatement.setString(i++, particularidade.getNome());
+            preparedStatement.setString(i++, particularidade.getDescricao());
+            preparedStatement.setInt(i++, particularidade.getTipoExame().getId());
+            preparedStatement.setInt(i++, particularidade.getPeriodicidade());
+            preparedStatement.setInt(i, id);
+            int linhasAfetadas = preparedStatement.executeUpdate();
+            commit(connection);
+
+            if (linhasAfetadas == 0) {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao alterar vinculo");
+        } finally {
+            close(resultSet, preparedStatement);
+        }
+    }
+
+    public void desvincularParticularidadesFuncionario(VinculoFuncionarioParticularidade vfp) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
             preparedStatement = connection.prepareStatement(DESVINCULAR_PARTICULARIDADE_FUNCIONARIO);
-            preparedStatement.setInt(1, particularidade.getId());
-            preparedStatement.setInt(2, funcionario.getId());
+            preparedStatement.setInt(1, vfp.getId());
             preparedStatement.execute();
             commit(connection);
         } catch (SQLException e) {

@@ -10,19 +10,30 @@ public class ParticularidadeService {
     ParticularidadeDAO particularidadeDAO = new ParticularidadeDAO();
 
     public void cadastrarParticularidade(Particularidade particularidade) {
-        particularidadeDAO.cadastrarParticularidade(particularidade);
+        if (particularidade.getId() == null) {
+            particularidadeDAO.cadastrarParticularidade(particularidade);
+        }
+        if (particularidade.getId() != null) {
+            particularidadeDAO.atualizarParticularidade(particularidade.getId(), particularidade);
+        }
     }
-
 
     public ObservableList<Particularidade> listarTodasParticularidades() {
         return particularidadeDAO.listarTodasParticularidades();
     }
+
     public ObservableList<Particularidade> listarTodasParticularidades(boolean ativos) {
         return particularidadeDAO.listarTodasParticularidades();
     }
 
-    public void vincularFuncionarioParticularidade(Funcionario funcionario, Particularidade particularidade, String motivo) {
-        particularidadeDAO.vincularParticularidadeFuncionario(funcionario, particularidade, motivo);
+    public void vincularFuncionarioParticularidade(VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade) {
+        System.out.println(vinculoFuncionarioParticularidade);
+        if (vinculoFuncionarioParticularidade.getId() == null) {
+            particularidadeDAO.vincularParticularidadeFuncionario(vinculoFuncionarioParticularidade);
+        }
+        if (vinculoFuncionarioParticularidade.getId() != null) {
+            particularidadeDAO.atualizarMotivoVinculo(vinculoFuncionarioParticularidade);
+        }
     }
 
     public ObservableList<VinculoFuncionarioParticularidade> listarTodosVinculos() {
@@ -33,19 +44,19 @@ public class ParticularidadeService {
         return particularidadeDAO.listarVinculos();
     }
 
-    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadesVinculadas(Funcionario funcionario){
+    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadesVinculadas(Funcionario funcionario) {
         return particularidadeDAO.listarParticularidadePorFuncionario(funcionario);
     }
 
-    public void deletarParticularidade(Particularidade particularidade){
+    public void deletarParticularidade(Particularidade particularidade) {
         particularidadeDAO.deletarParticularidade(particularidade);
     }
 
     public void desvincularParticularidadeFuncionario(VinculoFuncionarioParticularidade vp) {
         try {
-            particularidadeDAO.desvincularParticularidadesFuncionario(vp.getParticularidade(), vp.getFuncionario());
-            listarTodosVinculos().remove(vp);
-        } catch (Exception e){
+            particularidadeDAO.desvincularParticularidadesFuncionario(vp);
+
+        } catch (Exception e) {
             throw new RuntimeException("Erro ao desnvincular");
         }
     }

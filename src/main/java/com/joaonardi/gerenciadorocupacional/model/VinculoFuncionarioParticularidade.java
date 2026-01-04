@@ -6,13 +6,13 @@ import lombok.ToString;
 @ToString
 @Getter
 public class VinculoFuncionarioParticularidade {
-    private int id;
+    private Integer id;
     private Funcionario funcionario;
     private Particularidade particularidade;
     private String motivo;
 
     public static final class VinculoFuncionarioParticularidadeBuilder {
-        private int id;
+        private Integer id;
         private Funcionario funcionario;
         private Particularidade particularidade;
         private String motivo;
