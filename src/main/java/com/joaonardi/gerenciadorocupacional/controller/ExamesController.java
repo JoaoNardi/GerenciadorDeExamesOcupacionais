@@ -7,16 +7,16 @@ import com.joaonardi.gerenciadorocupacional.service.ExameService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.TipoExameService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.binding.BooleanBinding;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 
 import java.util.List;
 
-public class ExamesController {
+public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
     public ComboBoxCustom<Funcionario> inputFuncionario;
     public ComboBoxCustom<TipoExame> inputTipoExame;
     public DatePicker inputDataEmissao;
@@ -40,7 +40,7 @@ public class ExamesController {
         setBindings();
     }
 
-    private void setBindings(){
+    private void setBindings() {
         BooleanBinding inputsValidos =
                 inputFuncionario.valueProperty().isNotNull()
                         .and(inputTipoExame.valueProperty().isNotNull())
@@ -49,7 +49,7 @@ public class ExamesController {
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-    public void handleSalvarExame(ActionEvent event) {
+    public void handleSalvarExame() {
         if (this.exame == null) {
             this.exame = Exame.ExameBuilder.builder()
                     .id(null)
@@ -75,25 +75,28 @@ public class ExamesController {
         janela.fecharJanela(btnSalvar);
     }
 
-    public void handleCancelarExame(ActionEvent event) {
+    public void handleCancelarExame() {
         janela.fecharJanela(btnCancelar);
     }
 
-    public void validadeAlteracao(ActionEvent event) {
+    public void validadeAlteracao() {
         if (inputFuncionario.getValue() != null && inputTipoExame.getValue() != null) {
             inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
                     inputTipoExame.getValue()));
         }
     }
 
-    public void setExame(Exame exameSelecionado) {
-        this.exame = exameSelecionado;
+    @Override
+    public void set(Exame objeto) {
+        super.set(objeto);
         if (exame != null) {
-            inputFuncionario.setValue(exame.getFuncionario());
-            inputTipoExame.setValue(exame.getTipoExame());
-            inputDataEmissao.setValue(exameSelecionado.getDataEmissao());
-            inputDataValidade.setValue(exameSelecionado.getDataEmissao());
+            this.exame = objeto;
+            inputFuncionario.setValue(objeto.getFuncionario());
+            inputTipoExame.setValue(objeto.getTipoExame());
+            inputDataEmissao.setValue(objeto.getDataEmissao());
+            inputDataValidade.setValue(objeto.getDataEmissao());
         }
         inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(), inputTipoExame.getValue()));
     }
+
 }

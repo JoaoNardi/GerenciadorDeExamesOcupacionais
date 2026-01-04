@@ -7,6 +7,7 @@ import com.joaonardi.gerenciadorocupacional.service.CertificadoService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ import javafx.scene.control.DatePicker;
 
 import java.util.List;
 
-public class CertificadoController extends Janela<Certificado> {
+public class CertificadoController extends Janela<Certificado> implements Editavel<Certificado> {
     public ComboBoxCustom<Funcionario> inputFuncionario;
     public ComboBoxCustom<TipoCertificado> inputTipoCertificado;
     public DatePicker inputDataEmissao;
@@ -57,7 +58,7 @@ public class CertificadoController extends Janela<Certificado> {
 
     public void handleSalvar() {
         String acao = "";
-        if (this.certificado == null) {
+        if (this.certificado == null || this.certificado.getId() == null) {
             acao = "salvo";
             this.certificado = Certificado.CertificadoBuilder.builder()
                     .id(null)
@@ -67,11 +68,10 @@ public class CertificadoController extends Janela<Certificado> {
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
-        }
-        if (this.certificado.getId() != null) {
+        } else {
             acao = "atualizado";
             this.certificado = Certificado.CertificadoBuilder.builder()
-                    .id(this.certificado.getId())
+                    .id(objetoPrincipal.getId())
                     .tipoCertificado(inputTipoCertificado.getValue())
                     .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
@@ -79,6 +79,8 @@ public class CertificadoController extends Janela<Certificado> {
                     .atualizadoPor(null)
                     .build();
         }
+        System.out.println(        this.certificado
+        );
         salvar("Certificado", acao, btnSalvar, () -> certificadoService.cadastrarCertificado(this.certificado));
 
         janela.fecharJanela(btnSalvar);
@@ -88,13 +90,16 @@ public class CertificadoController extends Janela<Certificado> {
         janela.fecharJanela(btnCancelar);
     }
 
-    public void setCertificado(Certificado certificadoSelecionado) {
-        this.certificado = certificadoSelecionado;
-        if (certificado != null) {
-            inputFuncionario.setValue(certificado.getFuncionario());
-            inputTipoCertificado.setValue(certificado.getTipoCertificado());
-            inputDataEmissao.setValue(certificadoSelecionado.getDataEmissao());
-            inputDataValidade.setValue(certificadoSelecionado.getDataEmissao());
+    @Override
+    public void set(Certificado objeto) {
+        super.set(objeto);
+        if (objeto!= null) {
+            this.certificado = objeto;
+            inputFuncionario.setValue(objeto.getFuncionario());
+            inputTipoCertificado.setValue(objeto.getTipoCertificado());
+            inputDataEmissao.setValue(objeto.getDataEmissao());
+            inputDataValidade.setValue(objeto.getDataEmissao());
         }
+        System.out.println(this.certificado);
     }
 }

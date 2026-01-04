@@ -28,14 +28,14 @@ public class CertificadoService {
         return dataValidade;
     }
 
-    public void cadastrarCertificado(Certificado certificado) {
+    public Certificado cadastrarCertificado(Certificado certificado) {
         if (certificado.getId() == null) {
-            certificadoDAO.cadastrarCertificado(certificado);
+            return certificadoDAO.cadastrarCertificado(certificado);
         } else {
             certificadoDAO.alterarCertificado(certificado);
         }
+        return null;
     }
-
     public ObservableList<Certificado> listarCertificados() {
         return certificadoDAO.listarCertificadosVigentes(true);
     }

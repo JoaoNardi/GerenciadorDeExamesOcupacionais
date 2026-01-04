@@ -422,7 +422,7 @@ public class MainController {
                         .dataValidade(certificado.getDataValidade())
                         .atualizadoPor(certificado1.getId())
                         .build();
-                certificadoService.editarCertificado(certificado2);
+                certificadoService.cadastrarCertificado(certificado2);
             }
             setTodos();
         });

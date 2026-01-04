@@ -37,6 +37,7 @@ public class TipoCertificadoController extends Janela<TipoCertificado> implement
     public void set(TipoCertificado objeto) {
         super.set(objeto);
         if (objeto != null) {
+            this.tipoCertificado = objeto;
             inputNome.setText(objeto.getNome());
             inputPeriodicidade.setValue(
                     Periodicidade.fromValor(objeto.getPeriodicidade())
@@ -46,20 +47,23 @@ public class TipoCertificadoController extends Janela<TipoCertificado> implement
 
     @FXML
     public void handleSalvarCertificado() {
+        String acao = "";
         if (tipoCertificado == null || tipoCertificado.getId() == null) {
+            acao = "Salvo";
             tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
                     .id(null)
                     .nome(inputNome.getText())
                     .periodicidade(inputPeriodicidade.getValue().getValor())
                     .build();
         } else {
+            acao = "Atualizado";
             tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
                     .id(this.tipoCertificado.getId())
                     .nome(inputNome.getText())
                     .periodicidade(inputPeriodicidade.getValue().getValor())
                     .build();
         }
-        tipoCertificadoService.cadastrarTipoCertificado(tipoCertificado);
+        salvar("Certificado",acao,btnSalvar, ()-> tipoCertificadoService.cadastrarTipoCertificado(tipoCertificado));
         janela.fecharJanela(btnSalvar);
     }
 
