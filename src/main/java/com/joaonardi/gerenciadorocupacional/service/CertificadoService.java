@@ -15,11 +15,11 @@ public class CertificadoService {
     final CertificadoDAO certificadoDAO = new CertificadoDAO();
     List<Certificado> certificadosList = FXCollections.observableArrayList();
 
-    public void carregarCertificadosVigentes(){
+    public void carregarCertificadosVigentes() {
         certificadosList = certificadoDAO.listarCertificadosVigentes(true);
     }
 
-    public LocalDate calcularValidade(LocalDate dataEmissao, TipoCertificado tipoCertificado){
+    public LocalDate calcularValidade(LocalDate dataEmissao, TipoCertificado tipoCertificado) {
         LocalDate dataValidade;
         if (tipoCertificado.getPeriodicidade().equals(0)) {
             return null;
@@ -28,13 +28,15 @@ public class CertificadoService {
         return dataValidade;
     }
 
-    public Certificado cadastrarCertificado(Certificado certificado) {
-        Certificado certificadoCadastrado = certificadoDAO.cadastrarCertificado(certificado);
-        listarCertificados();
-       return certificadoCadastrado;
+    public void cadastrarCertificado(Certificado certificado) {
+        if (certificado.getId() == null) {
+            certificadoDAO.cadastrarCertificado(certificado);
+        } else {
+            certificadoDAO.alterarCertificado(certificado);
+        }
     }
 
-    public ObservableList<Certificado> listarCertificados(){
+    public ObservableList<Certificado> listarCertificados() {
         return certificadoDAO.listarCertificadosVigentes(true);
     }
 
@@ -66,11 +68,6 @@ public class CertificadoService {
 
             return FXCollections.observableArrayList(list2);
         }
-    }
-
-    public void editarCertificado(Certificado certificado) {
-        certificadoDAO.alterarCertificado(certificado);
-        listarCertificados();
     }
 
     public void deletarCertificado(Certificado certificado) {

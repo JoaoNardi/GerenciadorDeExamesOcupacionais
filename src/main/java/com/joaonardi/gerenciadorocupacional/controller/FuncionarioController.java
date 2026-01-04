@@ -42,7 +42,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
 
     private Funcionario funcionario;
 
-    final Janela janela = new Janela();
+    final Janela<Funcionario> janela = new Janela<>();
 
     @FXML
     public void initialize() {

@@ -10,7 +10,6 @@ import java.time.LocalDate;
 public class FuncionarioService {
 
     private final FuncionarioDAO dao = new FuncionarioDAO();
-    public static ObservableList<Funcionario> funcionariosList;
 
     public ObservableList<Funcionario> listarFuncionariosPorStatus(boolean status) {
         return dao.listaFuncionariosPorStatus(status);
@@ -21,7 +20,7 @@ public class FuncionarioService {
     }
 
     public void validarCpf(String cpf) {
-        if ((cpf.length() != 11 || cpf == null)) throw new IllegalArgumentException("cpf Invalido");
+        if (cpf.length() != 11) throw new IllegalArgumentException("CPF Invalido");
     }
 
     public Integer calcularIdade(LocalDate dataNascimento) {

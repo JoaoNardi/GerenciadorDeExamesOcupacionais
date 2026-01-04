@@ -15,7 +15,7 @@ import javafx.scene.control.DatePicker;
 
 import java.util.List;
 
-public class CertificadoController {
+public class CertificadoController extends Janela<Certificado> {
     public ComboBoxCustom<Funcionario> inputFuncionario;
     public ComboBoxCustom<TipoCertificado> inputTipoCertificado;
     public DatePicker inputDataEmissao;
@@ -25,7 +25,7 @@ public class CertificadoController {
 
     Certificado certificado = null;
 
-    final Janela janela = new Janela();
+    final Janela<Certificado> janela = new Janela<>();
     final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     final CertificadoService certificadoService = new CertificadoService();
     final FuncionarioService funcionarioService = new FuncionarioService();
@@ -35,13 +35,13 @@ public class CertificadoController {
         inputDataValidade.setEditable(false);
         funcionarioService.listarFuncionariosPorStatus(true);
         tipoCertificadoService.carregarTiposCertificado();
-        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true),List.of(Funcionario::getNome,
+        inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome,
                 f -> f.getSetor().getArea()));
         inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
         setBindings();
     }
 
-    private void setBindings(){
+    private void setBindings() {
         BooleanBinding inputsValidos =
                 inputFuncionario.valueProperty().isNotNull()
                         .and(inputTipoCertificado.valueProperty().isNotNull())
@@ -50,27 +50,27 @@ public class CertificadoController {
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
-
     public void validadeAlteracao() {
         inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
                 inputTipoCertificado.getValue()));
     }
 
-
     public void handleSalvar() {
+        String acao = "";
         if (this.certificado == null) {
-            Certificado certificado = Certificado.CertificadoBuilder.builder()
+            acao = "salvo";
+            this.certificado = Certificado.CertificadoBuilder.builder()
+                    .id(null)
                     .tipoCertificado(inputTipoCertificado.getValue())
                     .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
-            certificadoService.cadastrarCertificado(certificado);
-            this.certificado = certificado;
         }
-        if (this.certificado.getId() != null){
-            Certificado certificado = Certificado.CertificadoBuilder.builder()
+        if (this.certificado.getId() != null) {
+            acao = "atualizado";
+            this.certificado = Certificado.CertificadoBuilder.builder()
                     .id(this.certificado.getId())
                     .tipoCertificado(inputTipoCertificado.getValue())
                     .funcionario(inputFuncionario.getValue())
@@ -78,8 +78,9 @@ public class CertificadoController {
                     .dataValidade(inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
-            certificadoService.editarCertificado(certificado);
         }
+        salvar("Certificado", acao, btnSalvar, () -> certificadoService.cadastrarCertificado(this.certificado));
+
         janela.fecharJanela(btnSalvar);
     }
 
@@ -94,7 +95,6 @@ public class CertificadoController {
             inputTipoCertificado.setValue(certificado.getTipoCertificado());
             inputDataEmissao.setValue(certificadoSelecionado.getDataEmissao());
             inputDataValidade.setValue(certificadoSelecionado.getDataEmissao());
-
         }
     }
 }
