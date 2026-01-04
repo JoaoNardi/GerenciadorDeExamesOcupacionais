@@ -7,20 +7,22 @@ import com.joaonardi.gerenciadorocupacional.service.CertificadoService;
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.TipoCertificadoService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class CertificadoController extends Janela<Certificado> implements Editavel<Certificado> {
     public ComboBoxCustom<Funcionario> inputFuncionario;
     public ComboBoxCustom<TipoCertificado> inputTipoCertificado;
-    public DatePicker inputDataEmissao;
-    public DatePicker inputDataValidade;
+    public DatePickerCustom inputDataEmissao;
+    public DatePickerCustom inputDataValidade;
     public Button btnSalvar;
     public Button btnCancelar;
 
@@ -34,11 +36,11 @@ public class CertificadoController extends Janela<Certificado> implements Editav
     @FXML
     private void initialize() {
         inputDataValidade.setEditable(false);
-        funcionarioService.listarFuncionariosPorStatus(true);
-        tipoCertificadoService.carregarTiposCertificado();
+
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome,
                 f -> f.getSetor().getArea()));
         inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
+
         setBindings();
     }
 
@@ -52,8 +54,8 @@ public class CertificadoController extends Janela<Certificado> implements Editav
     }
 
     public void validadeAlteracao() {
-        inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
-                inputTipoCertificado.getValue()));
+        Platform.runLater(()->  inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
+                inputTipoCertificado.getValue())));
     }
 
     public void handleSalvar() {
@@ -91,11 +93,13 @@ public class CertificadoController extends Janela<Certificado> implements Editav
     public void set(Certificado objeto) {
         super.set(objeto);
         if (objeto != null) {
-            this.certificado = objeto;
-            inputFuncionario.setValue(objeto.getFuncionario());
-            inputTipoCertificado.setValue(objeto.getTipoCertificado());
-            inputDataEmissao.setValue(objeto.getDataEmissao());
-            inputDataValidade.setValue(objeto.getDataEmissao());
+            Platform.runLater(()->{
+                this.certificado = objeto;
+                inputFuncionario.setValue(objeto.getFuncionario());
+                inputTipoCertificado.setValue(objeto.getTipoCertificado());
+                inputDataEmissao.setValue(objeto.getDataEmissao());
+                inputDataValidade.setValue(objeto.getDataEmissao());
+            });
         }
     }
 }
