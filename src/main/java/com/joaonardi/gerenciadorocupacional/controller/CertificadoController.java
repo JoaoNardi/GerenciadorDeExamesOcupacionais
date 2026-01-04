@@ -79,10 +79,7 @@ public class CertificadoController extends Janela<Certificado> implements Editav
                     .atualizadoPor(null)
                     .build();
         }
-        System.out.println(        this.certificado
-        );
         salvar("Certificado", acao, btnSalvar, () -> certificadoService.cadastrarCertificado(this.certificado));
-
         janela.fecharJanela(btnSalvar);
     }
 
@@ -93,13 +90,12 @@ public class CertificadoController extends Janela<Certificado> implements Editav
     @Override
     public void set(Certificado objeto) {
         super.set(objeto);
-        if (objeto!= null) {
+        if (objeto != null) {
             this.certificado = objeto;
             inputFuncionario.setValue(objeto.getFuncionario());
             inputTipoCertificado.setValue(objeto.getTipoCertificado());
             inputDataEmissao.setValue(objeto.getDataEmissao());
             inputDataValidade.setValue(objeto.getDataEmissao());
         }
-        System.out.println(this.certificado);
     }
 }
