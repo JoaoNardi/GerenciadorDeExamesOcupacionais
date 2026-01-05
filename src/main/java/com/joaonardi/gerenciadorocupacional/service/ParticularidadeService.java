@@ -7,7 +7,7 @@ import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularid
 import javafx.collections.ObservableList;
 
 public class ParticularidadeService {
-    ParticularidadeDAO particularidadeDAO = new ParticularidadeDAO();
+    private final ParticularidadeDAO particularidadeDAO = new ParticularidadeDAO();
 
     public void cadastrarParticularidade(Particularidade particularidade) {
         if (particularidade.getId() == null) {

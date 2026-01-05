@@ -16,7 +16,7 @@ public class ExameService {
     private final ConjuntoService conjuntoService = new ConjuntoService();
     private final CondicaoService condicaoService = new CondicaoService();
     private static ObservableList<Exame> examesList = FXCollections.observableArrayList();
-
+    private final ParticularidadeService particularidadeService = new ParticularidadeService();
     public void carregarExamesVigentes() {
         examesList = exameDAO.listarExamesVigentes(true);
     }
@@ -52,8 +52,11 @@ public class ExameService {
 
     public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Conjunto> conjuntos) {
 
-        // Carrega condições A
-        // Carrega condições B
+        for (VinculoFuncionarioParticularidade vfp : particularidadeService.listarTodosVinculos()){
+            if (vfp.getFuncionario().getId().equals(funcionario.getId())){
+                return vfp.getParticularidade().getPeriodicidade();
+            }
+        }
         Conjunto melhor = conjuntos.stream()
                 .filter(conjunto -> {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
@@ -73,9 +76,13 @@ public class ExameService {
                 })
                 .orElse(null);
         return melhor != null ? melhor.getPeriodicidade() : null;
+
+
     }
 
-
+    private void verificaParticularidades(){
+        ;
+    }
     private boolean verificaCondicao(Funcionario funcionario, Condicao condicao) {
         String referencia = condicao.getReferencia();
         String operador = condicao.getOperador();

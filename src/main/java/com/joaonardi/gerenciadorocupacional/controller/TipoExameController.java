@@ -108,8 +108,12 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
             }
             cadastrarTipoExame();
         });
-        setTabelaConjuntos();
-        setBindings();
+        Platform.runLater(()->{
+            if (this.tipoExame != null){
+                setTabelaConjuntos();
+            }
+            setBindings();
+        });
     }
 
     private void setBindings() {
@@ -123,20 +127,23 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
     @Override
     public void set(TipoExame objeto) {
         super.set(objeto);
-        this.tipoExame = objeto;
-        if (tipoExame != null) {
-            inputNome.setText(tipoExame.getNome());
-        }
+        Platform.runLater(()-> {
+            this.tipoExame = objeto;
+            if (tipoExame != null) {
+                inputNome.setText(tipoExame.getNome());
+            }
+            setTabelaCondicoes();
+            setTabelaConjuntos();
+        });
 
-        setTabelaCondicoes();
-        setTabelaConjuntos();
     }
 
     private void setTabelaConjuntos() {
+
         colunaConjuntosRegras.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getPeriodicidade() + " Meses"));
         setColunaAcoesGeneric((TableColumn<Object, Node>) colunaAcoesRegras);
+        Platform.runLater(()-> {tabelaConjuntos.setItems(conjuntoService.listarConjuntos(this.tipoExame.getId()));});
 
-        tabelaConjuntos.setItems(conjuntoService.listarConjuntos(this.tipoExame.getId()));
     }
 
     private void setModalCondicao() {

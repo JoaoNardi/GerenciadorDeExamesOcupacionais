@@ -10,6 +10,7 @@ import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
 import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -77,15 +79,18 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     @Override
     public void set(Funcionario objeto) {
         super.set(objeto);
-        if (objeto != null) {
-            this.funcionario = objeto;
-            setTabelaParticularidade();
-            inputNome.setText(objeto.getNome());
-            inputCpf.setText(objeto.getCpf());
-            inputDataNascimento.setValue(objeto.getDataNascimento());
-            inputDataAdmissao.setValue(objeto.getDataAdmissao());
-            inputSetor.setValue(objeto.getSetor());
-        }
+        Platform.runLater(()->{
+            if (objeto != null) {
+                this.funcionario = objeto;
+                setTabelaParticularidade();
+                inputNome.setText(objeto.getNome());
+                inputCpf.setText(objeto.getCpf());
+                inputDataNascimento.setValue(objeto.getDataNascimento());
+                inputDataAdmissao.setValue(objeto.getDataAdmissao());
+                inputSetor.setValue(objeto.getSetor());
+            }
+        });
+
     }
 
     @FXML

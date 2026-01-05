@@ -16,7 +16,7 @@ public class PendenciaService {
     private final CondicaoService condicaoService = new CondicaoService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
     public final ObservableList<Pendencia> pendencias = FXCollections.observableArrayList();
-
+    private final ParticularidadeService particularidadeService = new ParticularidadeService();
     public void varreduraPendencias() {
         pendencias.clear();
         funcionarioService.listarFuncionariosPorStatus(true);
@@ -84,6 +84,7 @@ public class PendenciaService {
         }
         return false;
     }
+
 
 
     private boolean compara(int valorFuncionario, String operador, int parametro) {
