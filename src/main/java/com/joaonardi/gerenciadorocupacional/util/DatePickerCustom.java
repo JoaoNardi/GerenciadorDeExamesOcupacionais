@@ -81,7 +81,7 @@ public class DatePickerCustom extends DatePicker {
                 for (int i = caret; i >= 0; i--) {
                     if (text.charAt(i) != '/') {
                         replaceAt(i, ' ');
-                        getEditor().positionCaret(caret+1);
+                        getEditor().positionCaret(caret + 1);
                         break;
                     }
                 }
@@ -101,9 +101,8 @@ public class DatePickerCustom extends DatePicker {
             }
 
             String text = getEditor().getText();
-            int caret = getEditor().getCaretPosition();
 
-            int pos = caret;
+            int pos = getEditor().getCaretPosition();
             while (pos < text.length() && text.charAt(pos) == '/') {
                 pos++;
             }
@@ -136,26 +135,6 @@ public class DatePickerCustom extends DatePicker {
             }
         });
 
-
-        editableProperty().addListener((obs, o, editable) -> {
-            if (editable) {
-                preencheHoje();
-            }
-        });
-
-        sceneProperty().addListener((obs, o, n) -> {
-            if (n != null && isEditable()) {
-                preencheHoje();
-            }
-        });
-    }
-
-    private void preencheHoje() {
-        if (!isEditable()) return;
-        LocalDate today = LocalDate.now();
-        setValue(today);
-        getEditor().setText(FORMATTER.format(today));
-        getEditor().positionCaret(getEditor().getText().length());
     }
 
     private void restauraPlaceholder() {
@@ -187,6 +166,7 @@ public class DatePickerCustom extends DatePicker {
         getEditor().setText(sb.toString());
         getEditor().positionCaret(sel.getStart());
     }
+
     private boolean isDataValida(String text) {
         if (text == null) return false;
         if (text.contains(" ")) return false;
