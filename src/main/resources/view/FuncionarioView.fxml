@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom?>
-<?import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
+<?import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom?>
+<?import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom?>
+
 <AnchorPane prefHeight="435.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.joaonardi.gerenciadorocupacional.controller.FuncionarioController">
@@ -43,6 +50,30 @@
         <Pane layoutX="22.0" layoutY="235.0" prefHeight="154.0" prefWidth="380.0"
               style="-fx-background-color: silver; -fx-background-radius: 5px;">
             <children>
+                <HBox alignment="CENTER" layoutX="112.0" layoutY="122.0" prefHeight="27.0" prefWidth="253.0"
+                      spacing="15.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleAdicionarVinculo" prefHeight="21.0"
+                                prefWidth="62.0" text="Adicionar">
+                            <font>
+                                <Font size="11.0"/>
+                            </font>
+                        </Button>
+                        <Button fx:id="btnEditar" disable="true" mnemonicParsing="false" onAction="#handleEditarVinculo"
+                                prefHeight="24.0" prefWidth="78.0" text="Editar">
+                            <font>
+                                <Font size="11.0"/>
+                            </font>
+                        </Button>
+                        <Button fx:id="btnRemover" alignment="CENTER" disable="true" mnemonicParsing="false"
+                                onAction="#handleRemoverParticularidade" prefHeight="24.0" prefWidth="78.0"
+                                text="Remover">
+                            <font>
+                                <Font size="11.0"/>
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
                 <TableView fx:id="tabelaParticularidade" layoutX="16.0" layoutY="9.0" prefHeight="113.0"
                            prefWidth="349.0" style="-fx-background-radius: 5px;">
                     <columns>
@@ -51,18 +82,6 @@
                         <TableColumn fx:id="colunaMotivo" prefWidth="143.0" text="Motivo"/>
                     </columns>
                 </TableView>
-                <Button layoutX="206.0" layoutY="125.0" mnemonicParsing="false" onAction="#handleAdicionarVincularidade"
-                        prefHeight="21.0" prefWidth="62.0" text="Adicionar">
-                    <font>
-                        <Font size="11.0"/>
-                    </font>
-                </Button>
-                <Button disable="true" fx:id="btnRemover" layoutX="281.0" layoutY="125.0" mnemonicParsing="false"
-                        onAction="#handleRemoverParticularidade" prefHeight="24.0" prefWidth="78.0" text="Remover">
-                    <font>
-                        <Font size="11.0"/>
-                    </font>
-                </Button>
             </children>
         </Pane>
     </children>

@@ -337,7 +337,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
             case IDADE:
                 container.getItems().addAll(Operador.values());
                 break;
-            case SETOR, ENFERMIDADE:
+            case SETOR:
                 container.getItems().addAll(Operador.IGUAL, Operador.DIFERENTE);
                 break;
             case null:
@@ -369,26 +369,6 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
                 setorChoice.setPrefWidth(120);
                 setorChoice.setValue(setorChoice.getItems().getFirst());
                 return setorChoice;
-
-            case Referencia.ENFERMIDADE:
-                ChoiceBox<Boolean> boolChoice = new ChoiceBox<>();
-                boolChoice.getItems().addAll(true, false);
-                boolChoice.setValue(false);
-                boolChoice.setConverter(new StringConverter<>() {
-                    @Override
-                    public String toString(Boolean object) {
-                        if (object == null) return "";
-                        return object ? "Verdadeiro" : "Falso";
-                    }
-
-                    @Override
-                    public Boolean fromString(String string) {
-                        if (string.equalsIgnoreCase("Verdadeiro")) return true;
-                        if (string.equalsIgnoreCase("Falso")) return false;
-                        return null;
-                    }
-                });
-                return boolChoice;
 
             default:
                 return new Label("Inválido");

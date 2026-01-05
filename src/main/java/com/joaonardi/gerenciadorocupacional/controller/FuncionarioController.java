@@ -15,11 +15,11 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -40,6 +40,8 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     public TableColumn<VinculoFuncionarioParticularidade, String> colunaTipoExame;
     public TableColumn<VinculoFuncionarioParticularidade, String> colunaMotivo;
     public Button btnRemover;
+    public Button btnEditar;
+
     private final ParticularidadeService particularidadeService = new ParticularidadeService();
 
     private Funcionario funcionario;
@@ -64,8 +66,9 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     }
 
     private void setBindings() {
-        BooleanBinding removerBinding = tabelaParticularidade.getSelectionModel().selectedItemProperty().isNull();
-        btnRemover.disableProperty().bind(removerBinding);
+        BooleanBinding tableItemSelected = tabelaParticularidade.getSelectionModel().selectedItemProperty().isNull();
+        btnRemover.disableProperty().bind(tableItemSelected);
+        btnEditar.disableProperty().bind(tableItemSelected);
 
         BooleanBinding inputsValidos =
                 inputNome.textProperty().isNotNull()
@@ -126,7 +129,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
         janela.fecharJanela(btnCancelar);
     }
 
-    public void handleAdicionarVincularidade() {
+    public void handleAdicionarVinculo() {
         VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade =
                 VinculoFuncionarioParticularidade.VinculoFuncionarioParticularidadeBuilder.builder()
                         .funcionario(funcionario)
@@ -138,5 +141,10 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     public void handleRemoverParticularidade() {
         particularidadeService.desvincularParticularidadeFuncionario(tabelaParticularidade.getSelectionModel().getSelectedItem());
         setTabelaParticularidade();
+    }
+
+    public void handleEditarVinculo() {
+        new Janela<>().abrirJanela("/view/VinculoParticularidadesFuncionarios.fxml", "Vincular Particularidades", janela.stage,
+                this::initialize, tabelaParticularidade.getSelectionModel().getSelectedItem());
     }
 }

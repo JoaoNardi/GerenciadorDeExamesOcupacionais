@@ -17,6 +17,7 @@ public class ExameService {
     private final CondicaoService condicaoService = new CondicaoService();
     private static ObservableList<Exame> examesList = FXCollections.observableArrayList();
     private final ParticularidadeService particularidadeService = new ParticularidadeService();
+
     public void carregarExamesVigentes() {
         examesList = exameDAO.listarExamesVigentes(true);
     }
@@ -52,9 +53,12 @@ public class ExameService {
 
     public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Conjunto> conjuntos) {
 
-        for (VinculoFuncionarioParticularidade vfp : particularidadeService.listarTodosVinculos()){
-            if (vfp.getFuncionario().getId().equals(funcionario.getId())){
-                return vfp.getParticularidade().getPeriodicidade();
+        for (VinculoFuncionarioParticularidade vfp : particularidadeService.listarTodosVinculos()) {
+            for (Conjunto conjunto : conjuntos) {
+                if (vfp.getFuncionario().getId().equals(funcionario.getId())
+                        && vfp.getParticularidade().getTipoExame().getId().equals(conjunto.getTipoExame().getId())) {
+                    return vfp.getParticularidade().getPeriodicidade();
+                }
             }
         }
         Conjunto melhor = conjuntos.stream()
@@ -80,9 +84,10 @@ public class ExameService {
 
     }
 
-    private void verificaParticularidades(){
+    private void verificaParticularidades() {
         ;
     }
+
     private boolean verificaCondicao(Funcionario funcionario, Condicao condicao) {
         String referencia = condicao.getReferencia();
         String operador = condicao.getOperador();
@@ -96,9 +101,6 @@ public class ExameService {
 
             case "setor":
                 return comparaString(funcionario.getSetor().getArea(), operador, parametro);
-
-//            case "enfermidade":
-//                return
         }
         return false;
     }

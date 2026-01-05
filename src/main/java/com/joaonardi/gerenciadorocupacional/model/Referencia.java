@@ -5,8 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Referencia {
     IDADE("Idade"),
-    SETOR("Setor"),
-    ENFERMIDADE("Enfermidade");
+    SETOR("Setor");
 
     private final String label;
 
@@ -28,7 +27,6 @@ public enum Referencia {
         return switch (this) {
             case IDADE -> "Idade";
             case SETOR -> "Setor";
-            case ENFERMIDADE -> "Enfermidade";
         };
     }
 }

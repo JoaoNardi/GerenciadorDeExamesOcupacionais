@@ -8,10 +8,9 @@ import lombok.ToString;
 public class Condicao {
     private Integer id;
     private Conjunto conjunto;
-    private String referencia; //idade, setor, enfermidade
-    private String operador; // ==;>=;!= etc
-    private String parametro; // idade 45; setor Escritrorio
-
+    private String referencia;
+    private String operador;
+    private String parametro;
 
     public static final class CondicaoBuilder {
         private Integer id;
