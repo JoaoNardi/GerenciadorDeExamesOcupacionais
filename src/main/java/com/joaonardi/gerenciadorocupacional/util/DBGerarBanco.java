@@ -94,6 +94,8 @@ public class DBGerarBanco {
                     "funcionario_id" INTEGER NOT NULL,
                     "particularidade_id" INTEGER NOT NULL,
                     "motivo" TEXT,
+                    "data_inclusao" DATE NOT NULL,
+                    "data_exclusao" DATE,
                     FOREIGN KEY("funcionario_id") REFERENCES "funcionarios"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,
                     FOREIGN KEY("particularidade_id") REFERENCES "particularidades"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
                 );

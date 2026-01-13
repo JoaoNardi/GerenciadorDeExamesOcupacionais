@@ -30,22 +30,28 @@ public class ParticularidadeDAO extends BaseDAO {
     //tabela de vinculos
 
     private static final String VINCULAR_PARTICULARIDADE_FUNCIONARIO = "INSERT INTO vinculos_particularidades (id, funcionario_id, " +
-            "particularidade_id, motivo) VALUES (NULL, ?, ?, ?)";
-    private static final String ALTERAR_MOTIVO_VINCULO = "UPDATE vinculos_particularidades SET motivo = ? WHERE id = ?";
+            "particularidade_id, motivo, data_inclusao, data_exclusao) VALUES (NULL, ?, ?, ?, ?, ?)";
+    private static final String ATUALIZAR_VINCULO_FUNCIONARIO_PARTICULARIDADE = "UPDATE vinculos_particularidades SET " +
+            "motivo = ?, data_inclusao = ?, data_exclusao = ? " +
+            "WHERE id = ?";
+    private static final String INATIVAR_VINCULO_PARTICULARIDADE_FUNCIONARIO = "UPDATE vinculos_particularidades SET " +
+            "data_exclusao = ? " +
+            "WHERE id = ?";
     private static final String LISTAR_FUNCIONARIOS_VINCULADOS_PARTICULARIDADE = "SELECT f.*, s.id as s_id, s.area as s_area " +
             "FROM vinculos_particularidades vp " +
             "JOIN setores s on s.id = f.setor_id " +
             "JOIN funcionarios f ON f.id = vp.funcionario_id " +
             "WHERE vp.particularidade_id = ?";
+    //ajustar data inclusao etc
     private static final String LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO = "SELECT p.* , t.id AS t_id, t.nome AS t_nome, " +
-            "vp.id as vp_id, vp.motivo as vp_motivo  " +
+            "vp.id as vp_id, vp.motivo as vp_motivo, vp.data_inclusao as vp_data_inclusao, vp.data_exclusao as vp_data_exclusao  " +
             "FROM vinculos_particularidades vp " +
             "JOIN particularidades p ON p.id = vp.particularidade_id " +
             "JOIN tipos_exame t on t.id = p.tipo_exame_id " +
             "WHERE vp.funcionario_id = ?";
 
-
-    private static final String LISTAR_TODOS_VINCULOS = "SELECT vp.id as vp_id, vp.motivo as vp_motivo, " +
+    private static final String LISTAR_TODOS_VINCULOS = "SELECT " +
+            "vp.id as vp_id, vp.motivo as vp_motivo, vp.data_inclusao as vp_data_inclusao, vp.data_exclusao as vp_data_exclusao , " +
             "p.id as p_id, p.nome as p_nome, p.descricao as p_descricao, p.tipo_exame_id as p_tipo_exame_id, p.periodicidade as p_periodicidade, " +
             "f.id as f_id, f.nome as f_nome, f.cpf as f_cpf, f.data_nascimento as f_data_nascimento, " +
             "f.data_admissao as f_data_admissao, f.setor_id as f_setor_id, f.ativo as f_ativo, " +
@@ -156,6 +162,8 @@ public class ParticularidadeDAO extends BaseDAO {
             preparedStatement.setInt(i++, vfp.getFuncionario().getId());
             preparedStatement.setInt(i++, vfp.getParticularidade().getId());
             preparedStatement.setString(i++, vfp.getMotivo());
+            preparedStatement.setString(i++, vfp.getDataInclusao().format(formato));
+            preparedStatement.setString(i++, vfp.getDataExclusao() == null ? null : vfp.getDataExclusao().format(formato));
             preparedStatement.execute();
             commit(connection);
         } catch (SQLException e) {
@@ -166,12 +174,34 @@ public class ParticularidadeDAO extends BaseDAO {
         }
     }
 
-    public ObservableList<VinculoFuncionarioParticularidade> listarVinculos() {
+    public void AtivarInativarVinculoParticularidadeFuncionario(VinculoFuncionarioParticularidade vfp) {
+        Connection connection = DBConexao.getInstance().abrirConexao();
+        try {
+            preparedStatement = connection.prepareStatement(INATIVAR_VINCULO_PARTICULARIDADE_FUNCIONARIO);
+            int i = 1;
+            preparedStatement.setString(i++, vfp.getDataExclusao() == null ? null : vfp.getDataExclusao().format(formato));
+            preparedStatement.setInt(i++, vfp.getId());
+            preparedStatement.execute();
+            commit(connection);
+        } catch (SQLException e) {
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao vincular particularidade - funcionario");
+        } finally {
+            close(resultSet, preparedStatement);
+        }
+    }
+
+    public ObservableList<VinculoFuncionarioParticularidade> listarVinculos(boolean inAtivos) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         Funcionario funcionario;
         ObservableList<VinculoFuncionarioParticularidade> list = FXCollections.observableArrayList();
         try {
-            preparedStatement = connection.prepareStatement(LISTAR_TODOS_VINCULOS);
+            if (inAtivos){
+                preparedStatement = connection.prepareStatement(LISTAR_TODOS_VINCULOS + " and vp.data_exclusao is null");
+            } else {
+                preparedStatement = connection.prepareStatement(LISTAR_TODOS_VINCULOS + " and vp.data_exclusao is not null");
+            }
+
 
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -210,6 +240,10 @@ public class ParticularidadeDAO extends BaseDAO {
                         .funcionario(funcionario)
                         .particularidade(particularidade)
                         .motivo(resultSet.getString("vp_motivo"))
+                        .dataInclusao(resultSet.getString("vp_data_inclusao") != null ?
+                                LocalDate.parse(resultSet.getString("vp_data_inclusao")) : null)
+                        .dataExclusao(resultSet.getString("vp_data_exclusao") != null ?
+                                LocalDate.parse(resultSet.getString("vp_data_exclusao")) : null)
                         .build();
                 list.add(vinculoFuncionarioParticularidade);
 
@@ -223,12 +257,14 @@ public class ParticularidadeDAO extends BaseDAO {
         return list;
     }
 
-    public void atualizarMotivoVinculo(VinculoFuncionarioParticularidade vfp) {
+    public void atualizarVinculoFuncionarioParticularidade(VinculoFuncionarioParticularidade vfp) {
         Connection connection = DBConexao.getInstance().abrirConexao();
         try {
-            preparedStatement = connection.prepareStatement(ALTERAR_MOTIVO_VINCULO);
+            preparedStatement = connection.prepareStatement(ATUALIZAR_VINCULO_FUNCIONARIO_PARTICULARIDADE);
             int i = 1;
             preparedStatement.setString(i++, vfp.getMotivo());
+            preparedStatement.setString(i++, vfp.getDataInclusao().format(formato));
+            preparedStatement.setString(i++, vfp.getDataExclusao() == null ? null : vfp.getDataExclusao().format(formato));
             preparedStatement.setInt(i++, vfp.getId());
 
             int linhasAfetadas = preparedStatement.executeUpdate();
@@ -319,12 +355,19 @@ public class ParticularidadeDAO extends BaseDAO {
         return funcionariosList;
     }
 
-    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadePorFuncionario(Funcionario funcionario) {
+    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadePorFuncionario(Funcionario funcionario, boolean inVigentes) {
         Connection connection = DBConexao.getInstance().abrirConexao();
 
         ObservableList<VinculoFuncionarioParticularidade> particularidadeList = FXCollections.observableArrayList();
         try {
-            preparedStatement = connection.prepareStatement(LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO);
+            if (inVigentes) {
+                preparedStatement = connection
+                        .prepareStatement(LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO + " and vp.data_exclusao is null");
+            }
+            if (!inVigentes) {
+                preparedStatement = connection
+                        .prepareStatement(LISTAR_PARTICULARIDADES_VINCULADOS_FUNCIONARIO + "and vp.data_exclusao is not null");
+            }
             preparedStatement.setInt(1, funcionario.getId());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -348,6 +391,10 @@ public class ParticularidadeDAO extends BaseDAO {
                                 .funcionario(funcionario)
                                 .particularidade(particularidade)
                                 .motivo(resultSet.getString("vp_motivo"))
+                                .dataInclusao(resultSet.getString("vp_data_inclusao") != null ?
+                                        LocalDate.parse(resultSet.getString("vp_data_inclusao")) : null)
+                                .dataExclusao(resultSet.getString("vp_data_exclusao") != null ?
+                                        LocalDate.parse(resultSet.getString("vp_data_exclusao")) : null)
                                 .build();
 
                 particularidadeList.add(vinculoFuncionarioParticularidade);
@@ -360,7 +407,6 @@ public class ParticularidadeDAO extends BaseDAO {
         }
         return particularidadeList;
     }
-
 
     public void deletarParticularidade(Particularidade particularidade) {
         Connection connection = DBConexao.getInstance().abrirConexao();

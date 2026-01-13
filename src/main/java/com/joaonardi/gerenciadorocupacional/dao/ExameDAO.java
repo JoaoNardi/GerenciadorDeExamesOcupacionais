@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class ExameDAO extends BaseDAO {
-    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 

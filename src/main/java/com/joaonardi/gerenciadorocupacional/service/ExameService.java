@@ -51,38 +51,58 @@ public class ExameService {
         return dataValidade;
     }
 
-    public Integer calcularPeriodicidade(Funcionario funcionario, TipoExame tipoExame, ObservableList<Conjunto> conjuntos) {
+    public Integer calcularPeriodicidade(Funcionario funcionario,
+                                         TipoExame tipoExame,
+                                         ObservableList<Conjunto> conjuntos) {
 
-        for (VinculoFuncionarioParticularidade vfp : particularidadeService.listarTodosVinculos()) {
-            for (Conjunto conjunto : conjuntos) {
-                if (vfp.getFuncionario().getId().equals(funcionario.getId())
-                        && vfp.getParticularidade().getTipoExame().getId().equals(conjunto.getTipoExame().getId())) {
-                    return vfp.getParticularidade().getPeriodicidade();
-                }
+        Integer menorPeriodicidadeVinculo = null;
+
+        for (VinculoFuncionarioParticularidade vfp : particularidadeService.listarTodosVinculos(true)) {
+            if (!vfp.getFuncionario().getId().equals(funcionario.getId())) {
+                continue;
+            }
+
+            if (!vfp.getParticularidade().getTipoExame().getId().equals(tipoExame.getId())) {
+                continue;
+            }
+
+            Integer periodicidade = vfp.getParticularidade().getPeriodicidade();
+
+            if (periodicidade != null &&
+                    (menorPeriodicidadeVinculo == null || periodicidade < menorPeriodicidadeVinculo)) {
+                menorPeriodicidadeVinculo = periodicidade;
             }
         }
-        Conjunto melhor = conjuntos.stream()
+
+        Conjunto melhorConjunto = conjuntos.stream()
                 .filter(conjunto -> {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
                     return condicaoService.listarCondicoes().stream()
                             .allMatch(cond -> verificaCondicao(funcionario, cond));
-                }).min((a, b) -> {
-                    // Carrega condições A
+                })
+                .min((a, b) -> {
                     condicaoService.carregarCondicoesPorConjuntoId(a.getId());
                     int sizeA = condicaoService.listarCondicoes().size();
 
-                    // Carrega condições B
                     condicaoService.carregarCondicoesPorConjuntoId(b.getId());
                     int sizeB = condicaoService.listarCondicoes().size();
-                    int result = Integer.compare(sizeB, sizeA);
+
+                    int result = Integer.compare(sizeB, sizeA); // mais condições = mais específico
                     if (result != 0) return result;
+
                     return Integer.compare(a.getPeriodicidade(), b.getPeriodicidade());
                 })
                 .orElse(null);
-        return melhor != null ? melhor.getPeriodicidade() : null;
 
+        Integer periodicidadeConjunto =
+                melhorConjunto != null ? melhorConjunto.getPeriodicidade() : null;
 
+        if (menorPeriodicidadeVinculo == null) return periodicidadeConjunto;
+        if (periodicidadeConjunto == null) return menorPeriodicidadeVinculo;
+
+        return Math.min(menorPeriodicidadeVinculo, periodicidadeConjunto);
     }
+
 
     private void verificaParticularidades() {
         ;

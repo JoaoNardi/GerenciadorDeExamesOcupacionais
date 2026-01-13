@@ -6,11 +6,13 @@ import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularid
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
+import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 import java.util.List;
@@ -24,6 +26,9 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
     public ComboBoxCustom<Particularidade> inputParticularidade;
     public ComboBoxCustom<Funcionario> inputFuncionario;
     public TextArea inputMotivo;
+    public DatePickerCustom inputInclusao;
+    public DatePickerCustom inputExclusao;
+    public Label outputPeriodicidade;
 
     private VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade;
 
@@ -39,7 +44,8 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
         BooleanBinding inputsValidos =
                 inputFuncionario.valueProperty().isNotNull()
                         .and(inputParticularidade.valueProperty().isNotNull())
-                        .and(inputMotivo.textProperty().isNotNull());
+                        .and(inputMotivo.textProperty().isNotNull()
+                                .and(inputInclusao.valueProperty().isNotNull()));
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
@@ -52,6 +58,8 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
                             .funcionario(inputFuncionario.getValue())
                             .particularidade(inputParticularidade.getValue())
                             .motivo(inputMotivo.getText())
+                            .dataInclusao(inputInclusao.getValue())
+                            .dataExclusao(inputExclusao.getValue())
                             .build();
         } else {
             acao = "atualizado";
@@ -61,6 +69,8 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
                             .funcionario(inputFuncionario.getValue())
                             .particularidade(inputParticularidade.getValue())
                             .motivo(inputMotivo.getText())
+                            .dataInclusao(inputInclusao.getValue())
+                            .dataExclusao(inputExclusao.getValue())
                             .build();
         }
 
@@ -77,17 +87,23 @@ public class VinculoParticularidadeController extends Janela<VinculoFuncionarioP
     @Override
     public void set(VinculoFuncionarioParticularidade objeto) {
         super.set(objeto);
-        if (objeto != null) {
-            vinculoFuncionarioParticularidade = objeto;
-            inputFuncionario.setValue(objeto.getFuncionario());
-            inputParticularidade.setValue(objeto.getParticularidade());
-            inputMotivo.setText(objeto.getMotivo());
-            if (inputFuncionario.getValue() != null) {
-                inputFuncionario.setDisable(true);
+        Platform.runLater(() -> {
+            if (objeto != null) {
+                vinculoFuncionarioParticularidade = objeto;
+                inputFuncionario.setValue(objeto.getFuncionario());
+                inputParticularidade.setValue(objeto.getParticularidade());
+                inputMotivo.setText(objeto.getMotivo());
+                inputInclusao.setValue(objeto.getDataInclusao());
+                inputExclusao.setValue(objeto.getDataExclusao());
+                outputPeriodicidade.setText(objeto.getParticularidade().getPeriodicidade().toString() + " meses");
+                if (inputFuncionario.getValue() != null) {
+                    inputFuncionario.setDisable(true);
+                }
+                if (inputParticularidade.getValue() != null) {
+                    inputParticularidade.setDisable(true);
+                }
             }
-            if (inputParticularidade.getValue() != null) {
-                inputParticularidade.setDisable(true);
-            }
-        }
+        });
+
     }
 }

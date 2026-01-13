@@ -15,7 +15,6 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -62,7 +61,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
         colunaParticularidades.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getParticularidade().getNome()));
         colunaTipoExame.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getParticularidade().getTipoExame().getNome()));
         colunaMotivo.setCellValueFactory(new PropertyValueFactory<>("motivo"));
-        tabelaParticularidade.setItems(particularidadeService.listarParticularidadesVinculadas(funcionario));
+        tabelaParticularidade.setItems(particularidadeService.listarParticularidadesVinculadas(funcionario, true));
     }
 
     private void setBindings() {
@@ -139,7 +138,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
     }
 
     public void handleRemoverParticularidade() {
-        particularidadeService.desvincularParticularidadeFuncionario(tabelaParticularidade.getSelectionModel().getSelectedItem());
+        particularidadeService.ativarInativarVinculo(tabelaParticularidade.getSelectionModel().getSelectedItem());
         setTabelaParticularidade();
     }
 

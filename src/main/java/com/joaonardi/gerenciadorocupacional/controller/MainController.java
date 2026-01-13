@@ -581,7 +581,7 @@ public class MainController {
     public void handleAbrirGerenciarVinculos() {
         final ParticularidadeService particularidadeService = new ParticularidadeService();
         ObservableList<VinculoFuncionarioParticularidade> vinculoFuncionarioParticularidade =
-                FXCollections.observableArrayList(particularidadeService.listarTodosVinculos());
+                FXCollections.observableArrayList(particularidadeService.listarTodosVinculos(true));
         String titulo = "Vinculos Funcionarios Particularidades";
 
         JanelaGerenciar<VinculoFuncionarioParticularidade> controller =
@@ -599,12 +599,13 @@ public class MainController {
                         new Coluna<>("Funcionário", f -> f.getFuncionario().getNome()),
                         new Coluna<>("Particularidade", f -> f.getParticularidade().getNome()),
                         new Coluna<>("Tipo Exame", f -> f.getParticularidade().getTipoExame().getNome()),
-                        new Coluna<>("Motivo", VinculoFuncionarioParticularidade::getMotivo)
-
+                        new Coluna<>("Motivo", VinculoFuncionarioParticularidade::getMotivo),
+                        new Coluna<>("Data Vinculo", VinculoFuncionarioParticularidade::getDataInclusao),
+                        new Coluna<>("Data Desvinculo", VinculoFuncionarioParticularidade::getDataExclusao)
                 ),
                 (particularidadeService::listarTodosVinculos),
-                (particularidadeService::desvincularParticularidadeFuncionario),
-                false
+                (particularidadeService::ativarInativarVinculo),
+                true
         );
     }
 

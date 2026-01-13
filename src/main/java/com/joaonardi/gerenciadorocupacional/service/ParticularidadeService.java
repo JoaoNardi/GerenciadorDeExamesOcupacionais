@@ -6,6 +6,8 @@ import com.joaonardi.gerenciadorocupacional.model.Particularidade;
 import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularidade;
 import javafx.collections.ObservableList;
 
+import java.time.LocalDate;
+
 public class ParticularidadeService {
     private final ParticularidadeDAO particularidadeDAO = new ParticularidadeDAO();
 
@@ -27,25 +29,39 @@ public class ParticularidadeService {
     }
 
     public void vincularFuncionarioParticularidade(VinculoFuncionarioParticularidade vinculoFuncionarioParticularidade) {
-        System.out.println(vinculoFuncionarioParticularidade);
         if (vinculoFuncionarioParticularidade.getId() == null) {
             particularidadeDAO.vincularParticularidadeFuncionario(vinculoFuncionarioParticularidade);
         }
         if (vinculoFuncionarioParticularidade.getId() != null) {
-            particularidadeDAO.atualizarMotivoVinculo(vinculoFuncionarioParticularidade);
+            particularidadeDAO.atualizarVinculoFuncionarioParticularidade(vinculoFuncionarioParticularidade);
         }
     }
 
-    public ObservableList<VinculoFuncionarioParticularidade> listarTodosVinculos() {
-        return particularidadeDAO.listarVinculos();
-    }
-
     public ObservableList<VinculoFuncionarioParticularidade> listarTodosVinculos(boolean ativos) {
-        return particularidadeDAO.listarVinculos();
+        return particularidadeDAO.listarVinculos(ativos);
     }
 
-    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadesVinculadas(Funcionario funcionario) {
-        return particularidadeDAO.listarParticularidadePorFuncionario(funcionario);
+    public ObservableList<VinculoFuncionarioParticularidade> listarParticularidadesVinculadas(Funcionario funcionario, boolean inVigentes) {
+        return particularidadeDAO.listarParticularidadePorFuncionario(funcionario, inVigentes);
+    }
+
+    public void ativarInativarVinculo(VinculoFuncionarioParticularidade vfp){
+        VinculoFuncionarioParticularidade vfp1 = null;
+        if (vfp.getDataExclusao() == null){
+             vfp1 = VinculoFuncionarioParticularidade
+                     .VinculoFuncionarioParticularidadeBuilder.builder()
+                            .id(vfp.getId())
+                            .dataExclusao(LocalDate.now())
+                            .build();
+        }
+        if (vfp.getDataExclusao() != null){
+            vfp1 = VinculoFuncionarioParticularidade
+                    .VinculoFuncionarioParticularidadeBuilder.builder()
+                    .id(vfp.getId())
+                    .dataExclusao(null)
+                    .build();
+        }
+        particularidadeDAO.AtivarInativarVinculoParticularidadeFuncionario(vfp1);
     }
 
     public void deletarParticularidade(Particularidade particularidade) {
