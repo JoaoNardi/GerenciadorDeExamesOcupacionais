@@ -3,11 +3,15 @@ package com.joaonardi.gerenciadorocupacional.controller;
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -37,7 +41,7 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
     @FXML
     public Label tituloLabel;
     private List<Coluna<T>> colunas;
-
+    private boolean ativarRadioBtns;
     public void configurar(
             String titulo,
             String diretorioObjeto,
@@ -52,6 +56,7 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
         this.lista = lista;
         this.loader = loader;
         this.colunas = colunas;
+        this.ativarRadioBtns = ativarRadioBtns;
         tituloLabel.setText(titulo);
 
         this.lista.setAll(loader.apply(true));
@@ -70,17 +75,78 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
     private void configurarTabela() {
         tabela.getColumns().clear();
 
+        int index = 0;
+
         for (Coluna<T> col : colunas) {
+            final boolean primeiraColuna = index == 0;
+
             TableColumn<T, String> coluna = new TableColumn<>(col.nomeColuna());
 
             coluna.setCellValueFactory(cell -> {
                 Object valor = col.dadosColuna().apply(cell.getValue());
                 return new ReadOnlyStringWrapper(valor != null ? valor.toString() : "");
             });
+
+            coluna.setCellFactory(tc -> new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? null : item);
+                    setAlignment(primeiraColuna ? Pos.CENTER_LEFT : Pos.CENTER);
+                }
+            });
+
             tabela.getColumns().add(coluna);
+            index++;
         }
+
         tabela.setItems(lista);
+
+        Platform.runLater(() -> {
+            ajustarLarguraColunas();
+            ajustarJanelaAoConteudo();
+        });
     }
+
+
+    private void ajustarLarguraColunas() {
+        for (TableColumn<T, ?> coluna : tabela.getColumns()) {
+
+            Text text = new Text(coluna.getText());
+            double max = text.getLayoutBounds().getWidth();
+
+            for (T item : tabela.getItems()) {
+                Object valor = coluna.getCellData(item);
+                if (valor != null) {
+                    text.setText(valor.toString());
+                    max = Math.max(max, text.getLayoutBounds().getWidth());
+                }
+            }
+
+            double paddingSeguro = 28; // header + célula
+            coluna.setPrefWidth(max + paddingSeguro);
+            coluna.setMinWidth(Control.USE_PREF_SIZE);
+        }
+    }
+
+
+    private void ajustarJanelaAoConteudo() {
+        Stage stage = (Stage) tabela.getScene().getWindow();
+        Screen screen = Screen.getPrimary();
+
+        double larguraColunas = tabela.getColumns().stream()
+                .mapToDouble(TableColumn::getPrefWidth)
+                .sum();
+
+        double paddingSeguro = 6;
+        double decoracao = 60;
+
+        double larguraFinal = larguraColunas + paddingSeguro + decoracao;
+        double maxWidth = screen.getVisualBounds().getWidth() * 0.9;
+        stage.setMinWidth(350);
+        stage.setWidth(Math.min(larguraFinal, maxWidth));
+    }
+
 
     private void setBindings() {
         ativosInativos.getToggles().setAll(radioBtnAtivos, radioBtnInativos);
@@ -88,6 +154,7 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
             if (novo == null) {
                 old.setSelected(true);
             }
+            configurarTabela();
         });
 
         BooleanBinding inputsValidos =
@@ -98,7 +165,6 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
 
     @FXML
     private void initialize() {
-        //disabilitar ativosinativos
         radioBtnAtivos.setToggleGroup(ativosInativos);
         radioBtnInativos.setToggleGroup(ativosInativos);
 
@@ -107,8 +173,15 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
 
             inAtivos = selected == radioBtnAtivos;
             atualizar(inAtivos);
+            if (this.ativarRadioBtns){
+                if (radioBtnAtivos.isSelected()){
+                    btnDeletar.setText("Inativar");
+                }
+                if (radioBtnInativos.isSelected()){
+                    btnDeletar.setText("Ativar");
+                }
+            }
         });
-
         setBindings();
     }
 

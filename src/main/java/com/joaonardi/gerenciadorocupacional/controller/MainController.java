@@ -4,6 +4,7 @@ import com.joaonardi.gerenciadorocupacional.MainApp;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -527,10 +528,11 @@ public class MainController {
                 List.of(
                         new Coluna<>("Nome", Funcionario::getNome),
                         new Coluna<>("Cpf", Funcionario::getCpf),
-                        new Coluna<>("Data Nascimento", Funcionario::getDataNascimento),
+                        new Coluna<>("Data Nascimento", f -> FormataData.br(f.getDataNascimento())),
                         new Coluna<>("Setor", Funcionario::getSetor),
-                        new Coluna<>("Data Admissão", Funcionario::getDataAdmissao),
-                        new Coluna<>("Ativo", Funcionario::getAtivo)
+                        new Coluna<>("Data Admissão", f -> FormataData.br(f.getDataAdmissao())),
+                        new Coluna<>("Ativo", f -> f.getAtivo() ? "✔" : "✖"
+                        )
 
                 ),
                 (funcionarioService::listarFuncionariosPorStatus),
@@ -600,8 +602,8 @@ public class MainController {
                         new Coluna<>("Particularidade", f -> f.getParticularidade().getNome()),
                         new Coluna<>("Tipo Exame", f -> f.getParticularidade().getTipoExame().getNome()),
                         new Coluna<>("Motivo", VinculoFuncionarioParticularidade::getMotivo),
-                        new Coluna<>("Data Vinculo", VinculoFuncionarioParticularidade::getDataInclusao),
-                        new Coluna<>("Data Desvinculo", VinculoFuncionarioParticularidade::getDataExclusao)
+                        new Coluna<>("Data Vinculo", f -> FormataData.br(f.getDataInclusao())),
+                        new Coluna<>("Data Desvinculo", f -> FormataData.br(f.getDataExclusao()))
                 ),
                 (particularidadeService::listarTodosVinculos),
                 (particularidadeService::ativarInativarVinculo),
