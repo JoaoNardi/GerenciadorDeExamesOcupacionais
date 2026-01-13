@@ -6,12 +6,12 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class ExameDAO extends BaseDAO {
     private PreparedStatement preparedStatement = null;
@@ -48,8 +48,8 @@ public class ExameDAO extends BaseDAO {
             int i = 1;
             preparedStatement.setInt(i++, exame.getTipoExame().getId());
             preparedStatement.setInt(i++, exame.getFuncionario().getId());
-            preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
-            preparedStatement.setString(i++, exame.getDataValidade() == null ? null : exame.getDataValidade().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(exame.getDataEmissao()));
+            preparedStatement.setString(i++, FormataData.iso(exame.getDataValidade()));
             if (exame.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {
@@ -79,8 +79,8 @@ public class ExameDAO extends BaseDAO {
             preparedStatement = connection.prepareStatement(ALTERAR_EXAME);
             int i = 1;
             preparedStatement.setInt(i++, exame.getTipoExame().getId());
-            preparedStatement.setString(i++, exame.getDataEmissao().format(formato));
-            preparedStatement.setString(i++, (exame.getDataValidade() == null ? null : exame.getDataValidade().format(formato)));
+            preparedStatement.setString(i++, FormataData.iso(exame.getDataEmissao()));
+            preparedStatement.setString(i++, FormataData.iso(exame.getDataValidade()));
             if (exame.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {

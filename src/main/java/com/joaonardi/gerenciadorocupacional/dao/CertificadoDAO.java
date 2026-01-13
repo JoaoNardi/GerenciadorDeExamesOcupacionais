@@ -5,6 +5,7 @@ import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,7 +14,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class CertificadoDAO extends BaseDAO {
-    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
@@ -49,8 +49,8 @@ public class CertificadoDAO extends BaseDAO {
             int i = 1;
             preparedStatement.setInt(i++, certificado.getTipoCertificado().getId());
             preparedStatement.setInt(i++, certificado.getFuncionario().getId());
-            preparedStatement.setString(i++, certificado.getDataEmissao().format(formato));
-            preparedStatement.setString(i++, certificado.getDataValidade() == null ? null : certificado.getDataValidade().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(certificado.getDataEmissao()));
+            preparedStatement.setString(i++, FormataData.iso(certificado.getDataValidade()));
             if (certificado.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null, Types.INTEGER);
             } else {
@@ -81,8 +81,8 @@ public class CertificadoDAO extends BaseDAO {
             int i = 1;
             preparedStatement.setInt(i++, certificado.getTipoCertificado().getId());
             preparedStatement.setInt(i++, certificado.getFuncionario().getId());
-            preparedStatement.setString(i++, certificado.getDataEmissao().format(formato));
-            preparedStatement.setString(i++, (certificado.getDataValidade() == null ? null : certificado.getDataValidade().format(formato)));
+            preparedStatement.setString(i++, FormataData.iso(certificado.getDataEmissao()));
+            preparedStatement.setString(i++, FormataData.iso(certificado.getDataValidade()));
             if (certificado.getAtualizadoPor() == null) {
                 preparedStatement.setObject(i++, null);
             } else {

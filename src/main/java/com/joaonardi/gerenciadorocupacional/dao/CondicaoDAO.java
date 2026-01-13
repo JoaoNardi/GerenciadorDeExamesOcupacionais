@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.Condicao;
 import com.joaonardi.gerenciadorocupacional.model.Conjunto;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;

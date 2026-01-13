@@ -5,6 +5,7 @@ import com.joaonardi.gerenciadorocupacional.model.RelatorioItem;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.model.TipoDe;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class RelatorioDAO extends BaseDAO {
-    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
@@ -119,8 +119,8 @@ public class RelatorioDAO extends BaseDAO {
             int i = 1;
             preparedStatement.setInt(i++, funcionario.getId());
             preparedStatement.setString(i++, inputData);
-            preparedStatement.setString(i++, dataInicial.format(formato));
-            preparedStatement.setString(i++, dataFinal.format(formato));
+            preparedStatement.setString(i++, FormataData.iso(dataInicial));
+            preparedStatement.setString(i++, FormataData.iso(dataFinal));
             preparedStatement.setObject(i++, tipoDe != null ? tipoDe.getId() : null);
             preparedStatement.setInt(i++, exame ? 1 : 0);
             preparedStatement.setInt(i++, certificado ? 1 : 0);
@@ -146,8 +146,8 @@ public class RelatorioDAO extends BaseDAO {
                         .funcionario(funcionario1)
                         .origem(resultSet.getString("origem"))
                         .tipoId(resultSet.getInt("tipo_id"))
-                        .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao"), formato))
-                        .dataValidade(LocalDate.parse(resultSet.getString("data_validade"), formato))
+                        .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
+                        .dataValidade(LocalDate.parse(resultSet.getString("data_validade")))
                         .atualizadoPor(resultSet.getObject("atualizado_por") != null ? resultSet.getInt("atualizado_por") : null)
                         .build();
                 lista.add(item);

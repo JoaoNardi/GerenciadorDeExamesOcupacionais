@@ -3,6 +3,7 @@ package com.joaonardi.gerenciadorocupacional.dao;
 import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.Setor;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -14,7 +15,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class FuncionarioDAO extends BaseDAO {
-    final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
     private static final String CADASTRAR_FUNCIONARIO = " INSERT INTO FUNCIONARIOS "
@@ -46,8 +46,8 @@ public class FuncionarioDAO extends BaseDAO {
             int i = 1;
             preparedStatement.setString(i++, funcionario.getNome());
             preparedStatement.setString(i++, funcionario.getCpf());
-            preparedStatement.setString(i++, funcionario.getDataNascimento().format(formato));
-            preparedStatement.setString(i++, funcionario.getDataAdmissao().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(funcionario.getDataNascimento()));
+            preparedStatement.setString(i++, FormataData.iso(funcionario.getDataAdmissao()));
             preparedStatement.setInt(i++, funcionario.getSetor().getId());
             preparedStatement.setBoolean(i++, funcionario.getAtivo());
 
@@ -85,8 +85,8 @@ public class FuncionarioDAO extends BaseDAO {
             int i = 1;
             preparedStatement.setString(i++, funcionario.getNome());
             preparedStatement.setString(i++, funcionario.getCpf());
-            preparedStatement.setString(i++, funcionario.getDataNascimento().format(formato));
-            preparedStatement.setString(i++, funcionario.getDataAdmissao().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(funcionario.getDataNascimento()));
+            preparedStatement.setString(i++, FormataData.iso(funcionario.getDataAdmissao()));
             preparedStatement.setObject(i++, funcionario.getSetor().getId());
             preparedStatement.setBoolean(i++, funcionario.getAtivo());
             preparedStatement.setInt(i++, id);

@@ -2,6 +2,7 @@ package com.joaonardi.gerenciadorocupacional.dao;
 
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -162,8 +163,8 @@ public class ParticularidadeDAO extends BaseDAO {
             preparedStatement.setInt(i++, vfp.getFuncionario().getId());
             preparedStatement.setInt(i++, vfp.getParticularidade().getId());
             preparedStatement.setString(i++, vfp.getMotivo());
-            preparedStatement.setString(i++, vfp.getDataInclusao().format(formato));
-            preparedStatement.setString(i++, vfp.getDataExclusao() == null ? null : vfp.getDataExclusao().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(vfp.getDataInclusao()));
+            preparedStatement.setString(i++, FormataData.iso(vfp.getDataExclusao()));
             preparedStatement.execute();
             commit(connection);
         } catch (SQLException e) {
@@ -179,7 +180,7 @@ public class ParticularidadeDAO extends BaseDAO {
         try {
             preparedStatement = connection.prepareStatement(INATIVAR_VINCULO_PARTICULARIDADE_FUNCIONARIO);
             int i = 1;
-            preparedStatement.setString(i++, vfp.getDataExclusao() == null ? null : vfp.getDataExclusao().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(vfp.getDataExclusao()));
             preparedStatement.setInt(i++, vfp.getId());
             preparedStatement.execute();
             commit(connection);
@@ -263,8 +264,8 @@ public class ParticularidadeDAO extends BaseDAO {
             preparedStatement = connection.prepareStatement(ATUALIZAR_VINCULO_FUNCIONARIO_PARTICULARIDADE);
             int i = 1;
             preparedStatement.setString(i++, vfp.getMotivo());
-            preparedStatement.setString(i++, vfp.getDataInclusao().format(formato));
-            preparedStatement.setString(i++, vfp.getDataExclusao() == null ? null : vfp.getDataExclusao().format(formato));
+            preparedStatement.setString(i++, FormataData.iso(vfp.getDataInclusao()));
+            preparedStatement.setString(i++, FormataData.iso(vfp.getDataExclusao()));
             preparedStatement.setInt(i++, vfp.getId());
 
             int linhasAfetadas = preparedStatement.executeUpdate();
