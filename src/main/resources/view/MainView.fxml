@@ -1,136 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="921.0" prefWidth="1263.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="921.0"
+            prefWidth="1263.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.joaonardi.gerenciadorocupacional.controller.MainController">
     <children>
         <MenuBar layoutY="2.0">
             <menus>
                 <Menu mnemonicParsing="false" text="Setores">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirSetor" text="Adicionar Setor" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarSetor" text="Gerenciar Setores" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirSetor" text="Adicionar Setor"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarSetor"
+                                  text="Gerenciar Setores"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Funcionários">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirFuncionario" text="Cadastrar Funcionario" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarFuncionario" text="Gerenciar Funcionarios" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirFuncionario"
+                                  text="Cadastrar Funcionario"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarFuncionario"
+                                  text="Gerenciar Funcionarios"/>
                     </items>
                 </Menu>
-            <Menu mnemonicParsing="false" text="Particularidade">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#handleAbrirParticularidades" text="Criar Particularidades" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarParticularidades" text="Gerenciar Particularidades" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirVincularParticularidades" text="Vincular Particularidades" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarVinculos" text="Gerenciar Vínculos" />
-              </items>
-            </Menu>
+                <Menu mnemonicParsing="false" text="Particularidade">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirParticularidades"
+                                  text="Criar Particularidades"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarParticularidades"
+                                  text="Gerenciar Particularidades"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirVincularParticularidades"
+                                  text="Vincular Particularidades"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarVinculos"
+                                  text="Gerenciar Vínculos"/>
+                    </items>
+                </Menu>
                 <Menu mnemonicParsing="false" text="Exames">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Tipo de Exame" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame" text="Gerenciar Tipo de Exame" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleLancarExame" text="Lançar novo Exame" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirExame" text="Adicionar Tipo de Exame"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirGerenciarExame"
+                                  text="Gerenciar Tipo de Exame"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleLancarExame" text="Lançar novo Exame"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Certificados">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleTipoCertificado" text="Adicionar Tipo de Certificado" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleGerenciarTiposCertificado" text="Gerenciar Tipos de Certificados" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleLancarCertificado" text="Lançar Certificados" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleTipoCertificado"
+                                  text="Adicionar Tipo de Certificado"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleGerenciarTiposCertificado"
+                                  text="Gerenciar Tipos de Certificados"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleLancarCertificado"
+                                  text="Lançar Certificados"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Relatórios">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirRelatorioFuncionario" text="Por Funcionário" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleAbrirRelatorioFuncionario"
+                                  text="Por Funcionário"/>
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
-        <Button fx:id="btnGeral" layoutX="407.0" layoutY="50.0" mnemonicParsing="false" onAction="#handleBtnGeral" prefHeight="70.0" prefWidth="437.0" style="-fx-border-radius: 30; -fx-background-radius: 30;" text="Geral">
-            <font>
-                <Font name="System Bold" size="24.0" />
-            </font>
-        </Button>
-        <HBox alignment="CENTER" layoutX="34.0" layoutY="120.0" prefHeight="100.0" prefWidth="1183.0" spacing="50.0">
+        <HBox alignment="CENTER" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+            <Button fx:id="btnGeral" mnemonicParsing="false" onAction="#handleBtnGeral" prefHeight="70.0"
+                    prefWidth="437.0" style="-fx-border-radius: 30; -fx-background-radius: 30;" text="Geral">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Button>
+        </HBox>
+
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1183.0" spacing="50.0" AnchorPane.leftAnchor="20.0"
+              AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="120.0">
             <children>
-                <Button fx:id="btnVencidos" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0" minWidth="149.0" mnemonicParsing="false" onAction="#handleBtnVencidos" prefHeight="65.0" prefWidth="149.0" style="-fx-base: #D94343; -fx-text-fill: black; -fx-border-radius: 30; -fx-background-radius: 30;" text="Vencidos">
+                <Button fx:id="btnVencidos" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0"
+                        minWidth="149.0" mnemonicParsing="false" onAction="#handleBtnVencidos" prefHeight="65.0"
+                        prefWidth="149.0"
+                        style="-fx-base: #D94343; -fx-text-fill: black; -fx-border-radius: 30; -fx-background-radius: 30;"
+                        text="Vencidos">
                     <font>
-                        <Font name="System Bold" size="16.0" />
+                        <Font name="System Bold" size="16.0"/>
                     </font>
                     <graphic>
                         <VBox alignment="BOTTOM_CENTER">
                             <Label fx:id="labelVencidos" text="0">
                                 <font>
-                                    <Font name="System Bold" size="14.0" />
+                                    <Font name="System Bold" size="14.0"/>
                                 </font>
                             </Label>
                         </VBox>
                     </graphic>
                 </Button>
-                <Button fx:id="btnVencemSemana" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0" minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnSemana" prefHeight="65.0" prefWidth="203.0" style="-fx-base: #F29544; -fx-border-radius: 30; -fx-background-radius: 30;" text="Vencem na Semana">
+                <Button fx:id="btnVencemSemana" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0"
+                        minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnSemana" prefHeight="65.0"
+                        prefWidth="203.0" style="-fx-base: #F29544; -fx-border-radius: 30; -fx-background-radius: 30;"
+                        text="Vencem na Semana">
                     <font>
-                        <Font name="System Bold" size="16.0" />
+                        <Font name="System Bold" size="16.0"/>
                     </font>
                     <graphic>
                         <VBox alignment="BOTTOM_CENTER">
                             <Label fx:id="labelVencemSemana" text="0">
                                 <font>
-                                    <Font name="System Bold" size="14.0" />
+                                    <Font name="System Bold" size="14.0"/>
                                 </font>
                             </Label>
                         </VBox>
                     </graphic>
 
                 </Button>
-                <Button fx:id="btnVencemMes" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0" minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnMes" prefHeight="65.0" prefWidth="183.0" style="-fx-base: #F2B84B; -fx-border-radius: 30; -fx-background-radius: 30;" text="Vencem no Mes">
+                <Button fx:id="btnVencemMes" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0"
+                        minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnMes" prefHeight="65.0"
+                        prefWidth="183.0" style="-fx-base: #F2B84B; -fx-border-radius: 30; -fx-background-radius: 30;"
+                        text="Vencem no Mes">
                     <font>
-                        <Font name="System Bold" size="16.0" />
+                        <Font name="System Bold" size="16.0"/>
                     </font>
                     <graphic>
                         <VBox alignment="BOTTOM_CENTER">
                             <Label fx:id="labelVencemMes" text="0">
                                 <font>
-                                    <Font name="System Bold" size="14.0" />
+                                    <Font name="System Bold" size="14.0"/>
                                 </font>
                             </Label>
                         </VBox>
                     </graphic>
                 </Button>
-                <Button fx:id="btnVencemSemestre" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0" minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnSemestre" prefHeight="65.0" prefWidth="233.0" style="-fx-base: #48A1D9; -fx-border-radius: 30; -fx-background-radius: 30;" text="Vencem no Semestre">
+                <Button fx:id="btnVencemSemestre" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0"
+                        minWidth="170.0" mnemonicParsing="false" onAction="#handleBtnSemestre" prefHeight="65.0"
+                        prefWidth="233.0" style="-fx-base: #48A1D9; -fx-border-radius: 30; -fx-background-radius: 30;"
+                        text="Vencem no Semestre">
                     <font>
-                        <Font name="System Bold" size="16.0" />
+                        <Font name="System Bold" size="16.0"/>
                     </font>
                     <graphic>
                         <VBox alignment="BOTTOM_CENTER">
                             <Label fx:id="labelVencemSemestre" text="0">
                                 <font>
-                                    <Font name="System Bold" size="14.0" />
+                                    <Font name="System Bold" size="14.0"/>
                                 </font>
                             </Label>
                         </VBox>
                     </graphic>
                 </Button>
-                <Button fx:id="btnTodos" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0" minWidth="142.0" mnemonicParsing="false" onAction="#handleBtnTodos" prefHeight="65.0" prefWidth="142.0" style="-fx-base: #5ABF73; -fx-border-radius: 30; -fx-background-radius: 30;" text="Todos">
+                <Button fx:id="btnTodos" alignment="TOP_CENTER" contentDisplay="BOTTOM" minHeight="65.0"
+                        minWidth="142.0" mnemonicParsing="false" onAction="#handleBtnTodos" prefHeight="65.0"
+                        prefWidth="142.0" style="-fx-base: #5ABF73; -fx-border-radius: 30; -fx-background-radius: 30;"
+                        text="Todos">
                     <font>
-                        <Font name="System Bold" size="16.0" />
+                        <Font name="System Bold" size="16.0"/>
                     </font>
                     <graphic>
                         <VBox alignment="BOTTOM_CENTER">
                             <Label fx:id="labelTodos" text="0">
                                 <font>
-                                    <Font name="System Bold" size="14.0" />
+                                    <Font name="System Bold" size="14.0"/>
                                 </font>
                             </Label>
                         </VBox>
@@ -139,33 +166,50 @@
 
             </children>
         </HBox>
-        <TableView fx:id="tabelaPrincipal" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" style="-fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+        <TableView fx:id="tabelaPrincipal" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0"
+                   style="-fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="70.0"
+                   AnchorPane.rightAnchor="70.0" AnchorPane.bottomAnchor="40.0" AnchorPane.topAnchor="240.0">
             <columns>
-                <TableColumn fx:id="colunaFuncionarioGeral" prefWidth="200.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Funcionário" />
-                <TableColumn fx:id="colunaIdadeGeral" prefWidth="70.0" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;" text="Idade" />
-                <TableColumn fx:id="colunaSetorGeral" prefWidth="135.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Setor" />
-                <TableColumn fx:id="colunaAniversario" minWidth="0.0" prefWidth="126.0" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;" text="Aniversário" />
-                <TableColumn fx:id="colunaStatusGeral" minWidth="482.0" prefWidth="482.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Status Geral" />
-                <TableColumn fx:id="colunaAcoesGeral" maxWidth="133.0" prefWidth="121.0" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;" text="Ações" />
+                <TableColumn fx:id="colunaFuncionarioGeral" prefWidth="220.0"
+                             style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Funcionário"/>
+                <TableColumn fx:id="colunaIdadeGeral" prefWidth="70.0"
+                             style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"
+                             text="Idade"/>
+                <TableColumn fx:id="colunaSetorGeral" prefWidth="135.0"
+                             style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Setor"/>
+                <TableColumn fx:id="colunaAniversario" minWidth="0.0" prefWidth="115.0"
+                             style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"
+                             text="Aniversário"/>
+                <TableColumn fx:id="colunaStatusGeral" minWidth="482.0" prefWidth="482.0"
+                             style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Status Geral"/>
+                <TableColumn fx:id="colunaAcoesGeral" maxWidth="133.0" prefWidth="90.0"
+                             style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"
+                             text="Ações"/>
             </columns>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
         </TableView>
-        <TableView fx:id="tabelaVencimentos" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1163.0" style="-fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+        <TableView fx:id="tabelaVencimentos" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1163.0"
+                   style="-fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="50.0"
+                   AnchorPane.rightAnchor="50.0">
             <columns>
-                <TableColumn fx:id="colunaFuncionarioVencimentos" prefWidth="200.0" text="Funcionário" />
-                <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="50.0" style="-fx-alignment: CENTER;" text="Idade" />
-                <TableColumn fx:id="colunaSetorVencimentos" prefWidth="100.0" text="Setor" />
-                <TableColumn fx:id="colunaTipoVencimentos" prefWidth="70.0" text="Tipo" />
-                <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="125.0" text="Descrição" />
-                <TableColumn fx:id="colunaEmissaoVencimentos" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Data Emissão" />
-                <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Data Validade" />
-                <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="299.0" text="Status" />
-                <TableColumn fx:id="colunaAcoesVencimentos" prefWidth="95.0" style="-fx-alignment: CENTER;" text="Ações" />
+                <TableColumn fx:id="colunaFuncionarioVencimentos" prefWidth="200.0" text="Funcionário"/>
+                <TableColumn fx:id="colunaIdadeVencimentos" prefWidth="50.0" style="-fx-alignment: CENTER;"
+                             text="Idade"/>
+                <TableColumn fx:id="colunaSetorVencimentos" prefWidth="100.0" text="Setor"/>
+                <TableColumn fx:id="colunaTipoVencimentos" prefWidth="70.0" text="Tipo"/>
+                <TableColumn fx:id="colunaDescricaoVencimentos" prefWidth="125.0" text="Descrição"/>
+                <TableColumn fx:id="colunaEmissaoVencimentos" prefWidth="100.0" style="-fx-alignment: CENTER;"
+                             text="Data Emissão"/>
+                <TableColumn fx:id="colunaValidadeVencimentos" prefWidth="100.0" style="-fx-alignment: CENTER;"
+                             text="Data Validade"/>
+                <TableColumn fx:id="colunaStatusVencimentos" minWidth="0.0" prefWidth="299.0" text="Status"/>
+                <TableColumn fx:id="colunaAcoesVencimentos" prefWidth="95.0" style="-fx-alignment: CENTER;"
+                             text="Ações"/>
             </columns>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
         </TableView>
     </children>
