@@ -119,8 +119,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
     private void setBindings() {
         BooleanBinding inputsValidos =
                 inputNome.textProperty().isNotNull()
-                        .and(tabelaCondicoes.itemsProperty().isNotNull())
-                        .and(inputPeriodicidade.valueProperty().isNotNull());
+                        .and(tabelaCondicoes.itemsProperty().isNotNull());
         btnSalvar.disableProperty().bind(inputsValidos.not());
     }
 
