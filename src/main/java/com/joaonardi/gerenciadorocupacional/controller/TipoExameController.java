@@ -32,6 +32,7 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TipoExameController extends Janela<TipoExame> implements Editavel<TipoExame> {
@@ -74,19 +75,22 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
     private TipoExame tipoExame;
     final TipoExameService tipoExameService = new TipoExameService();
 
+
     public void initialize() {
         FontIcon iconInfo = new FontIcon(FontAwesomeSolid.INFO);
-        Tooltip tooltip = new Tooltip("""
+
+        btnInfo.setGraphic(iconInfo);
+        btnInfo.setOnAction(event -> JOptionPane.showMessageDialog(
+                null,
+                """
                 A Condição torna o tipo de exame obrigatório o funcionario que contemple a regra\s
                  \
                 OBS: Será atendida atendindo o conjunto de regras que houver maior compatibilidade com o funcionário!\s
                  \
-                (Em caso de conflito, será aplicada a menor periodicidade)""");
-
-        btnInfo.setGraphic(iconInfo);
-        btnInfo.setTooltip(tooltip);
-        tooltip.fontProperty().set(new Font(14));
-        TooltipUtils.installWithDelay(btnInfo, tooltip, 200);
+                (Em caso de conflito, será aplicada a menor periodicidade)""",
+                "Infomativo",
+                JOptionPane.INFORMATION_MESSAGE
+        ));
         conjuntoSelecionado.addListener((obs, oldV, newV) -> {
             atualizarTabelaCondicoes();
             btnAtivaModalCondicao.setOpacity(newV != null ? 1 : 0);
@@ -102,12 +106,15 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
                     }
                 }
         );
+
+
         inputNome.focusedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
                 return;
             }
             cadastrarTipoExame();
         });
+
         Platform.runLater(()->{
             if (this.tipoExame != null){
                 setTabelaConjuntos();
@@ -121,6 +128,10 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
                 inputNome.textProperty().isNotNull()
                         .and(tabelaCondicoes.itemsProperty().isNotNull());
         btnSalvar.disableProperty().bind(inputsValidos.not());
+
+        BooleanBinding periodicidadeSelecionada = conjuntoSelecionado.isNotNull();
+        btnAddCondicao.disableProperty().bind(periodicidadeSelecionada);
+
     }
 
     @Override
@@ -134,15 +145,12 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
             setTabelaCondicoes();
             setTabelaConjuntos();
         });
-
     }
 
     private void setTabelaConjuntos() {
-
         colunaConjuntosRegras.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getPeriodicidade() + " Meses"));
         setColunaAcoesGeneric((TableColumn<Object, Node>) colunaAcoesRegras);
         Platform.runLater(()-> {tabelaConjuntos.setItems(conjuntoService.listarConjuntos(this.tipoExame.getId()));});
-
     }
 
     private void setModalCondicao() {
@@ -179,6 +187,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
         modalAddCondicao.setOpacity(0);
         btnAtivaModalCondicao.setOpacity(1);
         btnAtivaModalCondicao.setDisable(false);
+        modalAddRegraSwitch(false);
     }
 
 
@@ -262,9 +271,10 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
                 .parametro(parametro)
                 .build();
 
-        condicaoService.listarCondicoes().add(condicao);
+        condicaoService.cadastrarCondicao(condicao);
+        tabelaCondicoes.refresh();
+        actionFecharModalCondicao();
     }
-
 
     private String extrairParametro(Node node) {
         if (node instanceof Spinner<?> spinner)
@@ -328,6 +338,10 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
         btnAtivaModalCondicao.setOpacity(0);
         btnAtivaModalCondicao.setDisable(true);
         setModalCondicao();
+        btnAddRegra.setDisable(true);
+        inputPeriodicidade.setDisable(true);
+        btnAddRegra.setOpacity(0);
+        inputPeriodicidade.setOpacity(0);
     }
 
     private void operadorChoiceBoxPorReferencia(Referencia referencia, ChoiceBox<Operador> container) {
@@ -395,6 +409,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
                         }
                         if (getTableRow().getItem() instanceof Conjunto) {
                             acaoRemmoverColuna(index, conjuntoService.listarConjuntos(tipoExame.getId()), getTableRow());
+                            tabelaConjuntos.setItems(conjuntoService.listarConjuntos(tipoExame.getId()));
                         }
                     });
                     setGraphic(hBox);
@@ -423,7 +438,6 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
 
     public void handleSalvarExame() {
         cadastrarTipoExame();
-        condicaoService.cadastrarListaCondicao(condicaoService.listarCondicoes());
         janela.fecharJanela(btnSalvar);
     }
 
@@ -432,13 +446,15 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
     }
 
     private void modalAddRegraSwitch(boolean inChoicebox) {
-        inputPeriodicidade.setDisable(!inChoicebox);
-        inputPeriodicidade.setOpacity(inChoicebox ? 1 : 0);
-        btnAddRegra.setDisable(inChoicebox);
-        btnAddRegra.setOpacity(inChoicebox ? 0 : 1);
+        switchBtn(inputPeriodicidade,!inChoicebox);
+        switchBtn(btnAddRegra,inChoicebox);
     }
 
-    //
+    private void switchBtn(Node node, boolean setDisable){
+        node.setDisable(setDisable);
+        node.setOpacity(setDisable ? 0 : 1);
+    }
+
     public void handleSelecionarConjunto() {
         conjuntoSelecionado.setValue(tabelaConjuntos.selectionModelProperty().getValue().getSelectedItem());
         condicaoService.carregarCondicoesPorConjuntoId(conjuntoSelecionado.get().getId());
@@ -446,24 +462,46 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
     }
 
     private void atualizarTabelaCondicoes() {
+        if (conjuntoSelecionado.getValue().getId() == null){
+            return;
+        }
         tabelaCondicoes.setItems(FXCollections.observableArrayList(condicaoService.listarCondicoes()));
     }
 
     public void handleAddPeriodicidade() {
+
+        var periodicidadeSelecionada = inputPeriodicidade.getValue();
+
+        if (periodicidadeSelecionada == null) {
+            return;
+        }
         Conjunto conjuntoNovo = Conjunto.ConjuntoBuilder.builder()
                 .id(null)
                 .tipoExame(tipoExame)
-                .periodicidade(inputPeriodicidade.getValue().getValor())
+                .periodicidade(periodicidadeSelecionada.getValor())
                 .build();
         conjuntoSelecionado.setValue(conjuntoNovo);
         conjuntoService.cadastrarConjunto(conjuntoNovo);
+
+        tabelaConjuntos.setItems(
+                conjuntoService.listarConjuntos(tipoExame.getId())
+        );
+
+        tabelaConjuntos.getSelectionModel()
+                .select(tabelaConjuntos.getItems().size() - 1);
+        tabelaConjuntos.scrollTo(
+                tabelaConjuntos.getItems().size() - 1
+        );
         Platform.runLater(() -> {
-            tabelaConjuntos.getSelectionModel().select(tabelaConjuntos.getItems().size() - 1);
-            tabelaConjuntos.scrollTo(tabelaConjuntos.getItems().size() - 1);
+            handleSelecionarConjunto();
+            inputPeriodicidade.getSelectionModel().clearSelection();
+            modalAddRegraSwitch(false);
         });
-        tabelaConjuntos.setItems(conjuntoService.listarConjuntos(tipoExame.getId()));
-        modalAddRegraSwitch(false);
+
         setTabelaConjuntos();
+        setTabelaCondicoes();
+
     }
+
 
 }

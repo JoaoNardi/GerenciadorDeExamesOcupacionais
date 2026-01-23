@@ -22,17 +22,14 @@ public class CondicaoService {
         return listaCondicoes;
     }
 
-    public void cadastrarListaCondicao(ObservableList<Condicao> listaCondicao) {
-        ObservableList<Condicao> lista = FXCollections.observableArrayList();
-        for (Condicao condicao : listaCondicao) {
-            if (condicao.getId() == null) {
-                if (condicao.getParametro() == null){
-                    continue;
-                }
-                lista.add(condicao);
-            }
+    public void cadastrarCondicao(Condicao condicao){
+        try {
+            condicaoDAO.cadastrarCondicao(condicao);
+            listaCondicoes.add(condicao);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
-        condicaoDAO.cadastrarListaCondicao(lista);
+
     }
 
     public void deletarCondicao(Condicao condicao) {
