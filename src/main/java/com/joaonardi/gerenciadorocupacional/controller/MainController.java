@@ -744,6 +744,11 @@ public class MainController {
                 this::setTodos, null);
     }
 
+    public void handleAbrirAjuda(ActionEvent event) {
+        new Janela<>().abrirJanela("/view/DuvidasErrosView.fxml", "Ajuda - Dúvidas - Erros", MainApp.STAGE_PRINCIPAL,
+                this::setTodos, null);
+    }
+
     public void handleBtnVencidos() {
         tabelaPrincipal.setVisible(false);
         tabelaVencimentos.setVisible(true);
@@ -798,4 +803,5 @@ public class MainController {
         tabelaPrincipal.refresh();
         pendenciaService.varreduraPendencias();
     }
+
 }
