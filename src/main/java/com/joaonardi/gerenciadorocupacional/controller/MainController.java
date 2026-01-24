@@ -360,6 +360,8 @@ public class MainController {
                         datePicker.getValue(),
                         exame.getTipoExame())));
         Button btnConfirmar = new Button("Concluir");
+        Label label3 = new Label("Condições atendidas: " + exame.getTipoExame().getNome());
+
         btnConfirmar.setOnAction(e -> {
             btnConfirmar.setDisable(true);
             Exame exame1 = Exame.ExameBuilder.builder()
