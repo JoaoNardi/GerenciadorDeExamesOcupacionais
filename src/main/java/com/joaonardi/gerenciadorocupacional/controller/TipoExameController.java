@@ -94,6 +94,7 @@ public class TipoExameController extends Janela<TipoExame> implements Editavel<T
         conjuntoSelecionado.addListener((obs, oldV, newV) -> {
             atualizarTabelaCondicoes();
             btnAtivaModalCondicao.setOpacity(newV != null ? 1 : 0);
+            btnAtivaModalCondicao.setDisable(newV == null);
         });
         btnAtivaModalCondicao.setDisable(true);
         setores.setAll(setorService.listarSetores());
