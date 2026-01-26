@@ -34,9 +34,7 @@ import java.util.List;
 
 
 public class MainController {
-    ExamesController examesController = new ExamesController();
-    CertificadoController certificadoController = new CertificadoController();
-    FuncionarioController funcionarioController = new FuncionarioController();
+    CondicaoService condicaoService = new CondicaoService();
 
     //tabela Principal Geral
     public TableView<Funcionario> tabelaPrincipal;
@@ -360,7 +358,6 @@ public class MainController {
                         datePicker.getValue(),
                         exame.getTipoExame())));
         Button btnConfirmar = new Button("Concluir");
-        Label label3 = new Label("Condições atendidas: " + exame.getTipoExame().getNome());
 
         btnConfirmar.setOnAction(e -> {
             btnConfirmar.setDisable(true);

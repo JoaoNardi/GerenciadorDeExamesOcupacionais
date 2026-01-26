@@ -145,8 +145,8 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
         double maxWidth = screen.getVisualBounds().getWidth() * 0.9;
         stage.setMinWidth(350);
         stage.setWidth(Math.min(larguraFinal, maxWidth));
+        Platform.runLater(stage::centerOnScreen);
     }
-
 
     private void setBindings() {
         ativosInativos.getToggles().setAll(radioBtnAtivos, radioBtnInativos);

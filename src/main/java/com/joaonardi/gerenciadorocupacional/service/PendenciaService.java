@@ -17,10 +17,12 @@ public class PendenciaService {
     private final FuncionarioService funcionarioService = new FuncionarioService();
     public final ObservableList<Pendencia> pendencias = FXCollections.observableArrayList();
     private final ParticularidadeService particularidadeService = new ParticularidadeService();
+
     public void varreduraPendencias() {
         pendencias.clear();
         funcionarioService.listarFuncionariosPorStatus(true);
         for (Funcionario funcionario : funcionarioService.listarFuncionariosPorStatus(true)) {
+
             for (Certificado certificado : certificadoService.listarCertificados()) {
                 if (funcionario.getId().equals(certificado.getFuncionario().getId())) {
                     int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
@@ -40,6 +42,7 @@ public class PendenciaService {
             }
 
             String setorFuncionario = funcionario.getSetor().getArea();
+
             for (TipoExame tipoExameL : tipoExameService.listarTiposExame()) {
                 ObservableList<Conjunto> list = conjuntoService.listarConjuntos(tipoExameL.getId());
                 for (Conjunto conjunto : list.stream().sorted(Comparator.comparing(Conjunto::getPeriodicidade)).toList()) {
