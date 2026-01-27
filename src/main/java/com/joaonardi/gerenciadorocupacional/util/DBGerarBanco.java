@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class DBGerarBanco {
 
-    private static final String DB_ORIGINAL = "src/main/resources/_db/db_gerenciador.db";
+    private static final String DB_ORIGINAL = Config.DB_FULL_PATH;
 
     public static void GerarDB() {
 

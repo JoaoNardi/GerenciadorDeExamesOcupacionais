@@ -7,7 +7,7 @@ import java.sql.*;
 public class DBConexao {
     private static DBConexao instance;
     private static final String DRIVER = "org.sqlite.JDBC";
-    private static final String BD = "jdbc:sqlite:src/main/resources/_db/db_gerenciador.db?foreign_keys=on";
+    private static final String BD = "jdbc:sqlite:" + Config.DB_FULL_PATH +"?foreign_keys=on";
 
     private Connection conexao;
 

@@ -14,16 +14,14 @@ import javafx.application.Platform;
 
 public class DBBackup {
 
-    private static final String DB_ORIGINAL = "src/main/resources/_db/db_gerenciador.db";
-    private static final String PASTA_BACKUP = "src/main/resources/_db/backups";
     private static final int MAX_BACKUPS = 7;
 
     public static void verificarOuRestaurarBanco() {
         try {
-            Files.createDirectories(Paths.get("src/main/resources/_db"));
-            Files.createDirectories(Paths.get(PASTA_BACKUP));
+            Files.createDirectories(Paths.get(Config.BASE_DIR));
+            Files.createDirectories(Paths.get(Config.BACKUP_DIR));
 
-            File db = new File(DB_ORIGINAL);
+            File db = new File(Config.DB_FULL_PATH);
 
             if (!db.exists()) {
                 File maisRecente = obterBackupMaisRecente();
@@ -41,7 +39,7 @@ public class DBBackup {
                 return;
             }
 
-            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + DB_ORIGINAL)) {
+            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + Config.DB_FULL_PATH)) {
                 Statement stmt = conn.createStatement();
                 stmt.execute("SELECT 1");
             } catch (SQLException e) {
@@ -66,17 +64,17 @@ public class DBBackup {
 
     public static void criarBackupDiario() {
         try {
-            Files.createDirectories(Paths.get(PASTA_BACKUP));
+            Files.createDirectories(Paths.get(Config.BACKUP_DIR));
 
             String dataHoje = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String arquivoBackup = PASTA_BACKUP + "/backup_" + dataHoje + ".db";
+            String arquivoBackup = Config.BACKUP_DIR + "/backup_" + dataHoje + ".db";
             File backupFile = new File(arquivoBackup);
 
             if (backupFile.exists()) {
                 return;
             }
 
-            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + DB_ORIGINAL);
+            try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + Config.DB_FULL_PATH);
                  Statement stmt = conn.createStatement()) {
                 stmt.execute("VACUUM INTO '" + arquivoBackup + "';");
             }
@@ -102,7 +100,7 @@ public class DBBackup {
 
     private static void limparBackupsAntigos() {
         try {
-            List<File> backups = Files.list(Paths.get(PASTA_BACKUP))
+            List<File> backups = Files.list(Paths.get(Config.BACKUP_DIR))
                     .map(Path::toFile)
                     .filter(f -> f.getName().startsWith("backup_") && f.getName().endsWith(".db"))
                     .sorted(Comparator.comparing(File::getName).reversed())
@@ -126,7 +124,7 @@ public class DBBackup {
     public static void abrirJanelaRestauracao() {
         Platform.runLater(() -> {
             try {
-                File pasta = new File(PASTA_BACKUP);
+                File pasta = new File(Config.BACKUP_DIR);
                 File[] backups = pasta.listFiles((dir, name) -> name.endsWith(".db"));
 
                 if (backups == null || backups.length == 0) {
@@ -156,7 +154,7 @@ public class DBBackup {
                 );
 
                 if (selecionado != null) {
-                    File escolhido = new File(PASTA_BACKUP + "/" + selecionado);
+                    File escolhido = new File(Config.BACKUP_DIR + "/" + selecionado);
                     restaurarBackup(escolhido);
 
                     JOptionPane.showMessageDialog(
@@ -191,7 +189,7 @@ public class DBBackup {
     private static void restaurarBackup(File arquivoBackup) {
         try {
             Path origem = arquivoBackup.toPath();
-            Path destino = Paths.get(DB_ORIGINAL);
+            Path destino = Paths.get(Config.DB_FULL_PATH);
             Files.copy(origem, destino, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(
@@ -204,7 +202,7 @@ public class DBBackup {
     }
 
     private static File obterBackupMaisRecente() {
-        File pasta = new File(PASTA_BACKUP);
+        File pasta = new File(Config.BACKUP_DIR);
         File[] backups = pasta.listFiles((dir, name) -> name.endsWith(".db"));
         if (backups == null || backups.length == 0) return null;
 
