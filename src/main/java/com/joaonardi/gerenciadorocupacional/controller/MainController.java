@@ -17,11 +17,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.control.PopOver;
@@ -34,7 +37,7 @@ import java.util.List;
 
 
 public class MainController {
-    CondicaoService condicaoService = new CondicaoService();
+    public AnchorPane root;
 
     //tabela Principal Geral
     public TableView<Funcionario> tabelaPrincipal;
@@ -83,6 +86,8 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+        root.setMinHeight(screen.getHeight() * 0.8);
         tabelaVencimentos.setVisible(false);
         mainService.loadInicial();
         setTodos();
