@@ -87,7 +87,8 @@ public class MainController {
     @FXML
     private void initialize() {
         Rectangle2D screen = Screen.getPrimary().getVisualBounds();
-        root.setMinHeight(screen.getHeight() * 0.8);
+        root.setMinHeight(screen.getHeight() * 0.5);
+        root.setMaxHeight(screen.getHeight() * 0.8);
         tabelaVencimentos.setVisible(false);
         mainService.loadInicial();
         setTodos();
