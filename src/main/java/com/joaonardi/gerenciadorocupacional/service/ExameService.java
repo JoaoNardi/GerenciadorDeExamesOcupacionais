@@ -104,10 +104,6 @@ public class ExameService {
     }
 
 
-    private void verificaParticularidades() {
-        ;
-    }
-
     private boolean verificaCondicao(Funcionario funcionario, Condicao condicao) {
         String referencia = condicao.getReferencia();
         String operador = condicao.getOperador();

@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
@@ -38,6 +39,7 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
 
         inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputDataValidade.setEditable(false);
+        Platform.runLater(()->  inputDataEmissao.setValue(LocalDate.now()));
         setBindings();
     }
 
@@ -63,7 +65,7 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
             ;
             salvar("Exame", "Salvo",btnSalvar,()->exameService.lancarExame(exame));
         }
-        if (this.exame != null || this.exame.getId() != null || this.exame.getAtualizadoPor() == null) {
+        if (this.exame != null && this.exame.getId() != null && this.exame.getAtualizadoPor() == null) {
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(this.exame.getId())
                     .tipoExame(inputTipoExame.getValue())

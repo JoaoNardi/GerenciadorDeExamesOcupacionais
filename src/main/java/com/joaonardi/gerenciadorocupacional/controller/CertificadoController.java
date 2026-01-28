@@ -15,6 +15,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class CertificadoController extends Janela<Certificado> implements Editavel<Certificado> {
@@ -39,7 +40,7 @@ public class CertificadoController extends Janela<Certificado> implements Editav
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome,
                 f -> f.getSetor().getArea()));
         inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
-
+        Platform.runLater(()->  inputDataEmissao.setValue(LocalDate.now()));
         setBindings();
     }
 
