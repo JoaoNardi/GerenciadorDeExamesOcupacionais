@@ -20,6 +20,13 @@ public class TipoCertificadoDAO extends BaseDAO {
     private static final String ALTERAR = "UPDATE tipos_certificado SET nome = ? , periodicidade = ? WHERE id = ?";
     private static final String DELETAR = "DELETE FROM tipos_certificado WHERE id = ?";
     private static final String LISTAR = "SELECT * FROM tipos_certificado";
+    private static final String LISTAR_NO_FUNCIONARIO = "SELECT tc.* " +
+            "FROM tipos_certificado tc " +
+            "WHERE NOT EXISTS ( " +
+            "    SELECT 1 FROM certificados c " +
+            "    WHERE c.tipo_certificado_id = tc.id " +
+            "      AND c.funcionario_id = ? " +
+            ")";
 
     public TipoCertificadoDAO() {
     }
@@ -108,6 +115,30 @@ public class TipoCertificadoDAO extends BaseDAO {
             preparedStatement = connection.prepareStatement(LISTAR);
             resultSet = preparedStatement.executeQuery();
 
+            while (resultSet.next()) {
+                TipoCertificado tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
+                        .id(resultSet.getInt("id"))
+                        .nome(resultSet.getString("nome"))
+                        .periodicidade(resultSet.getInt("periodicidade"))
+                        .build();
+                lista.add(tipoCertificado);
+            }
+        } catch (SQLException e) {
+            rollback(connection);
+            trataSqlExceptions(e,"Erro ao carregar tipos certificados");
+        } finally {
+            close(resultSet, preparedStatement);
+        }
+        return lista;
+    }
+
+    public ObservableList<TipoCertificado> listarTiposCertificado(Integer idFuncionario) {
+        Connection connection = DBConexao.getInstance().abrirConexao();
+        ObservableList<TipoCertificado> lista = FXCollections.observableArrayList();
+        try {
+            preparedStatement = connection.prepareStatement(LISTAR_NO_FUNCIONARIO);
+            preparedStatement.setInt(1,idFuncionario);
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 TipoCertificado tipoCertificado = TipoCertificado.TipoCertificadoBuilder.builder()
                         .id(resultSet.getInt("id"))

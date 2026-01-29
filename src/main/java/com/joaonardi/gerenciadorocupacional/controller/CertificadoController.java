@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class CertificadoController extends Janela<Certificado> implements Editavel<Certificado> {
     public ComboBoxCustom<Funcionario> inputFuncionario;
@@ -39,9 +40,18 @@ public class CertificadoController extends Janela<Certificado> implements Editav
 
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome,
                 f -> f.getSetor().getArea()));
-        inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(), List.of(TipoCertificado::getNome));
-        Platform.runLater(()->  inputDataEmissao.setValue(LocalDate.now()));
         setBindings();
+        inputFuncionario.valueProperty().addListener((obs, oldV, newV) -> {
+            if (newV == null || Objects.equals(oldV, newV)) {
+                return;
+            }
+            inputTipoCertificado.clear();
+            inputTipoCertificado.setItemsAndDisplay(
+                    tipoCertificadoService.listarTiposCertificados(newV),
+                    List.of(TipoCertificado::getNome)
+            );
+        });
+
     }
 
     private void setBindings() {
@@ -51,11 +61,24 @@ public class CertificadoController extends Janela<Certificado> implements Editav
                         .and(inputDataEmissao.valueProperty().isNotNull())
                         .and(inputDataValidade.valueProperty().isNotNull());
         btnSalvar.disableProperty().bind(inputsValidos.not());
+
+
+        BooleanBinding funcionarioChoice = inputFuncionario.valueProperty().isNull();
+        inputTipoCertificado.disableProperty().bind(funcionarioChoice);
     }
 
-    public void validadeAlteracao() {
-        Platform.runLater(()->  inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
-                inputTipoCertificado.getValue())));
+    public void inputAlteracao() {
+        if (inputFuncionario.getValue() == null) {
+            return;
+        }
+        if (inputDataEmissao.getValue() == null){
+            inputDataEmissao.setValue(LocalDate.now());
+        }
+        if (inputFuncionario.getValue() != null && inputTipoCertificado.getValue() != null){
+            inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
+                    inputTipoCertificado.getValue()));
+        }
+        inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(inputFuncionario.getValue()), List.of(TipoCertificado::getNome));
     }
 
     public void handleSalvar() {
@@ -93,13 +116,16 @@ public class CertificadoController extends Janela<Certificado> implements Editav
     public void set(Certificado objeto) {
         super.set(objeto);
         if (objeto != null) {
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 this.certificado = objeto;
                 inputTipoCertificado.setDisable(true);
                 inputFuncionario.setValue(objeto.getFuncionario());
                 inputTipoCertificado.setValue(objeto.getTipoCertificado());
                 inputDataEmissao.setValue(objeto.getDataEmissao());
                 inputDataValidade.setValue(objeto.getDataEmissao());
+                inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
+                        inputTipoCertificado.getValue()));
+
             });
         }
     }

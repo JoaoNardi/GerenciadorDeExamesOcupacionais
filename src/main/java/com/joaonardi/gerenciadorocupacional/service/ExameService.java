@@ -51,6 +51,15 @@ public class ExameService {
         return dataValidade;
     }
 
+    public LocalDate calcularValidade(LocalDate dataEmissao, TipoCertificado tipoCertificado) {
+        LocalDate dataValidade;
+        if (tipoCertificado.getPeriodicidade().equals(0)) {
+            return null;
+        }
+        dataValidade = dataEmissao.plusMonths(tipoCertificado.getPeriodicidade());
+        return dataValidade;
+    }
+
     public Integer calcularPeriodicidade(Funcionario funcionario,
                                          TipoExame tipoExame,
                                          ObservableList<Conjunto> conjuntos) {

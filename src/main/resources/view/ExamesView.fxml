@@ -22,12 +22,12 @@
         </Label>
         <Label layoutX="106.0" layoutY="68.0" text="Funcionário"/>
         <Label layoutX="106.0" layoutY="145.0" text="Tipo de Exame"/>
-        <ComboBoxCustom fx:id="inputFuncionario" onAction="#validadeAlteracao" editable="true" layoutX="104.0" layoutY="85.0" prefHeight="25.0"
-                  prefWidth="165.0" promptText="Pesquise ou selecione"/>
-        <ComboBoxCustom fx:id="inputTipoExame" editable="true" layoutX="104.0" layoutY="162.0" onAction="#validadeAlteracao"
+        <ComboBoxCustom fx:id="inputFuncionario" onAction="#inputsAlteracoes" editable="true" layoutX="104.0" layoutY="85.0" prefHeight="25.0"
+                        prefWidth="165.0" promptText="Pesquise ou selecione"/>
+        <ComboBoxCustom fx:id="inputTipoExame" editable="true" layoutX="104.0" layoutY="162.0" onAction="#inputsAlteracoes"
                   prefHeight="25.0" prefWidth="165.0" promptText="Pesquise ou selecione"/>
         <DatePickerCustom fx:id="inputDataEmissao" layoutX="106.0" layoutY="226.0"
-                          onAction="#validadeAlteracao" prefHeight="25.0" prefWidth="165.0"/>
+                          onAction="#inputsAlteracoes" prefHeight="25.0" prefWidth="165.0"/>
         <DatePickerCustom fx:id="inputDataValidade" editable="false" layoutX="106.0" layoutY="275.0" prefHeight="25.0"
                           prefWidth="165.0"/>
         <Label layoutX="106.0" layoutY="209.0" text="Data de Emissão"/>

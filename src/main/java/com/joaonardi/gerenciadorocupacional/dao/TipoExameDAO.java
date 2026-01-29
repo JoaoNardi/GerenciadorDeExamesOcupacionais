@@ -1,6 +1,5 @@
 package com.joaonardi.gerenciadorocupacional.dao;
 
-import com.joaonardi.gerenciadorocupacional.exception.DbException;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import com.joaonardi.gerenciadorocupacional.util.DBConexao;
 import javafx.collections.FXCollections;
@@ -17,6 +16,13 @@ public class TipoExameDAO extends BaseDAO {
     private static final String ALTERAR = "UPDATE tipos_exame SET nome = ? WHERE id = ?";
     private static final String DELETAR = "DELETE FROM tipos_exame WHERE id = ?";
     private static final String LISTAR = "SELECT * FROM tipos_exame";
+    private static final String LISTAR_NO_FUNCIONARIO = "SELECT te.* " +
+            "FROM tipos_exame te " +
+            "WHERE NOT EXISTS ( " +
+            "    SELECT 1 FROM exames e " +
+            "    WHERE e.tipo_exame_id = te.id " +
+            "      AND e.funcionario_id = ? " +
+            ")";
 
     public TipoExameDAO() {
     }
@@ -61,7 +67,7 @@ public class TipoExameDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            trataSqlExceptions(e,"Erro ao consultar Tipo Exame");
+            trataSqlExceptions(e, "Erro ao consultar Tipo Exame");
         } finally {
             DBConexao.getInstance().fechaConexao(resultSet, preparedStatement);
         }
@@ -80,7 +86,7 @@ public class TipoExameDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            trataSqlExceptions(e,"Erro ao alterar Tipo Exame");
+            trataSqlExceptions(e, "Erro ao alterar Tipo Exame");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -96,7 +102,7 @@ public class TipoExameDAO extends BaseDAO {
 
         } catch (SQLException e) {
             rollback(connection);
-            trataSqlExceptions(e,"Erro ao deletar Tipo Exame");
+            trataSqlExceptions(e, "Erro ao deletar Tipo Exame");
         } finally {
             close(resultSet, preparedStatement);
         }
@@ -108,6 +114,30 @@ public class TipoExameDAO extends BaseDAO {
 
         try {
             preparedStatement = connection.prepareStatement(LISTAR);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()
+                        .id(resultSet.getInt("id"))
+                        .nome(resultSet.getString("nome"))
+                        .build();
+                lista.add(tipoExame);
+            }
+        } catch (SQLException e) {
+            rollback(connection);
+            trataSqlExceptions(e, "Erro ao carregar Tipo Exames");
+        } finally {
+            close(resultSet, preparedStatement);
+        }
+        return lista;
+    }
+
+    public ObservableList<TipoExame> listarTiposExame(Integer idFuncionario) {
+        Connection connection = DBConexao.getInstance().abrirConexao();
+        ObservableList<TipoExame> lista = FXCollections.observableArrayList();
+
+        try {
+            preparedStatement = connection.prepareStatement(LISTAR_NO_FUNCIONARIO);
+            preparedStatement.setInt(1, idFuncionario);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 TipoExame tipoExame = TipoExame.TipoExameBuilder.builder()

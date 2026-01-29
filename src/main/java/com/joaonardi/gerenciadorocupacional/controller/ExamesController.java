@@ -37,9 +37,7 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
         inputFuncionario.setItemsAndDisplay(funcionarioService.listarFuncionariosPorStatus(true), List.of(Funcionario::getNome,
                 f -> f.getSetor().getArea()));
 
-        inputTipoExame.setItemsAndDisplay(tipoExameService.listarTiposExame(), List.of(TipoExame::getNome));
         inputDataValidade.setEditable(false);
-        Platform.runLater(()->  inputDataEmissao.setValue(LocalDate.now()));
         setBindings();
     }
 
@@ -50,6 +48,9 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
                         .and(inputDataEmissao.valueProperty().isNotNull())
                         .and(inputDataValidade.valueProperty().isNotNull());
         btnSalvar.disableProperty().bind(inputsValidos.not());
+
+        BooleanBinding funcionarioChoice = inputFuncionario.valueProperty().isNull();
+        inputTipoExame.disableProperty().bind(funcionarioChoice);
     }
 
     public void handleSalvarExame() {
@@ -63,7 +64,7 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
                     .atualizadoPor(null)
                     .build();
             ;
-            salvar("Exame", "Salvo",btnSalvar,()->exameService.lancarExame(exame));
+            salvar("Exame", "Salvo", btnSalvar, () -> exameService.lancarExame(exame));
         }
         if (this.exame != null && this.exame.getId() != null && this.exame.getAtualizadoPor() == null) {
             Exame exame1 = Exame.ExameBuilder.builder()
@@ -74,7 +75,7 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
-            salvar("Exame", "Editado",btnSalvar,()->exameService.editarExame(exame1));
+            salvar("Exame", "Editado", btnSalvar, () -> exameService.editarExame(exame1));
         }
         janela.fecharJanela(btnSalvar);
     }
@@ -83,18 +84,27 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
         janela.fecharJanela(btnCancelar);
     }
 
-    public void validadeAlteracao() {
+    public void inputsAlteracoes() {
+        if(inputFuncionario.getValue() == null){
+            return;
+        }
+        if (inputDataValidade.getValue() == null){
+            inputDataEmissao.setValue(LocalDate.now());
+        }
         if (inputFuncionario.getValue() != null && inputTipoExame.getValue() != null) {
             inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
                     inputTipoExame.getValue()));
         }
+        inputTipoExame.setItemsAndDisplay(
+                tipoExameService.listarTiposExame(inputFuncionario.getValue()),
+                List.of(TipoExame::getNome));
     }
 
     @Override
     public void set(Exame objeto) {
         super.set(objeto);
         if (objeto != null) {
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 this.exame = objeto;
                 inputTipoExame.setDisable(true);
                 inputFuncionario.setValue(objeto.getFuncionario());

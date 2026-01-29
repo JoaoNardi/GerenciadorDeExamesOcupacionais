@@ -1,11 +1,9 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.dao.TipoExameDAO;
+import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoExame;
 import javafx.collections.ObservableList;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TipoExameService {
     private final TipoExameDAO dao = new TipoExameDAO();
@@ -30,6 +28,13 @@ public class TipoExameService {
     public ObservableList<TipoExame> listarTiposExame(boolean ativos) {
         return dao.listarTiposExame();
     }
+    public ObservableList<TipoExame> listarTiposExame(boolean ativos, Funcionario funcionario) {
+        return dao.listarTiposExame();
+    }
+    public ObservableList<TipoExame> listarTiposExame(Funcionario funcionario) {
+        return dao.listarTiposExame(funcionario.getId());
+    }
+
 
     public TipoExame getTipoExameMapeadoPorId(int tipoId) {
         return dao.listarTiposExame()

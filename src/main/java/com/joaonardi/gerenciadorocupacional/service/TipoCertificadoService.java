@@ -1,6 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.dao.TipoCertificadoDAO;
+import com.joaonardi.gerenciadorocupacional.model.Funcionario;
 import com.joaonardi.gerenciadorocupacional.model.TipoCertificado;
 import javafx.collections.ObservableList;
 
@@ -25,12 +26,21 @@ public class TipoCertificadoService {
                 .collect(Collectors.toMap(TipoCertificado::getId, f -> f));
 
     }
+
     public ObservableList<TipoCertificado> listarTiposCertificados(){
         return dao.listarTiposCertificado();
     }
     public ObservableList<TipoCertificado> listarTiposCertificados(boolean ativos){
         return dao.listarTiposCertificado();
     }
+    public ObservableList<TipoCertificado> listarTiposCertificados(Funcionario funcionario){
+        return dao.listarTiposCertificado(funcionario.getId());
+    }
+    public ObservableList<TipoCertificado> listarTiposCertificados(boolean ativos,Funcionario funcionario){
+        return dao.listarTiposCertificado(funcionario.getId());
+    }
+
+
     public void deletarTipoCertificado(TipoCertificado tipoCertificado){
         dao.deletarTipoCertificado(tipoCertificado.getId());
     }
