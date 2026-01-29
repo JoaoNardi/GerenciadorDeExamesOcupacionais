@@ -100,6 +100,31 @@ public class DBGerarBanco {
                     FOREIGN KEY("particularidade_id") REFERENCES "particularidades"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
                 );
                 
+                -- indices
+                
+                CREATE INDEX idx_exames_funcionario_id ON exames(funcionario_id);
+                CREATE INDEX idx_exames_tipo_exame_id ON exames(tipo_exame_id);
+                CREATE INDEX idx_exames_atualizado_por ON exames(atualizado_por);
+                CREATE INDEX idx_exames_datas ON exames(data_emissao, data_validade);
+                
+                CREATE INDEX idx_certificados_funcionario_id ON certificados(funcionario_id);
+                CREATE INDEX idx_certificados_tipo_certificado_id ON certificados(tipo_certificado_id);
+                CREATE INDEX idx_certificados_atualizado_por ON certificados(atualizado_por);
+                CREATE INDEX idx_certificados_datas ON certificados(data_emissao, data_validade);
+                
+                CREATE INDEX idx_funcionarios_setor_id ON funcionarios(setor_id);
+                CREATE INDEX idx_funcionarios_ativo ON funcionarios(ativo);
+                CREATE INDEX idx_funcionarios_setor_ativo ON funcionarios(setor_id, ativo);
+                
+                CREATE INDEX idx_vinculos_funcionario_id ON vinculos_particularidades(funcionario_id);
+                CREATE INDEX idx_vinculos_particularidade_id ON vinculos_particularidades(particularidade_id);
+                CREATE INDEX idx_vinculos_datas ON vinculos_particularidades(data_inclusao, data_exclusao);
+                
+                CREATE INDEX idx_particularidades_tipo_exame_id ON particularidades(tipo_exame_id);
+                
+                CREATE INDEX idx_conjuntos_tipo_exame_id ON conjuntos(tipo_exame_id);
+                
+                CREATE INDEX idx_condicoes_conjunto_id ON condicoes(conjunto_id);
                 """;
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + DB_ORIGINAL);
