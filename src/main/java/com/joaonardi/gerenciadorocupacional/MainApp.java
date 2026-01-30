@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,8 +21,12 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainView.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            primaryStage.setTitle("Gerenciador");
-            primaryStage.setScene(scene);
+            primaryStage.setTitle("Gerenciador Ocupacional");
+            Image icon = new Image(
+                    getClass().getResourceAsStream("/icons/app-icon.png")
+            );
+
+            primaryStage.getIcons().add(icon);            primaryStage.setScene(scene);
             STAGE_PRINCIPAL = primaryStage;
             primaryStage.show();
 

@@ -148,6 +148,8 @@
                                 <argument>${project.build.directory}</argument>
                                 <argument>--main-jar</argument>
                                 <argument>gerenciador-ocupacional.jar</argument>
+                                <argument>--icon</argument>
+                                <argument>${project.basedir}/icons/app-icon.ico</argument>
                                 <argument>--main-class</argument>
                                 <argument>com.joaonardi.gerenciadorocupacional.Launcher</argument>
                                 <argument>--win-shortcut</argument>
