@@ -66,14 +66,14 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
             ;
             salvar("Exame", "Salvo", btnSalvar, () -> exameService.lancarExame(exame));
         }
-        if (this.exame != null && this.exame.getId() != null && this.exame.getAtualizadoPor() == null) {
+        if (this.exame != null && this.exame.getId() != null) {
             Exame exame1 = Exame.ExameBuilder.builder()
                     .id(this.exame.getId())
                     .tipoExame(inputTipoExame.getValue())
                     .funcionario(inputFuncionario.getValue())
                     .dataEmissao(inputDataEmissao.getValue())
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
-                    .atualizadoPor(null)
+                    .atualizadoPor(this.exame.getAtualizadoPor())
                     .build();
             salvar("Exame", "Editado", btnSalvar, () -> exameService.editarExame(exame1));
         }
@@ -95,9 +95,12 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
             inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
                     inputTipoExame.getValue()));
         }
-        inputTipoExame.setItemsAndDisplay(
-                tipoExameService.listarTiposExame(inputFuncionario.getValue()),
-                List.of(TipoExame::getNome));
+        if (inputTipoExame.getItems().isEmpty()){
+            inputTipoExame.setItemsAndDisplay(
+                    tipoExameService.listarTiposExame(inputFuncionario.getValue()),
+                    List.of(TipoExame::getNome));
+        }
+
     }
 
     @Override
@@ -106,7 +109,6 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
         if (objeto != null) {
             Platform.runLater(() -> {
                 this.exame = objeto;
-                inputTipoExame.setDisable(true);
                 inputFuncionario.setValue(objeto.getFuncionario());
                 inputTipoExame.setValue(objeto.getTipoExame());
                 inputDataEmissao.setValue(objeto.getDataEmissao());

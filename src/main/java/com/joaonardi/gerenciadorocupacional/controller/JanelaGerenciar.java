@@ -2,6 +2,7 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
+import com.joaonardi.gerenciadorocupacional.util.FormataCPF;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
@@ -79,12 +80,24 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
 
         for (Coluna<T> col : colunas) {
             final boolean primeiraColuna = index == 0;
+            final boolean ehCPF = col.nomeColuna().equalsIgnoreCase("cpf");
 
             TableColumn<T, String> coluna = new TableColumn<>(col.nomeColuna());
 
             coluna.setCellValueFactory(cell -> {
                 Object valor = col.dadosColuna().apply(cell.getValue());
-                return new ReadOnlyStringWrapper(valor != null ? valor.toString() : "");
+
+                if (valor == null) {
+                    return new ReadOnlyStringWrapper("");
+                }
+
+                String texto = valor.toString();
+
+                if (ehCPF) {
+                    texto = FormataCPF.outPutCPF(texto);
+                }
+
+                return new ReadOnlyStringWrapper(texto);
             });
 
             coluna.setCellFactory(tc -> new TableCell<>() {
@@ -107,6 +120,7 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
             ajustarJanelaAoConteudo();
         });
     }
+
 
 
     private void ajustarLarguraColunas() {

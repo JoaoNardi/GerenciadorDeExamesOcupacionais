@@ -6,10 +6,7 @@ import com.joaonardi.gerenciadorocupacional.model.VinculoFuncionarioParticularid
 import com.joaonardi.gerenciadorocupacional.service.FuncionarioService;
 import com.joaonardi.gerenciadorocupacional.service.ParticularidadeService;
 import com.joaonardi.gerenciadorocupacional.service.SetorService;
-import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom;
-import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
-import com.joaonardi.gerenciadorocupacional.util.Editavel;
-import com.joaonardi.gerenciadorocupacional.util.Janela;
+import com.joaonardi.gerenciadorocupacional.util.*;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
@@ -86,13 +83,12 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
                 this.funcionario = objeto;
                 setTabelaParticularidade();
                 inputNome.setText(objeto.getNome());
-                inputCpf.setText(objeto.getCpf());
+                inputCpf.setText(FormataCPF.outPutCPF(objeto.getCpf()));
                 inputDataNascimento.setValue(objeto.getDataNascimento());
                 inputDataAdmissao.setValue(objeto.getDataAdmissao());
                 inputSetor.setValue(objeto.getSetor());
             }
         });
-
     }
 
     @FXML
@@ -104,7 +100,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
                     .FuncionarioBuilder.builder()
                     .id(null)
                     .nome(inputNome.getText())
-                    .cpf(inputCpf.getText())
+                    .cpf(FormataCPF.inputCPF(inputCpf.getText()))
                     .dataNascimento(inputDataNascimento.getValue())
                     .dataAdmissao(inputDataAdmissao.getValue())
                     .setor(inputSetor.getValue())
@@ -115,7 +111,7 @@ public class FuncionarioController extends Janela<Funcionario> implements Editav
                     .FuncionarioBuilder.builder()
                     .id(this.funcionario.getId())
                     .nome(inputNome.getText())
-                    .cpf(inputCpf.getText())
+                    .cpf(FormataCPF.inputCPF(inputCpf.getText()))
                     .dataNascimento(inputDataNascimento.getValue())
                     .dataAdmissao(inputDataAdmissao.getValue())
                     .setor(inputSetor.getValue())

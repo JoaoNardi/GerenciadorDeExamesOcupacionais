@@ -159,6 +159,10 @@ public class ExameDAO extends BaseDAO {
                         .setor(setor)
                         .build();
 
+                Integer atualizadoPor = resultSet.getInt("atualizado_por");
+                if (resultSet.wasNull()) {
+                    atualizadoPor = null;
+                }
                 Exame exame = Exame.ExameBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .tipoExame(tipoExame)
@@ -166,7 +170,7 @@ public class ExameDAO extends BaseDAO {
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
                         .dataValidade(resultSet.getString("data_validade") != null ?
                                 LocalDate.parse(resultSet.getString("data_validade")) : null)
-                        .atualizadoPor(resultSet.wasNull() ? null : resultSet.getInt("atualizado_por"))
+                        .atualizadoPor(atualizadoPor)
                         .build();
                 listaExames.add(exame);
             }

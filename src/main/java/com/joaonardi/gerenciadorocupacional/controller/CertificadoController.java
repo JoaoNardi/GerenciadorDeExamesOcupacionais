@@ -71,14 +71,18 @@ public class CertificadoController extends Janela<Certificado> implements Editav
         if (inputFuncionario.getValue() == null) {
             return;
         }
-        if (inputDataEmissao.getValue() == null){
+        if (inputDataEmissao.getValue() == null) {
             inputDataEmissao.setValue(LocalDate.now());
         }
-        if (inputFuncionario.getValue() != null && inputTipoCertificado.getValue() != null){
+        if (inputFuncionario.getValue() != null && inputTipoCertificado.getValue() != null) {
             inputDataValidade.setValue(certificadoService.calcularValidade(inputDataEmissao.getValue(),
                     inputTipoCertificado.getValue()));
         }
-        inputTipoCertificado.setItemsAndDisplay(tipoCertificadoService.listarTiposCertificados(inputFuncionario.getValue()), List.of(TipoCertificado::getNome));
+        if (inputTipoCertificado.getItems().isEmpty()) {
+            inputTipoCertificado.setItemsAndDisplay(
+                    tipoCertificadoService.listarTiposCertificados(inputFuncionario.getValue()), List.of(TipoCertificado::getNome)
+            );
+        }
     }
 
     public void handleSalvar() {

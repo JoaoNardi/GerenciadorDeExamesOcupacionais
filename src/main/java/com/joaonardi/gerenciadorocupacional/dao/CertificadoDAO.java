@@ -160,6 +160,10 @@ public class CertificadoDAO extends BaseDAO {
                         .setor(setor)
                         .build();
 
+                Integer atualizadoPor = resultSet.getInt("atualizado_por");
+                if (resultSet.wasNull()) {
+                    atualizadoPor = null;
+                }
                 Certificado certificado = Certificado.CertificadoBuilder.builder()
                         .id(resultSet.getInt("id"))
                         .tipoCertificado(tipoCertificado)
@@ -167,7 +171,7 @@ public class CertificadoDAO extends BaseDAO {
                         .dataEmissao(LocalDate.parse(resultSet.getString("data_emissao")))
                         .dataValidade(resultSet.getString("data_validade") != null ?
                                 LocalDate.parse(resultSet.getString("data_validade")) : null)
-                        .atualizadoPor(resultSet.getInt("atualizado_por"))
+                        .atualizadoPor(atualizadoPor)
                         .build();
                 listaCertificados.add(certificado);
             }
