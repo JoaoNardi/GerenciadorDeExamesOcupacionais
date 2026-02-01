@@ -58,10 +58,14 @@ public class CertificadoController extends Janela<Certificado> implements Editav
         BooleanBinding inputsValidos =
                 inputFuncionario.valueProperty().isNotNull()
                         .and(inputTipoCertificado.valueProperty().isNotNull())
-                        .and(inputDataEmissao.valueProperty().isNotNull())
-                        .and(inputDataValidade.valueProperty().isNotNull());
+                        .and(inputDataEmissao.valueProperty().isNotNull());
         btnSalvar.disableProperty().bind(inputsValidos.not());
 
+        BooleanBinding tipo =
+                inputFuncionario.valueProperty().isNotNull()
+                        .and(inputTipoCertificado.valueProperty().isNotNull());
+        inputDataEmissao.disableProperty().bind(tipo.not());
+        inputDataValidade.disableProperty().bind(tipo.not());
 
         BooleanBinding funcionarioChoice = inputFuncionario.valueProperty().isNull();
         inputTipoCertificado.disableProperty().bind(funcionarioChoice);
@@ -87,7 +91,7 @@ public class CertificadoController extends Janela<Certificado> implements Editav
 
     public void handleSalvar() {
         String acao = "";
-        if (this.certificado == null || this.certificado.getId() == null) {
+        if (this.certificado == null) {
             acao = "salvo";
             this.certificado = Certificado.CertificadoBuilder.builder()
                     .id(null)
@@ -97,19 +101,24 @@ public class CertificadoController extends Janela<Certificado> implements Editav
                     .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
                     .atualizadoPor(null)
                     .build();
+            salvar("Certificado", acao, btnSalvar, () -> certificadoService.cadastrarCertificado(this.certificado));
+            janela.fecharJanela(btnSalvar);
         } else {
-            acao = "atualizado";
-            this.certificado = Certificado.CertificadoBuilder.builder()
-                    .id(objetoPrincipal.getId())
-                    .tipoCertificado(inputTipoCertificado.getValue())
-                    .funcionario(inputFuncionario.getValue())
-                    .dataEmissao(inputDataEmissao.getValue())
-                    .dataValidade(inputDataValidade.getValue())
-                    .atualizadoPor(null)
-                    .build();
+            if (this.certificado.getId() != null) {
+                acao = "atualizado";
+                Certificado certificado1 = Certificado.CertificadoBuilder.builder()
+                        .id(this.certificado.getId())
+                        .tipoCertificado(inputTipoCertificado.getValue())
+                        .funcionario(inputFuncionario.getValue())
+                        .dataEmissao(inputDataEmissao.getValue())
+                        .dataValidade(inputDataValidade.getValue())
+                        .atualizadoPor(this.certificado.getAtualizadoPor())
+                        .build();
+                System.out.println("aqui");
+                salvar("Certificado", acao, btnSalvar, () -> certificadoService.cadastrarCertificado(certificado1));
+                janela.fecharJanela(btnSalvar);
+            }
         }
-        salvar("Certificado", acao, btnSalvar, () -> certificadoService.cadastrarCertificado(this.certificado));
-        janela.fecharJanela(btnSalvar);
     }
 
     public void handleCancelar() {
@@ -122,7 +131,6 @@ public class CertificadoController extends Janela<Certificado> implements Editav
         if (objeto != null) {
             Platform.runLater(() -> {
                 this.certificado = objeto;
-                inputTipoCertificado.setDisable(true);
                 inputFuncionario.setValue(objeto.getFuncionario());
                 inputTipoCertificado.setValue(objeto.getTipoCertificado());
                 inputDataEmissao.setValue(objeto.getDataEmissao());

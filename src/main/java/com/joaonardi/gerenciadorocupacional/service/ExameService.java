@@ -38,10 +38,8 @@ public class ExameService {
     }
 
     public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
-        ObservableList<Conjunto> conjuntos = conjuntoService.listarConjuntos(tipoExame.getId());
 
-        Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, conjuntos);
-
+        Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, conjuntoService.listarConjuntos(tipoExame.getId()));
         if (periodicidade == null) {
             return null;
         }
@@ -86,20 +84,23 @@ public class ExameService {
         Conjunto melhorConjunto = conjuntos.stream()
                 .filter(conjunto -> {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
+                    // Apenas conjuntos onde TODAS as condições são atendidas
                     return condicaoService.listarCondicoes().stream()
                             .allMatch(cond -> verificaCondicao(funcionario, cond));
                 })
-                .min((a, b) -> {
+                .max((a, b) -> {
                     condicaoService.carregarCondicoesPorConjuntoId(a.getId());
                     int sizeA = condicaoService.listarCondicoes().size();
 
                     condicaoService.carregarCondicoesPorConjuntoId(b.getId());
                     int sizeB = condicaoService.listarCondicoes().size();
 
-                    int result = Integer.compare(sizeB, sizeA); // mais condições = mais específico
+                    // 1º critério: mais condições = mais específico (ordem decrescente)
+                    int result = Integer.compare(sizeA, sizeB);
                     if (result != 0) return result;
 
-                    return Integer.compare(a.getPeriodicidade(), b.getPeriodicidade());
+                    // 2º critério: menor periodicidade (ordem crescente)
+                    return Integer.compare(b.getPeriodicidade(), a.getPeriodicidade());
                 })
                 .orElse(null);
 

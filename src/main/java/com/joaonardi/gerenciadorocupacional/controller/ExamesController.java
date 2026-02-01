@@ -45,9 +45,14 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
         BooleanBinding inputsValidos =
                 inputFuncionario.valueProperty().isNotNull()
                         .and(inputTipoExame.valueProperty().isNotNull())
-                        .and(inputDataEmissao.valueProperty().isNotNull())
-                        .and(inputDataValidade.valueProperty().isNotNull());
+                        .and(inputDataEmissao.valueProperty().isNotNull());
         btnSalvar.disableProperty().bind(inputsValidos.not());
+
+        BooleanBinding tipo =
+                inputFuncionario.valueProperty().isNotNull()
+                        .and(inputTipoExame.valueProperty().isNotNull());
+        inputDataEmissao.disableProperty().bind(tipo.not());
+
 
         BooleanBinding funcionarioChoice = inputFuncionario.valueProperty().isNull();
         inputTipoExame.disableProperty().bind(funcionarioChoice);
@@ -65,19 +70,20 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
                     .build();
             ;
             salvar("Exame", "Salvo", btnSalvar, () -> exameService.lancarExame(exame));
+        } else {
+            if (this.exame.getId() != null) {
+                Exame exame1 = Exame.ExameBuilder.builder()
+                        .id(this.exame.getId())
+                        .tipoExame(inputTipoExame.getValue())
+                        .funcionario(inputFuncionario.getValue())
+                        .dataEmissao(inputDataEmissao.getValue())
+                        .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
+                        .atualizadoPor(this.exame.getAtualizadoPor())
+                        .build();
+                salvar("Exame", "Editado", btnSalvar, () -> exameService.editarExame(exame1));
+            }
+            janela.fecharJanela(btnSalvar);
         }
-        if (this.exame != null && this.exame.getId() != null) {
-            Exame exame1 = Exame.ExameBuilder.builder()
-                    .id(this.exame.getId())
-                    .tipoExame(inputTipoExame.getValue())
-                    .funcionario(inputFuncionario.getValue())
-                    .dataEmissao(inputDataEmissao.getValue())
-                    .dataValidade(inputDataValidade.getValue() == null ? null : inputDataValidade.getValue())
-                    .atualizadoPor(this.exame.getAtualizadoPor())
-                    .build();
-            salvar("Exame", "Editado", btnSalvar, () -> exameService.editarExame(exame1));
-        }
-        janela.fecharJanela(btnSalvar);
     }
 
     public void handleCancelarExame() {
@@ -85,17 +91,17 @@ public class ExamesController extends Janela<Exame> implements Editavel<Exame> {
     }
 
     public void inputsAlteracoes() {
-        if(inputFuncionario.getValue() == null){
+        if (inputFuncionario.getValue() == null) {
             return;
         }
-        if (inputDataValidade.getValue() == null){
+        if (inputDataValidade.getValue() == null) {
             inputDataEmissao.setValue(LocalDate.now());
         }
         if (inputFuncionario.getValue() != null && inputTipoExame.getValue() != null) {
             inputDataValidade.setValue(exameService.calcularValidadeExame(inputFuncionario.getValue(), inputDataEmissao.getValue(),
                     inputTipoExame.getValue()));
         }
-        if (inputTipoExame.getItems().isEmpty()){
+        if (inputTipoExame.getItems().isEmpty()) {
             inputTipoExame.setItemsAndDisplay(
                     tipoExameService.listarTiposExame(inputFuncionario.getValue()),
                     List.of(TipoExame::getNome));

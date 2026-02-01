@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class CertificadoDAO extends BaseDAO {
     private PreparedStatement preparedStatement = null;

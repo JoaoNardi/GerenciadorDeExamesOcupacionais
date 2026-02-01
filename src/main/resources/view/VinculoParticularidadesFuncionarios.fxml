@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.joaonardi.gerenciadorocupacional.util.*?>
+<?import com.joaonardi.gerenciadorocupacional.util.ComboBoxCustom?>
+<?import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="366.0" prefWidth="334.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.joaonardi.gerenciadorocupacional.controller.VinculoParticularidadeController">
 
     <children>

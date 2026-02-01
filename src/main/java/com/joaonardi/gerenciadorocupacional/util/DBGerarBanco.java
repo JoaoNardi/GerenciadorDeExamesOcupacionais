@@ -61,7 +61,7 @@ public class DBGerarBanco {
                     "tipo_certificado_id" INTEGER NOT NULL,
                     "funcionario_id" INTEGER NOT NULL,
                     "data_emissao" DATE NOT NULL,
-                    "data_validade" DATE NOT NULL,
+                    "data_validade" DATE,
                     "atualizado_por" INTEGER,
                     FOREIGN KEY("atualizado_por") REFERENCES "certificados"("id") ON DELETE SET NULL ON UPDATE CASCADE,
                     FOREIGN KEY("funcionario_id") REFERENCES "funcionarios"("id") ON DELETE RESTRICT ON UPDATE RESTRICT,

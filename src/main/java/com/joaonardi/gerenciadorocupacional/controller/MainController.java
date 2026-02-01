@@ -4,6 +4,7 @@ import com.joaonardi.gerenciadorocupacional.MainApp;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.service.*;
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
+import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
 import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -34,6 +35,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MainController {
@@ -353,16 +355,41 @@ public class MainController {
         }
     }
 
+    private String getS(Exame exame, DatePickerCustom datePicker) {
+        LocalDate data = null;
+        data = exameService.calcularValidadeExame(exame.getFuncionario(),
+                datePicker.getValue(),
+                exame.getTipoExame());
+        if (data == null){
+            return "Data de validade: 'Indeterminado'";
+        }
+        return "Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(data);
+    }
+
     @FXML
     private void handleLancarPendecia(Exame exame, Node anchor) {
         Label label = new Label("Regularizar: " + exame.getTipoExame().getNome());
         Label label1 = new Label("Data de emissão");
-        DatePicker datePicker = new DatePicker();
+        DatePickerCustom datePicker = new DatePickerCustom();
         datePicker.setValue(LocalDate.now());
         Label label2 =
-                new Label("Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(exameService.calcularValidadeExame(exame.getFuncionario(),
-                        datePicker.getValue(),
-                        exame.getTipoExame())));
+                new Label(getS(exame, datePicker));
+        datePicker.valueProperty().addListener(((observableValue, oldV, newV) -> {
+            if (newV == null || Objects.equals(oldV, newV)) {
+                return;
+            }
+            label2.setText(getS(exame,datePicker));
+        }));
+        Button btnConfirmar = getBtnConfirmar(exame, datePicker);
+        VBox layout = new VBox(10, label, label1, datePicker, label2, btnConfirmar);
+        layout.setPadding(new Insets(10));
+        PopOver popOver = new PopOver(layout);
+        popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+        popOver.setDetachable(false);
+        popOver.show(anchor);
+    }
+
+    private Button getBtnConfirmar(Exame exame, DatePickerCustom datePicker) {
         Button btnConfirmar = new Button("Concluir");
 
         btnConfirmar.setOnAction(e -> {
@@ -391,21 +418,32 @@ public class MainController {
             setTodos();
         });
         btnConfirmar.setDisable(false);
-        VBox layout = new VBox(10, label, label1, datePicker, label2, btnConfirmar);
-        layout.setPadding(new Insets(10));
-        PopOver popOver = new PopOver(layout);
-        popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
-        popOver.setDetachable(false);
-        popOver.show(anchor);
-
+        return btnConfirmar;
     }
 
+    private String getS(Certificado certificado) {
+        LocalDate data = null;
+        data = certificadoService.calcularValidade(certificado.getDataEmissao(),
+                certificado.getTipoCertificado());
+        if (data == null){
+            return "Data de validade: 'Indeterminado'";
+        }
+        return "Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(data);
+    }
     @FXML
     private void handleLancarPendecia(Certificado certificado, Node anchor) {
         Label label = new Label("Regularizar: " + certificado.getTipoCertificado().getNome());
         Label label1 = new Label("Data de emissão");
-        DatePicker datePicker = new DatePicker();
+        DatePickerCustom datePicker = new DatePickerCustom();
         datePicker.setValue(LocalDate.now());
+        Label label2 =
+                new Label(getS(certificado));
+        datePicker.valueProperty().addListener(((observableValue, oldV, newV) -> {
+            if (newV == null || Objects.equals(oldV, newV)) {
+                return;
+            }
+            label2.setText(getS(certificado));
+        }));
         Button btnConfirmar = new Button("Concluir");
         btnConfirmar.setOnAction(e -> {
             btnConfirmar.setDisable(true);
@@ -433,7 +471,7 @@ public class MainController {
             setTodos();
         });
         btnConfirmar.setDisable(false);
-        VBox layout = new VBox(10, label, label1, datePicker, btnConfirmar);
+        VBox layout = new VBox(10, label, label1, datePicker,label2, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);

@@ -1,7 +1,7 @@
 package com.joaonardi.gerenciadorocupacional.service;
 
 import com.joaonardi.gerenciadorocupacional.dao.CondicaoDAO;
-import com.joaonardi.gerenciadorocupacional.model.*;
+import com.joaonardi.gerenciadorocupacional.model.Condicao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

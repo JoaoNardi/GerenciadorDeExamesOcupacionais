@@ -1,16 +1,24 @@
 package com.joaonardi.gerenciadorocupacional.util;
 
+import javafx.application.Platform;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.sql.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import javafx.application.Platform;
 
 public class DBBackup {
 

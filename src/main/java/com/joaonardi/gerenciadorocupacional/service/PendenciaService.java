@@ -25,9 +25,11 @@ public class PendenciaService {
 
             for (Certificado certificado : certificadoService.listarCertificados()) {
                 if (funcionario.getId().equals(certificado.getFuncionario().getId())) {
-                    int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
-                    if (dias <= 1) {
-                        criarPendencia(funcionario, certificado.getTipoCertificado());
+                    if (certificado.getDataValidade() != null){
+                        int dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), certificado.getDataValidade());
+                        if (dias <= 1) {
+                            criarPendencia(funcionario, certificado.getTipoCertificado());
+                        }
                     }
                 }
             }
