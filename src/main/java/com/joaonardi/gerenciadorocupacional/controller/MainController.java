@@ -416,6 +416,9 @@ public class MainController {
 
     private String getS(Exame exame, DatePickerCustom datePicker) {
         LocalDate data = null;
+        if (exame.getDataValidade() == null){
+            return "Sem data de validade";
+        }
         data = exameService.calcularValidadeExame(exame.getFuncionario(),
                 datePicker.getValue(),
                 exame.getTipoExame());

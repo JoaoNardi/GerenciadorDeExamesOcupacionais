@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.List;
 
 public class PendenciaService {
     private final CertificadoService certificadoService = new CertificadoService();
@@ -16,7 +17,6 @@ public class PendenciaService {
     private final CondicaoService condicaoService = new CondicaoService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
     public final ObservableList<Pendencia> pendencias = FXCollections.observableArrayList();
-    private final ParticularidadeService particularidadeService = new ParticularidadeService();
 
     public void varreduraPendencias() {
         pendencias.clear();
@@ -49,29 +49,44 @@ public class PendenciaService {
                 ObservableList<Conjunto> list = conjuntoService.listarConjuntos(tipoExameL.getId());
                 for (Conjunto conjunto : list.stream().sorted(Comparator.comparing(Conjunto::getPeriodicidade)).toList()) {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
-                    for (Condicao condicao : condicaoService.listarCondicoes()) {
-                        if (condicao == null) continue;
-                        TipoExame tipoExameCond = null;
-                        if (conjunto.getTipoExame() != null) {
-                            tipoExameCond = conjunto.getTipoExame();
+                    List<Condicao> condicoes = condicaoService.listarCondicoes();
+
+                    if (condicoes.isEmpty()) continue;
+
+                    TipoExame tipoExameCond = conjunto.getTipoExame();
+                    if (tipoExameCond == null) continue;
+
+                    boolean atendeTodasCondicoes = true;
+
+                    for (Condicao condicao : condicoes) {
+                        if (condicao == null) {
+                            atendeTodasCondicoes = false;
+                            break;
                         }
-                        if (tipoExameCond == null) continue;
-                        boolean precisaFazerExame = false;
+
+                        boolean atendeEstaCondicao = false;
+
                         if (condicao.getParametro() != null && condicao.getParametro().equalsIgnoreCase(setorFuncionario)) {
-                            precisaFazerExame = true;
+                            atendeEstaCondicao = true;
                         } else {
                             try {
                                 int idadeCond = Integer.parseInt(condicao.getParametro());
                                 int idadeFuncionario = funcionarioService.calcularIdade(funcionario.getDataNascimento());
                                 if (compara(idadeFuncionario, condicao.getOperador(), idadeCond)) {
-                                    precisaFazerExame = true;
+                                    atendeEstaCondicao = true;
                                 }
                             } catch (NumberFormatException ignored) {
                             }
                         }
-                        if (precisaFazerExame && !funcionarioJaTemExame(funcionario, tipoExameCond)) {
-                            criarPendencia(funcionario, tipoExameCond);
+
+                        if (!atendeEstaCondicao) {
+                            atendeTodasCondicoes = false;
+                            break;
                         }
+                    }
+
+                    if (atendeTodasCondicoes && !funcionarioJaTemExame(funcionario, tipoExameCond)) {
+                        criarPendencia(funcionario, tipoExameCond);
                     }
                 }
             }

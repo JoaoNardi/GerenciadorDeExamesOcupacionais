@@ -17,11 +17,8 @@ public class MainService {
 
     private final FuncionarioService funcionarioService = new FuncionarioService();
     private final ExameService exameService = new ExameService();
-    private final SetorService setorService = new SetorService();
     private final TipoCertificadoService tipoCertificadoService = new TipoCertificadoService();
     private final CertificadoService certificadoService = new CertificadoService();
-    private final ObservableList<Setor> setores = FXCollections.observableArrayList();
-
 
     public void loadInicial() {
         tipoCertificadoService.carregarTiposCertificado();
