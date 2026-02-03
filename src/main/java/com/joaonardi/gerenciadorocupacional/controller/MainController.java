@@ -14,7 +14,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -145,9 +144,7 @@ public class MainController {
                     int idade = funcionarioService.calcularIdade(f.getDataNascimento());
                     return new ReadOnlyObjectWrapper<>(idade).asString();
                 });
-                colunaSetorGeral.setCellValueFactory(f -> {
-                    return new SimpleStringProperty(f.getValue().getSetor().getArea());
-                });
+                colunaSetorGeral.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getSetor().getArea()));
                 colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
                     String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
@@ -256,17 +253,13 @@ public class MainController {
 
     private void setTabelaSecundaria() {
         try {
-            colunaFuncionarioVencimentos.setCellValueFactory(f -> {
-                return new SimpleStringProperty(f.getValue().getFuncionario().getNome());
-            });
+            colunaFuncionarioVencimentos.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getFuncionario().getNome()));
             colunaIdadeVencimentos.setCellValueFactory(f -> {
                 String idadeFuncionario =
                         String.valueOf(funcionarioService.calcularIdade(f.getValue().getFuncionario().getDataNascimento()));
                 return new SimpleStringProperty(idadeFuncionario);
             });
-            colunaSetorVencimentos.setCellValueFactory(f -> {
-                return new SimpleStringProperty(f.getValue().getFuncionario().getSetor().getArea());
-            });
+            colunaSetorVencimentos.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getFuncionario().getSetor().getArea()));
             colunaTipoVencimentos.setCellValueFactory(f -> {
                 String tipo = f.getValue().getClass().getSimpleName();
                 return new SimpleStringProperty(tipo);
@@ -362,9 +355,7 @@ public class MainController {
 
     private void configuraTabelaEstendida(){
         try {
-            colunaFuncionarioEstendida.setCellValueFactory(f -> {
-                return new SimpleStringProperty(f.getValue().getFuncionario().getNome());
-            });
+            colunaFuncionarioEstendida.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getFuncionario().getNome()));
 
             colunaIdadeEstendida.setCellValueFactory(f -> {
                 String idadeFuncionario = String.valueOf(
@@ -373,9 +364,7 @@ public class MainController {
                 return new SimpleStringProperty(idadeFuncionario);
             });
 
-            colunaSetorEstendida.setCellValueFactory(f -> {
-                return new SimpleStringProperty(f.getValue().getFuncionario().getSetor().getArea());
-            });
+            colunaSetorEstendida.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getFuncionario().getSetor().getArea()));
 
             for (TableColumn<LinhaFuncionario, ?> tableColumn : mainService.geraColunas()) {
                 tabelaEstendida.getColumns().add(tableColumn);
@@ -417,7 +406,7 @@ public class MainController {
     }
 
     private String getS(Exame exame, DatePickerCustom datePicker) {
-        LocalDate data = null;
+        LocalDate data;
         data = exameService.calcularValidadeExame(exame.getFuncionario(),
                 datePicker.getValue(),
                 exame.getTipoExame());
@@ -451,6 +440,12 @@ public class MainController {
         datePicker.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 e.consume();
+                String text = datePicker.getEditor().getText();
+                if (text == null || text.isBlank()) {
+                    return;
+                }
+                LocalDate date = datePicker.getConverter().fromString(text);
+                datePicker.setValue(date);
                 btnConfirmar.fire();
             }
         });
@@ -495,7 +490,7 @@ public class MainController {
     }
 
     private String getS(Certificado certificado) {
-        LocalDate data = null;
+        LocalDate data;
         data = certificadoService.calcularValidade(certificado.getDataEmissao(),
                 certificado.getTipoCertificado());
         if (data == null) {
@@ -560,6 +555,12 @@ public class MainController {
         datePicker.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 e.consume();
+                String text = datePicker.getEditor().getText();
+                if (text == null || text.isBlank()) {
+                    return;
+                }
+                LocalDate date = datePicker.getConverter().fromString(text);
+                datePicker.setValue(date);
                 btnConfirmar.fire();
             }
         });
@@ -634,7 +635,7 @@ public class MainController {
     }
 
     @FXML
-    private void handleAbrirFuncionario(ActionEvent event) {
+    private void handleAbrirFuncionario() {
         new Janela<>().abrirJanela("/view/FuncionarioView.fxml", "Cadastro de Funcionários", MainApp.STAGE_PRINCIPAL, this::setTodos, null);
     }
 
@@ -873,7 +874,7 @@ public class MainController {
                 this::setTodos, null);
     }
 
-    public void handleAbrirAjuda(ActionEvent event) {
+    public void handleAbrirAjuda() {
         new Janela<>().abrirJanela("/view/DuvidasErrosView.fxml", "Ajuda - Dúvidas - Erros", MainApp.STAGE_PRINCIPAL,
                 this::setTodos, null);
     }
