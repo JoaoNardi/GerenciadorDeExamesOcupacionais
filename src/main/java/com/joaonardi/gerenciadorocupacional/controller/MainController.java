@@ -416,14 +416,11 @@ public class MainController {
 
     private String getS(Exame exame, DatePickerCustom datePicker) {
         LocalDate data = null;
-        if (exame.getDataValidade() == null){
-            return "Sem data de validade";
-        }
         data = exameService.calcularValidadeExame(exame.getFuncionario(),
                 datePicker.getValue(),
                 exame.getTipoExame());
         if (data == null) {
-            return "Data de validade: 'Indeterminado'";
+            return "";
         }
         return "Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(data);
     }

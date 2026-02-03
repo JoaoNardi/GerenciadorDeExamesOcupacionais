@@ -40,21 +40,12 @@ public class ExameService {
     public LocalDate calcularValidadeExame(Funcionario funcionario, LocalDate emissaoExame, TipoExame tipoExame) {
 
         Integer periodicidade = calcularPeriodicidade(funcionario, tipoExame, conjuntoService.listarConjuntos(tipoExame.getId()));
-        if (periodicidade == null) {
+        if (periodicidade == null || periodicidade == (Periodicidade.SEM_PERIODICIDADE.getValor())) {
             return null;
         }
         LocalDate dataValidade;
 
         dataValidade = emissaoExame.plusMonths(periodicidade);
-        return dataValidade;
-    }
-
-    public LocalDate calcularValidade(LocalDate dataEmissao, TipoCertificado tipoCertificado) {
-        LocalDate dataValidade;
-        if (tipoCertificado.getPeriodicidade().equals(0)) {
-            return null;
-        }
-        dataValidade = dataEmissao.plusMonths(tipoCertificado.getPeriodicidade());
         return dataValidade;
     }
 
