@@ -22,6 +22,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -446,6 +448,12 @@ public class MainController {
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
         popOver.setDetachable(false);
         popOver.show(anchor);
+        datePicker.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                e.consume();
+                btnConfirmar.fire();
+            }
+        });
     }
 
     private Button getBtnConfirmar(Exame exame, DatePickerCustom datePicker) {
@@ -474,7 +482,13 @@ public class MainController {
                         .build();
                 exameService.editarExame(exame2);
             }
-            setTodos();
+            if (tabelaPrincipal.isVisible()){
+                handleBtnGeral();
+            } else if (tabelaVencimentos.isVisible()){
+                btnVencimento(diasVencimento);
+            } else if (tabelaEstendida.isVisible()){
+                handleBtnEstendido();
+            }
         });
         btnConfirmar.setDisable(false);
         return btnConfirmar;
@@ -485,7 +499,7 @@ public class MainController {
         data = certificadoService.calcularValidade(certificado.getDataEmissao(),
                 certificado.getTipoCertificado());
         if (data == null) {
-            return "Data de validade: 'Indeterminado'";
+            return "";
         }
         return "Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(data);
     }
@@ -528,7 +542,13 @@ public class MainController {
                         .build();
                 certificadoService.cadastrarCertificado(certificado2);
             }
-            setTodos();
+            if (tabelaPrincipal.isVisible()){
+                handleBtnGeral();
+            } else if (tabelaVencimentos.isVisible()){
+                btnVencimento(diasVencimento);
+            } else if (tabelaEstendida.isVisible()){
+                handleBtnEstendido();
+            }
         });
         btnConfirmar.setDisable(false);
         VBox layout = new VBox(10, label, label1, datePicker, label2, btnConfirmar);
@@ -537,6 +557,12 @@ public class MainController {
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
         popOver.setDetachable(false);
         popOver.show(anchor);
+        datePicker.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                e.consume();
+                btnConfirmar.fire();
+            }
+        });
     }
 
     @FXML
