@@ -1,8 +1,11 @@
 package com.joaonardi.gerenciadorocupacional.model;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 public class Setor {
+    @EqualsAndHashCode.Include
     private Integer id;
     private String area;
 

@@ -6,10 +6,11 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
 @Getter
 public class Funcionario {
+    @EqualsAndHashCode.Include
     private Integer id;
     private String nome;
     private String cpf;

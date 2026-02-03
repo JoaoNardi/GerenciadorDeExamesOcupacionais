@@ -34,7 +34,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -72,6 +74,11 @@ public class MainController {
     public TableColumn<Tipo, String> colunaStatusVencimentos;
     public TableColumn<Tipo, Node> colunaAcoesVencimentos;
 
+    //tabela estendida
+    public TableView<LinhaFuncionario> tabelaEstendida;
+    public TableColumn<LinhaFuncionario, String> colunaFuncionarioEstendida;
+    public TableColumn<LinhaFuncionario, String> colunaIdadeEstendida;
+    public TableColumn<LinhaFuncionario, String> colunaSetorEstendida;
 
     final Janela<?> janela = new Janela<>();
 
@@ -83,6 +90,7 @@ public class MainController {
     final TipoExameService tipoExameService = new TipoExameService();
     final CertificadoService certificadoService = new CertificadoService();
     final PendenciaService pendenciaService = new PendenciaService();
+
     int diasVencimento = 0;
 
 
@@ -92,9 +100,11 @@ public class MainController {
         root.setMinHeight(screen.getHeight() * 0.5);
         root.setMaxHeight(screen.getHeight() * 0.8);
         tabelaVencimentos.setVisible(false);
+        tabelaEstendida.setVisible(false);
         mainService.loadInicial();
         setTodos();
         pendenciaService.varreduraPendencias();
+        configuraTabelaEstendida();
     }
 
     private void setTodos() {
@@ -348,6 +358,55 @@ public class MainController {
         }
     }
 
+    private void configuraTabelaEstendida(){
+        try {
+            colunaFuncionarioEstendida.setCellValueFactory(f -> {
+                return new SimpleStringProperty(f.getValue().getFuncionario().getNome());
+            });
+
+            colunaIdadeEstendida.setCellValueFactory(f -> {
+                String idadeFuncionario = String.valueOf(
+                        funcionarioService.calcularIdade(f.getValue().getFuncionario().getDataNascimento())
+                );
+                return new SimpleStringProperty(idadeFuncionario);
+            });
+
+            colunaSetorEstendida.setCellValueFactory(f -> {
+                return new SimpleStringProperty(f.getValue().getFuncionario().getSetor().getArea());
+            });
+
+            for (TableColumn<LinhaFuncionario, ?> tableColumn : mainService.geraColunas()) {
+                tabelaEstendida.getColumns().add(tableColumn);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setTabelaEstendida() {
+        try {
+            Map<Funcionario, LinhaFuncionario> porFuncionario = new HashMap<>();
+
+            for (Exame exame : exameService.listarExamePorVencimento(183)) {
+                porFuncionario
+                        .computeIfAbsent(exame.getFuncionario(), LinhaFuncionario::new)
+                        .addTipo(exame);
+            }
+
+            for (Certificado cert : certificadoService.listarCertificadosPorVencimento(183)) {
+                porFuncionario
+                        .computeIfAbsent(cert.getFuncionario(), LinhaFuncionario::new)
+                        .addTipo(cert);
+            }
+
+            tabelaEstendida.setItems(FXCollections.observableArrayList(porFuncionario.values())
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @FXML
     public void editarFuncionario(Funcionario funcionario) {
         if (funcionario != null) {
@@ -360,7 +419,7 @@ public class MainController {
         data = exameService.calcularValidadeExame(exame.getFuncionario(),
                 datePicker.getValue(),
                 exame.getTipoExame());
-        if (data == null){
+        if (data == null) {
             return "Data de validade: 'Indeterminado'";
         }
         return "Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(data);
@@ -378,7 +437,7 @@ public class MainController {
             if (newV == null || Objects.equals(oldV, newV)) {
                 return;
             }
-            label2.setText(getS(exame,datePicker));
+            label2.setText(getS(exame, datePicker));
         }));
         Button btnConfirmar = getBtnConfirmar(exame, datePicker);
         VBox layout = new VBox(10, label, label1, datePicker, label2, btnConfirmar);
@@ -425,11 +484,12 @@ public class MainController {
         LocalDate data = null;
         data = certificadoService.calcularValidade(certificado.getDataEmissao(),
                 certificado.getTipoCertificado());
-        if (data == null){
+        if (data == null) {
             return "Data de validade: 'Indeterminado'";
         }
         return "Data de validade: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(data);
     }
+
     @FXML
     private void handleLancarPendecia(Certificado certificado, Node anchor) {
         Label label = new Label("Regularizar: " + certificado.getTipoCertificado().getNome());
@@ -471,7 +531,7 @@ public class MainController {
             setTodos();
         });
         btnConfirmar.setDisable(false);
-        VBox layout = new VBox(10, label, label1, datePicker,label2, btnConfirmar);
+        VBox layout = new VBox(10, label, label1, datePicker, label2, btnConfirmar);
         layout.setPadding(new Insets(10));
         PopOver popOver = new PopOver(layout);
         popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
@@ -793,44 +853,30 @@ public class MainController {
     }
 
     public void handleBtnVencidos() {
-        tabelaPrincipal.setVisible(false);
-        tabelaVencimentos.setVisible(true);
-        diasVencimento = 0;
-        setLabels();
-        setTabelaSecundaria();
-        tabelaVencimentos.refresh();
+        btnVencimento(0);
     }
 
     public void handleBtnSemana() {
-        tabelaPrincipal.setVisible(false);
-        tabelaVencimentos.setVisible(true);
-        diasVencimento = 7;
-        setLabels();
-        setTabelaSecundaria();
-        tabelaVencimentos.refresh();
+        btnVencimento(7);
     }
 
     public void handleBtnMes() {
-        tabelaPrincipal.setVisible(false);
-        tabelaVencimentos.setVisible(true);
-        diasVencimento = 30;
-        setTabelaSecundaria();
-        setLabels();
+        btnVencimento(30);
     }
 
     public void handleBtnSemestre() {
-        tabelaPrincipal.setVisible(false);
-        tabelaVencimentos.setVisible(true);
-        diasVencimento = 182;
-        setLabels();
-        setTabelaSecundaria();
-        tabelaVencimentos.refresh();
+        btnVencimento(182);
     }
 
     public void handleBtnTodos() {
+        btnVencimento(183);
+    }
+
+    private void btnVencimento(int dias){
+        tabelaEstendida.setVisible(false);
         tabelaVencimentos.setVisible(true);
         tabelaPrincipal.setVisible(false);
-        diasVencimento = 183;
+        diasVencimento = dias;
         setLabels();
         setTabelaSecundaria();
         tabelaVencimentos.refresh();
@@ -838,13 +884,23 @@ public class MainController {
 
     public void handleBtnGeral() {
         mainService.loadInicial();
-        initialize();
         setTabelaPrincipal();
         setLabels();
         tabelaPrincipal.setVisible(true);
         tabelaVencimentos.setVisible(false);
+        tabelaEstendida.setVisible(false);
         tabelaPrincipal.refresh();
         pendenciaService.varreduraPendencias();
     }
 
+    public void handleBtnEstendido() {
+        mainService.loadInicial();
+        setTabelaEstendida();
+        setLabels();
+        tabelaPrincipal.setVisible(false);
+        tabelaVencimentos.setVisible(false);
+        tabelaEstendida.setVisible(true);
+        tabelaPrincipal.refresh();
+        pendenciaService.varreduraPendencias();
+    }
 }
