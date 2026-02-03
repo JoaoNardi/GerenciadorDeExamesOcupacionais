@@ -17,6 +17,7 @@ public class PendenciaService {
     private final CondicaoService condicaoService = new CondicaoService();
     private final FuncionarioService funcionarioService = new FuncionarioService();
     public final ObservableList<Pendencia> pendencias = FXCollections.observableArrayList();
+    private final ParticularidadeService particularidadeService = new ParticularidadeService();
 
     public void varreduraPendencias() {
         pendencias.clear();
@@ -50,6 +51,19 @@ public class PendenciaService {
                 for (Conjunto conjunto : list.stream().sorted(Comparator.comparing(Conjunto::getPeriodicidade)).toList()) {
                     condicaoService.carregarCondicoesPorConjuntoId(conjunto.getId());
                     List<Condicao> condicoes = condicaoService.listarCondicoes();
+
+                    for (VinculoFuncionarioParticularidade vfp : particularidadeService.listarTodosVinculos(true)) {
+                        if (!vfp.getFuncionario().getId().equals(funcionario.getId())) {
+                            continue;
+                        }
+
+                        if (!vfp.getParticularidade().getTipoExame().getId().equals(tipoExameL.getId())) {
+                            continue;
+                        }
+                        if (!funcionarioJaTemExame(funcionario,tipoExameL)){
+                            criarPendencia(funcionario,tipoExameL);
+                        }
+                    }
 
                     if (condicoes.isEmpty()) continue;
 
