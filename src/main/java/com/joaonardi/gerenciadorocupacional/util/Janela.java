@@ -87,7 +87,6 @@ public class Janela<T> implements Editavel<T> {
         this.objetoPrincipal = objeto;
     }
 
-    //todo implementar em todo o projeto
     public void salvar(String contexto, String acao, Node node, ActionSalvar actionSalvar) {
         try {
             actionSalvar.executar();

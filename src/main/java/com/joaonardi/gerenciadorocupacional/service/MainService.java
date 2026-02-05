@@ -7,7 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 
-import java.time.LocalDate;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -148,4 +148,27 @@ public class MainService {
         return colunas;
     }
 
+    public LocalDate proximoAniversario(MonthDay md, LocalDate hoje) {
+        LocalDate data;
+        try {
+            data = md.atYear(hoje.getYear());
+        } catch (DateTimeException e) {
+            data = LocalDate.of(hoje.getYear(), 3, 1);
+        }
+        if (data.isBefore(hoje)) {
+            data = data.plusYears(1);
+        }
+        return data;
+    }
+
+    public String formatarTempoEmpresa(LocalDateTime inicio, LocalDateTime fim) {
+        Period periodo = Period.between(inicio.toLocalDate(), fim.toLocalDate());
+
+        return String.format(
+                "%d a %d m %d d",
+                periodo.getYears(),
+                periodo.getMonths(),
+                periodo.getDays()
+        );
+    }
 }

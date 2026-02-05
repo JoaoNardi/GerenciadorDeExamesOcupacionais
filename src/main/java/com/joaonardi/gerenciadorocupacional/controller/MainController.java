@@ -3,10 +3,7 @@ package com.joaonardi.gerenciadorocupacional.controller;
 import com.joaonardi.gerenciadorocupacional.MainApp;
 import com.joaonardi.gerenciadorocupacional.model.*;
 import com.joaonardi.gerenciadorocupacional.service.*;
-import com.joaonardi.gerenciadorocupacional.util.Coluna;
-import com.joaonardi.gerenciadorocupacional.util.DatePickerCustom;
-import com.joaonardi.gerenciadorocupacional.util.FormataData;
-import com.joaonardi.gerenciadorocupacional.util.Janela;
+import com.joaonardi.gerenciadorocupacional.util.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -34,7 +31,10 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +46,11 @@ public class MainController {
 
     //tabela Principal Geral
     public TableView<Funcionario> tabelaPrincipal;
-    public TableColumn<Funcionario, String> colunaFuncionarioGeral;
+    public TableColumn<Funcionario, Funcionario> colunaFuncionarioGeral;
+    public TableColumn<Funcionario, Funcionario> colunaTempoEmpresa;
     public TableColumn<Funcionario, String> colunaIdadeGeral;
     public TableColumn<Funcionario, String> colunaSetorGeral;
-    public TableColumn<Funcionario, String> colunaAniversario;
+    public TableColumn<Funcionario, MonthDay> colunaAniversario;
     public TableColumn<Funcionario, String> colunaStatusGeral;
     public TableColumn<Funcionario, Node> colunaAcoesGeral;
     //botoes
@@ -99,7 +100,7 @@ public class MainController {
     private void initialize() {
         Rectangle2D screen = Screen.getPrimary().getVisualBounds();
         root.setMinHeight(screen.getHeight() * 0.5);
-        root.setMaxHeight(screen.getHeight() * 0.8);
+        root.setMaxHeight(screen.getHeight() * 0.9);
         tabelaVencimentos.setVisible(false);
         tabelaEstendida.setVisible(false);
         mainService.loadInicial();
@@ -139,6 +140,39 @@ public class MainController {
         try {
             if (!funcionarioService.listarFuncionariosPorStatus(true).isEmpty()) {
                 colunaFuncionarioGeral.setCellValueFactory(new PropertyValueFactory<>("nome"));
+                colunaTempoEmpresa.setCellValueFactory(cell ->
+                        new ReadOnlyObjectWrapper<>(cell.getValue())
+                );
+                colunaTempoEmpresa.setCellFactory(column -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(Funcionario item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty || item == null || item.getDataAdmissao() == null) {
+                            setText(null);
+                            return;
+                        }
+                        LocalDateTime admissao = item.getDataAdmissao().atStartOfDay();
+                        LocalDateTime agora = LocalDateTime.now();
+
+                        String tempoEmpresa = mainService.formatarTempoEmpresa(admissao, agora);
+                        setText(tempoEmpresa);
+                    }
+                });
+                colunaTempoEmpresa.setComparator((f1, f2) -> {
+                    if (f1 == null && f2 == null) return 0;
+                    if (f1 == null) return 1;
+                    if (f2 == null) return -1;
+
+                    LocalDate d1 = f1.getDataAdmissao();
+                    LocalDate d2 = f2.getDataAdmissao();
+
+                    if (d1 == null && d2 == null) return 0;
+                    if (d1 == null) return 1;
+                    if (d2 == null) return -1;
+                    return d1.compareTo(d2);
+                });
+
                 colunaIdadeGeral.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
                     int idade = funcionarioService.calcularIdade(f.getDataNascimento());
@@ -147,11 +181,41 @@ public class MainController {
                 colunaSetorGeral.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getSetor().getArea()));
                 colunaAniversario.setCellValueFactory(funcionarioStringCellDataFeatures -> {
                     Funcionario f = funcionarioStringCellDataFeatures.getValue();
-                    String dataAniversario = f.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM"));
-                    return new SimpleStringProperty(dataAniversario);
+                    LocalDate nascimento = f.getDataNascimento();
+                    return new SimpleObjectProperty<>(
+                            nascimento != null ? MonthDay.from(nascimento) : null
+                    );
                 });
-                colunaStatusGeral.setCellValueFactory(cd -> new ReadOnlyStringWrapper("")); // valor dummy
 
+                colunaAniversario.setCellFactory(column -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(MonthDay item, boolean empty) {
+                        super.updateItem(item, empty);
+                        Integer dias = null;
+                        if (item != null) {
+                            dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), item.atYear(LocalDate.now().getYear()));
+                            if (dias < 0) {
+                                dias = (int) ChronoUnit.DAYS.between(LocalDate.now(), item.atYear(LocalDate.now().getYear() + 1));
+                            }
+                        }
+                        setText(empty || item == null ? "" : DateTimeFormatter.ofPattern("dd/MM").format(item) + " (" + dias + " dias)");
+                    }
+                });
+
+                colunaAniversario.setComparator((md1, md2) -> {
+                    if (md1 == null && md2 == null) return 0;
+                    if (md1 == null) return 1;
+                    if (md2 == null) return -1;
+
+                    LocalDate hoje = LocalDate.now();
+
+                    LocalDate prox1 = mainService.proximoAniversario(md1, hoje);
+                    LocalDate prox2 = mainService.proximoAniversario(md2, hoje);
+
+                    return prox1.compareTo(prox2);
+                });
+
+                colunaStatusGeral.setCellValueFactory(cd -> new ReadOnlyStringWrapper("")); // valor dummy
                 colunaStatusGeral.setCellFactory(col -> new TableCell<>() {
                     @Override
                     protected void updateItem(String item, boolean empty) {
@@ -343,7 +407,6 @@ public class MainController {
                 }
             });
 
-
             ObservableList<Tipo> listaTudo = FXCollections.observableArrayList();
             listaTudo.addAll(exameService.listarExamePorVencimento(diasVencimento));
             listaTudo.addAll(certificadoService.listarCertificadosPorVencimento(diasVencimento));
@@ -353,7 +416,7 @@ public class MainController {
         }
     }
 
-    private void configuraTabelaEstendida(){
+    private void configuraTabelaEstendida() {
         try {
             colunaFuncionarioEstendida.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getFuncionario().getNome()));
 
@@ -477,11 +540,11 @@ public class MainController {
                         .build();
                 exameService.editarExame(exame2);
             }
-            if (tabelaPrincipal.isVisible()){
+            if (tabelaPrincipal.isVisible()) {
                 handleBtnGeral();
-            } else if (tabelaVencimentos.isVisible()){
+            } else if (tabelaVencimentos.isVisible()) {
                 btnVencimento(diasVencimento);
-            } else if (tabelaEstendida.isVisible()){
+            } else if (tabelaEstendida.isVisible()) {
                 handleBtnEstendido();
             }
         });
@@ -537,11 +600,11 @@ public class MainController {
                         .build();
                 certificadoService.cadastrarCertificado(certificado2);
             }
-            if (tabelaPrincipal.isVisible()){
+            if (tabelaPrincipal.isVisible()) {
                 handleBtnGeral();
-            } else if (tabelaVencimentos.isVisible()){
+            } else if (tabelaVencimentos.isVisible()) {
                 btnVencimento(diasVencimento);
-            } else if (tabelaEstendida.isVisible()){
+            } else if (tabelaEstendida.isVisible()) {
                 handleBtnEstendido();
             }
         });
@@ -657,10 +720,10 @@ public class MainController {
                 funcionarios,
                 List.of(
                         new Coluna<>("Nome", Funcionario::getNome),
-                        new Coluna<>("Cpf", Funcionario::getCpf),
-                        new Coluna<>("Data Nascimento", f -> FormataData.br(f.getDataNascimento())),
+                        new Coluna<>("Cpf", f-> FormataCPF.outPutCPF(f.getCpf())),
+                        new Coluna<>("Data Nascimento", Funcionario::getDataNascimento),
                         new Coluna<>("Setor", Funcionario::getSetor),
-                        new Coluna<>("Data Admissão", f -> FormataData.br(f.getDataAdmissao())),
+                        new Coluna<>("Data Admissão", Funcionario::getDataAdmissao),
                         new Coluna<>("Ativo", f -> f.getAtivo() ? "✔" : "✖"
                         )
 
@@ -899,7 +962,7 @@ public class MainController {
         btnVencimento(183);
     }
 
-    private void btnVencimento(int dias){
+    private void btnVencimento(int dias) {
         tabelaEstendida.setVisible(false);
         tabelaVencimentos.setVisible(true);
         tabelaPrincipal.setVisible(false);

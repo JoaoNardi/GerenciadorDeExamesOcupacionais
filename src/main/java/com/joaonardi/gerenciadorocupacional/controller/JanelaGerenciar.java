@@ -2,11 +2,11 @@ package com.joaonardi.gerenciadorocupacional.controller;
 
 import com.joaonardi.gerenciadorocupacional.util.Coluna;
 import com.joaonardi.gerenciadorocupacional.util.Editavel;
-import com.joaonardi.gerenciadorocupacional.util.FormataCPF;
+import com.joaonardi.gerenciadorocupacional.util.FormataData;
 import com.joaonardi.gerenciadorocupacional.util.Janela;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -41,13 +42,14 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
     public String diretorioObjeto;
     @FXML
     public Label tituloLabel;
-    private List<Coluna<T>> colunas;
+    private List<Coluna<T, ?>> colunas;
     private boolean ativarRadioBtns;
+
     public void configurar(
             String titulo,
             String diretorioObjeto,
             ObservableList<T> lista,
-            List<Coluna<T>> colunas,
+            List<Coluna<T, ?>> colunas,
             Function<Boolean, List<T>> loader,
             Consumer<T> delete,
             boolean ativarRadioBtns
@@ -78,39 +80,39 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
 
         int index = 0;
 
-        for (Coluna<T> col : colunas) {
-            final boolean primeiraColuna = index == 0;
-            final boolean ehCPF = col.nomeColuna().equalsIgnoreCase("cpf");
+        for (Coluna<T, ?> col : colunas) {
 
-            TableColumn<T, String> coluna = new TableColumn<>(col.nomeColuna());
+            TableColumn<T, Object> coluna = new TableColumn<>(col.nomeColuna());
 
             coluna.setCellValueFactory(cell -> {
                 Object valor = col.dadosColuna().apply(cell.getValue());
-
-                if (valor == null) {
-                    return new ReadOnlyStringWrapper("");
-                }
-
-                String texto = valor.toString();
-
-                if (ehCPF) {
-                    texto = FormataCPF.outPutCPF(texto);
-                }
-
-                return new ReadOnlyStringWrapper(texto);
+                return new ReadOnlyObjectWrapper<>(valor);
             });
 
             coluna.setCellFactory(tc -> new TableCell<>() {
                 @Override
-                protected void updateItem(String item, boolean empty) {
+                protected void updateItem(Object item, boolean empty) {
                     super.updateItem(item, empty);
-                    setText(empty ? null : item);
-                    setAlignment(primeiraColuna ? Pos.CENTER_LEFT : Pos.CENTER);
+
+                    if (empty || item == null) {
+                        setText(null);
+                        return;
+                    }
+
+                    if (item instanceof LocalDate data) {
+                        setText(FormataData.br(data));
+                        setAlignment(Pos.CENTER);
+                    } else if (item instanceof Boolean b) {
+                        setText(b ? "✔" : "✖");
+                        setAlignment(Pos.CENTER);
+                    } else {
+                        setText(item.toString());
+                        setAlignment(Pos.CENTER);
+                    }
                 }
             });
 
             tabela.getColumns().add(coluna);
-            index++;
         }
 
         tabela.setItems(lista);
@@ -120,8 +122,6 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
             ajustarJanelaAoConteudo();
         });
     }
-
-
 
     private void ajustarLarguraColunas() {
         for (TableColumn<T, ?> coluna : tabela.getColumns()) {
@@ -158,7 +158,7 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
         double larguraFinal = larguraColunas + paddingSeguro + decoracao;
         double maxWidth = screen.getVisualBounds().getWidth() * 0.9;
         stage.setMinWidth(350);
-        stage.setWidth(Math.min(larguraFinal, maxWidth));
+        stage.setWidth(Math.min(larguraFinal, maxWidth) + 15);
         Platform.runLater(stage::centerOnScreen);
     }
 
@@ -187,11 +187,11 @@ public class JanelaGerenciar<T> extends Janela<T> implements Editavel<T> {
 
             inAtivos = selected == radioBtnAtivos;
             atualizar(inAtivos);
-            if (this.ativarRadioBtns){
-                if (radioBtnAtivos.isSelected()){
+            if (this.ativarRadioBtns) {
+                if (radioBtnAtivos.isSelected()) {
                     btnDeletar.setText("Inativar");
                 }
-                if (radioBtnInativos.isSelected()){
+                if (radioBtnInativos.isSelected()) {
                     btnDeletar.setText("Ativar");
                 }
             }

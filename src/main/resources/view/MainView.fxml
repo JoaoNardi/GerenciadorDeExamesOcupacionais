@@ -146,11 +146,12 @@
         </HBox>
         <TableView fx:id="tabelaPrincipal" layoutX="50.0" layoutY="230.0" prefHeight="645.0" prefWidth="1183.0" style="-fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="240.0">
             <columns>
-                <TableColumn fx:id="colunaFuncionarioGeral" prefWidth="220.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Funcionário" />
+                <TableColumn fx:id="colunaFuncionarioGeral" maxWidth="265.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Funcionário" />
+                <TableColumn fx:id="colunaTempoEmpresa" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;"  text="Trabalhado" />
                 <TableColumn fx:id="colunaIdadeGeral" prefWidth="70.0" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;" text="Idade" />
                 <TableColumn fx:id="colunaSetorGeral" prefWidth="135.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Setor" />
                 <TableColumn fx:id="colunaAniversario" minWidth="0.0" prefWidth="115.0" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;" text="Aniversário" />
-                <TableColumn fx:id="colunaStatusGeral" minWidth="482.0" prefWidth="482.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Status Geral" />
+                <TableColumn fx:id="colunaStatusGeral" minWidth="470.0" prefWidth="480.0" style="-fx-border-radius: 5; -fx-background-radius: 5;" text="Status Geral" />
                 <TableColumn fx:id="colunaAcoesGeral" maxWidth="133.0" prefWidth="90.0" style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-alignment: CENTER;" text="Ações" />
             </columns>
             <padding>
