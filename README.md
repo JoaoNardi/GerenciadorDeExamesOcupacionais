@@ -12,6 +12,7 @@
 
 [Sobre](#-sobre) •
 [Funcionalidades](#-funcionalidades) •
+[Regras de Negócio](#-regras-de-negócio) •
 [Tecnologias](#-tecnologias) •
 [Instalação](#-instalação) •
 [Como Usar](#-como-usar) •
@@ -51,7 +52,7 @@ Proporcionar uma solução eficiente para empresas controlarem os exames ocupaci
   - Rastreabilidade completa
  
 - **🔍 Particularidades**
-  - Cadastro de Particulariades
+  - Cadastro de Particularidades
   - Vinculo de funcionário com particularidades
 
 - **⏰ Controle de Prazos e Alertas de Vencimento 🔔**
@@ -65,6 +66,105 @@ Proporcionar uma solução eficiente para empresas controlarem os exames ocupaci
   - Exportação para PDF/Excel
 
 ---
+
+## 🧠 Regras de Negócio
+
+- Um funcionário pode possuir múltiplos tipos de exames obrigatórios
+- A obrigatoriedade depende:
+  - do setor
+  - da idade
+  - da periodicidade definida
+- A validade é calculada automaticamente com base na regra aplicável
+- Particularidades podem sobrescrever regras gerais
+
+---
+## 🖼️ Screenshots
+
+---
+
+### 🏠 Telas Principais
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/f1abc771-5cbc-44f5-94cf-9c5ec395e9cb" width="48%" />
+  <img src="https://github.com/user-attachments/assets/489ad528-bf9d-4a12-ac71-2790d449e34a" width="48%" />
+</div>
+
+---
+
+### 🏢 Setores
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/531fd36f-eb56-4e3a-a134-58b70898a309" width="45%" />
+  <img src="https://github.com/user-attachments/assets/1d4aea5e-6e76-4cde-b6ca-c0281453092e" width="45%" />
+</div>
+
+---
+
+### 👤 Funcionários
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/3b404a00-7e38-4a7b-be3e-ee22ca1864b9" width="45%" />
+  <img src="https://github.com/user-attachments/assets/baa6b1fd-c841-4b29-9da0-69b64dddb832" width="45%" />
+</div>
+
+---
+
+### 🔍 Particularidades
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/13629e07-90bc-433e-9833-6fe03527ae28" width="45%" />
+  <img src="https://github.com/user-attachments/assets/2ab1e019-41c1-4874-b75b-9afafa3cc94c" width="45%" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b796a879-46d2-4835-a53c-465ec1d022d4" width="45%" />
+  <img src="https://github.com/user-attachments/assets/577e7e08-6e35-48ca-9b20-7249c8013856" width="45%" />
+</div>
+
+---
+
+### 🔬 Exames
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/8ef0a659-48be-4365-84f2-f7e141b3510d" width="45%" />
+  <img src="https://github.com/user-attachments/assets/3f767e8a-263e-4e3c-8daf-bb67f3e31139" width="45%" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b187318e-d1bb-40fa-91c2-fab07a1f1754" width="45%" />
+  <img src="https://github.com/user-attachments/assets/ab44a79a-698b-4809-bf7a-709ed6e237ff" width="45%" />
+</div>
+
+---
+
+### 📜 Certificados
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/4e4ef52a-a880-4443-9e99-5df41a31c121" width="45%" />
+  <img src="https://github.com/user-attachments/assets/dc645881-ebb3-4929-8530-18196c20fb95" width="45%" />
+</div>
+
+<br>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/458a15ba-e33e-4b71-9c7f-abb0200d2c59" width="45%" />
+</div>
+
+---
+
+### 📊 Relatórios
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/f2182e7c-a501-4713-99ca-ac2229c4d399" width="48%" />
+  <img src="https://github.com/user-attachments/assets/85844eb7-5dfa-4135-b088-523ed51e621a" width="48%" />
+</div>
+
+---
+
 
 ## 🛠️ Tecnologias
 
@@ -213,7 +313,7 @@ O sistema utiliza **SQLite** como banco de dados local, garantindo:
 - `conjuntos` - Agrupador de regras de tipo de exame em conjunto com a tabela `condicoes`
 - `condicoes` - Regras de validade que são iteradas sobre as caracteristicas dos funcionários
 - `particularidades` - Regras únicas por funcionários
-- `vinculos_particularidades` - Correlaciona particularidades para cadada funcionário
+- `vinculos_particularidades` - Correlaciona particularidades para cada funcionário
 
 ---
 
