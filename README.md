@@ -1,31 +1,280 @@
-<h1>Gerenciador de Exames e Certificados Ocupacionais</h1>
+# 🏥 Gerenciador de Exames e Certificados Ocupacionais
 
-<h3>Objetivo</h3>
-<p> Gerenciar exames e certificados ocupacionais controlando prazos e vencimentos</p>
+<div align="center">
 
-<h3>Funcionailidades</h3>
-OBS: Atualmente todos os cruds estao sem delete (crus?)
-<li>✅ Cadastro e Atualização de Funcionarios com Inativação </li> 
-<li>✅ Cadastro de Setores  </li>
-<li>✅ Cadastro de Exames </li>
-<li>✅ Cadastro de Certificados </li>
-<li>🚧 Controle de Prazos </li>
-<li>🚧 Alertas de Vencimento </li>
-<li>🚧 Relatorios </li>
+![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java)
+![JavaFX](https://img.shields.io/badge/JavaFX-Interface-blue?style=for-the-badge&logo=java)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apache-maven)
 
-<h3> Stacks </h3>
-<li><strong>Backend : </strong> Java - 21 </li>
-<li><strong>Frontend : </strong> JavaFX</li>
-<li><strong>Banco de dados : </strong> SQLlite</li>
+**Sistema completo para gestão de exames ocupacionais, certificados e controle de vencimentos**
 
-<h3>Escopo Inicial</h3>
-<p>Crud das funções de cadastro e alertas em funcionamento </p>
+[Sobre](#-sobre) •
+[Funcionalidades](#-funcionalidades) •
+[Tecnologias](#-tecnologias) •
+[Instalação](#-instalação) •
+[Como Usar](#-como-usar) •
+[Licença](#-licença)
 
-<h3> Instruções de Uso </h3>
-<li> Clone o repositório: https://github.com/JoaoNardi/GerenciadorDeExamesOcupacionais.git</li>
-<li>Compile e baixe dependências: mvn clean install</li>
-<li>Execute o projeto com o plugin JavaFX: mvn javafx:run</li>
+</div>
+
+---
+
+## 📋 Sobre
+
+O **Gerenciador de Exames e Certificados Ocupacionais** é uma aplicação desktop desenvolvida em Java com interface JavaFX, projetada para facilitar o controle e gestão de exames médicos ocupacionais e certificados de funcionários. O sistema permite gerenciar prazos, emitir alertas de vencimento e manter um histórico completo de todos os registros.
+
+### 🎯 Objetivo
+
+Proporcionar uma solução eficiente para empresas controlarem os exames ocupacionais obrigatórios de seus funcionários, evitando vencimentos e garantindo conformidade com as normas de segurança do trabalho.
+
+---
+
+## ✨ Funcionalidades
+
+- **👥 Gestão de Funcionários**
+  - Cadastro completo de funcionários
+  - Atualização de informações
+  - Inativação de funcionários
+
+- **🏢 Gestão de Setores**
+  - Cadastro de setores/departamentos
+  - Vinculação com funcionários
+
+- **🔬 Gestão de Exames e Certificados 📜**
+  - Cadastro de tipos de exames e de tipos de certificados
+  - Periodicidade de realização
+  - Requisitos por setor
+  - Histórico de exames realizados
+  - Controle de validade
+  - Rastreabilidade completa
+ 
+- **🔍 Particularidades**
+  - Cadastro de Particulariades
+  - Vinculo de funcionário com particularidades
+
+- **⏰ Controle de Prazos e Alertas de Vencimento 🔔**
+  - Dashboard de vencimentos
+  - Agendamento automatizado
+  - Pendências automáticas
+  - Lançamento facilitado
+
+- **📊 Relatórios**
+  - Relatórios gerenciais
+  - Exportação para PDF/Excel
+
+---
+
+## 🛠️ Tecnologias
+
+### Backend
+- **Java 21** - Linguagem de programação principal
+- **Maven** - Gerenciamento de dependências e build
+- **SQLite** - Banco de dados local
+- **JDBC** - Conexão com banco de dados
+
+### Frontend
+- **JavaFX** - Framework para interface gráfica
+- **FXML** - Arquitetura MVC para layouts
+
+### Arquitetura
+- **MVC (Model-View-Controller)** - Padrão arquitetural
+- **DAO (Data Access Object)** - Padrão de acesso a dados
+- **Repository Pattern** - Abstração de persistência
+
+---
+
+## 📦 Instalação e Boilerplate
+
+### Pré-requisitos
+
+- **Java JDK 21** ou superior
+- **Maven 3.8+**
+- **Git**
+
+### Passo a Passo
+
+1. **Clone o repositório**
+```bash
+git clone https://github.com/JoaoNardi/GerenciadorDeExamesOcupacionais.git
+cd GerenciadorDeExamesOcupacionais
+```
+
+2. **Compile e baixe as dependências**
+```bash
+mvn clean install
+```
+> Ao fazer mvn clean install será compilado e gerado um arquivo executavel (target>dist) para instalação da aplicação na máquina
 
 
-<h3>Autores</h3>
-<li>João Vitor Nardi</li>
+3. **Execute o projeto**
+```bash
+mvn javafx:run
+```
+
+### Executável (Alternativa)
+
+Para usuários finais, há um executável pré-compilado disponível:
+
+1. Baixe o arquivo `GerenciadorOcupacional-1.0.exe`
+2. Execute diretamente no Windows
+3. Nenhuma instalação adicional necessária
+
+---
+
+## 💻 Como Usar
+
+### Primeiro Acesso
+
+1. **Configuração Inicial**
+   - Configure os setores da empresa
+   - Cadastre os tipos de exames e de certificados necessários
+   - Defina as regras de períodos de validade
+
+2. **Regras de Condições de Tipos Exames**
+   - Preencha o nome do tipo exame
+   - Clique em `Adicionar Regra` e escolha uma periodicidade
+   - Clique em `Adicionar Condições` e defina a regra para aquela periodicidade selecionada
+   > OBS: Funcionários que contemplarem as regras terão obrigatoriedade para aquele Tipo Exame  
+   > Dica: Coloque apenas um setor por Periodicidade  
+   > Dicas: Evite sobrepor intervalos nas condições por idade  
+  
+3. **Cadastro de Funcionários**
+   - Acesse o módulo de Funcionários
+   - Preencha as informações pessoais
+   - Vincule ao setor correspondente
+
+4. **Registro de Exames**
+   - Selecione o funcionário
+   - Escolha o tipo de exame
+   - Informe a data de realização e validade será preenchida automaticamente com base na regra cadastrada
+
+5. **Emissão de Certificados**
+   - Vincule certificados aos exames realizados
+   - Anexe documentos comprobatórios
+   - Acompanhe o status de validade
+
+### Navegação
+```
+📁 Módulos Principais
+├── 👥 Funcionários     → Gestão de colaboradores
+├── 🏢 Setores          → Organização departamental
+├── 🔍 Particularidades → Regras Específicas 
+├── 🔬 Exames           → Tipos e histórico de exames
+├── 📜 Certificados     → Tipos e histórico de certificados
+├── 📊 Relatórios       → Relatórios de funcionário por tipos
+└── 🆘 Ajuda            → Ajudas/Bugs/Dúvidas
+```
+
+---
+
+## 📁 Estrutura do Projeto
+```
+GerenciadorDeExamesOcupacionais/
+├── src/
+│   └── main/
+│       ├── java/
+│       │   └── com/gerenciador/
+│       │       ├── controller/     # Controladores JavaFX
+│       │       ├── model/          # Entidades do domínio
+│       │       ├── dao/            # Acesso a dados
+│       │       ├── service/        # Lógica de negócio
+│       │       ├── util/           # Utilitários
+│       │       └── Main.java       # Classe principal
+│       └── resources/
+│           ├── fxml/               # Arquivos de layout
+│           └── database/           # Banco de dados SQLite
+├── icons/                          # Ícones da aplicação
+├── .idea/                          # Configurações IntelliJ
+├── pom.xml                         # Configuração Maven
+├── GerenciadorOcupacional-1.0.exe  # Executável
+└── README.md
+```
+
+---
+
+## 🗃️ Banco de Dados
+
+O sistema utiliza **SQLite** como banco de dados local, garantindo:
+- ✅ Portabilidade
+- ✅ Não requer servidor
+- ✅ Arquivo único de dados
+- ✅ Backup simplificado
+
+### Principais Tabelas
+
+- `funcionarios` - Dados dos colaboradores
+- `setores` - Departamentos da empresa
+- `exames` - Tipos e histórico de exames
+- `certificados` - Certificações ocupacionais
+- `tipos_certificado` - Controle de validade
+- `tipos_exame` - Controle de validade em conjunto com a tabela `conjuntos`
+- `conjuntos` - Agrupador de regras de tipo de exame em conjunto com a tabela `condicoes`
+- `condicoes` - Regras de validade que são iteradas sobre as caracteristicas dos funcionários
+- `particularidades` - Regras únicas por funcionários
+- `vinculos_particularidades` - Correlaciona particularidades para cadada funcionário
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. **Fork** o projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/MinhaFeature`)
+3. **Commit** suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
+4. **Push** para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um **Pull Request**
+
+## 🐛 Reportar Problemas
+
+Encontrou um bug? Tem uma sugestão? 
+
+1. Verifique se já não existe uma [issue aberta](https://github.com/JoaoNardi/GerenciadorDeExamesOcupacionais/issues)
+2. Abra uma nova issue com:
+   - Descrição clara do problema
+   - Passos para reproduzir
+   - Comportamento esperado vs atual
+   - Screenshots/clip (se aplicável)
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+```
+MIT License
+
+Copyright (c) 2024 João Vitor Nardi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files...
+```
+
+---
+
+## 👨‍💻 Autor
+
+**João Vitor Nardi**
+
+- GitHub: [@JoaoNardi](https://github.com/JoaoNardi)
+- LinkedIn: [João Vitor Nardi](https://linkedin.com/in/joao-nardi)
+
+---
+
+## 📞 Suporte
+
+Para questões e suporte:
+- 📧 Abra uma [issue](https://github.com/JoaoNardi/GerenciadorDeExamesOcupacionais/issues)
+- 💬 Discussões no GitHub
+
+---
+
+<div align="center">
+
+**⭐ Se este projeto foi útil, considere dar uma estrela! ⭐**
+
+Desenvolvido por [João Vitor Nardi](https://github.com/JoaoNardi)
+
+</div>
